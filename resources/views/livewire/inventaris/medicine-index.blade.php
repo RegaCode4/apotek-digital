@@ -1,4 +1,10 @@
 <div>
+    @if ($errorMessage)
+        <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+            {{ $errorMessage }}
+        </div>
+    @endif
+
     @if ($successMessage || session('success'))
         <div class="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
             {{ $successMessage ?? session('success') }}
@@ -134,6 +140,7 @@
                                     </button>
                                     <button
                                         type="button"
+                                        wire:click="confirmDelete({{ $medicine->id }})"
                                         class="rounded-md border border-red-200 bg-white px-2.5 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50"
                                     >
                                         Hapus
@@ -160,4 +167,61 @@
     </div>
 
     <livewire:inventaris.medicine-form />
+
+    <div
+        x-data="{ show: @entangle('showDeleteModal') }"
+        x-show="show"
+        x-cloak
+        class="relative z-50"
+        aria-labelledby="delete-medicine-title"
+        role="dialog"
+        aria-modal="true"
+    >
+        <div
+            x-show="show"
+            x-transition
+            class="fixed inset-0 bg-zinc-900/50"
+            wire:click="$set('showDeleteModal', false)"
+        ></div>
+
+        <div class="fixed inset-0 z-50 overflow-y-auto p-4 sm:p-6">
+            <div class="flex min-h-full items-center justify-center">
+                <div
+                    x-show="show"
+                    x-transition
+                    @click.stop
+                    class="w-full max-w-md rounded-xl border border-zinc-200 bg-white p-6 shadow-xl"
+                >
+                    <h3 id="delete-medicine-title" class="text-lg font-semibold text-zinc-900">
+                        Konfirmasi Hapus
+                    </h3>
+                    <p class="mt-3 text-sm text-zinc-600">
+                        Apakah Anda yakin ingin menghapus obat
+                        <span class="font-semibold text-zinc-900">{{ $deleteMedicineName }}</span>?
+                        Tindakan ini tidak dapat dibatalkan.
+                    </p>
+
+                    <div class="mt-6 flex justify-end gap-3">
+                        <button
+                            type="button"
+                            wire:click="$set('showDeleteModal', false)"
+                            class="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+                        >
+                            Batal
+                        </button>
+                        <button
+                            type="button"
+                            wire:click="deleteConfirmed"
+                            class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                            wire:loading.attr="disabled"
+                            wire:target="deleteConfirmed"
+                        >
+                            <span wire:loading.remove wire:target="deleteConfirmed">Hapus</span>
+                            <span wire:loading wire:target="deleteConfirmed">Menghapus...</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

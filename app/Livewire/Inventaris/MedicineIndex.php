@@ -7,6 +7,8 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
@@ -26,6 +28,14 @@ class MedicineIndex extends Component
     public string $requiresPrescription = '';
 
     public ?string $successMessage = null;
+
+    public ?string $errorMessage = null;
+
+    public bool $showDeleteModal = false;
+
+    public ?int $deleteMedicineId = null;
+
+    public string $deleteMedicineName = '';
 
     public function updatingSearch(): void
     {
@@ -50,6 +60,40 @@ class MedicineIndex extends Component
             session()->flash('success', $message);
         }
 
+        $this->resetPage();
+    }
+
+    public function confirmDelete(int $id): void
+    {
+        $medicine = Medicine::query()->findOrFail($id);
+
+        $this->errorMessage = null;
+        $this->deleteMedicineId = $medicine->id;
+        $this->deleteMedicineName = $medicine->name;
+        $this->showDeleteModal = true;
+    }
+
+    public function deleteConfirmed(): void
+    {
+        if ($this->deleteMedicineId === null) {
+            return;
+        }
+
+        $medicine = Medicine::query()->findOrFail($this->deleteMedicineId);
+
+        if ($this->hasSaleItems($medicine)) {
+            $this->errorMessage = 'Obat tidak bisa dihapus karena sudah pernah dijual. Nonaktifkan saja.';
+            $this->resetDeleteState();
+
+            return;
+        }
+
+        $medicine->stockMutations()->delete();
+        $medicine->delete();
+
+        $this->successMessage = 'Obat berhasil dihapus.';
+        session()->flash('success', $this->successMessage);
+        $this->resetDeleteState();
         $this->resetPage();
     }
 
@@ -91,5 +135,21 @@ class MedicineIndex extends Component
             'medicines' => $this->medicines,
             'categories' => $this->categories,
         ]);
+    }
+
+    protected function hasSaleItems(Medicine $medicine): bool
+    {
+        if (! Schema::hasTable('sale_items')) {
+            return false;
+        }
+
+        return DB::table('sale_items')->where('medicine_id', $medicine->id)->exists();
+    }
+
+    protected function resetDeleteState(): void
+    {
+        $this->showDeleteModal = false;
+        $this->deleteMedicineId = null;
+        $this->deleteMedicineName = '';
     }
 }

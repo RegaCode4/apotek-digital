@@ -2,8 +2,11 @@
 
 use App\Livewire\Inventaris\MedicineIndex;
 use App\Models\Medicine;
+use App\Models\StockMutation;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -117,4 +120,64 @@ test('medicine index shows low stock and expiring soon badges', function () {
         ->assertOk()
         ->assertSee('bg-red-100', false)
         ->assertSee('bg-amber-100', false);
+});
+
+test('medicine index shows delete confirmation modal with medicine name', function () {
+    $pharmacist = User::factory()->create(['role' => 'pharmacist']);
+    $medicine = Medicine::factory()->create(['name' => 'Obat Untuk Dihapus']);
+
+    Livewire::actingAs($pharmacist)
+        ->test(MedicineIndex::class)
+        ->call('confirmDelete', $medicine->id)
+        ->assertSet('showDeleteModal', true)
+        ->assertSet('deleteMedicineName', 'Obat Untuk Dihapus')
+        ->assertSee('Obat Untuk Dihapus');
+});
+
+test('medicine index deletes medicine and stock mutations when confirmed', function () {
+    $pharmacist = User::factory()->create(['role' => 'pharmacist']);
+    $medicine = Medicine::factory()->create(['name' => 'Obat Hapus']);
+
+    StockMutation::query()->create([
+        'medicine_id' => $medicine->id,
+        'type' => 'in',
+        'quantity' => 10,
+        'created_by' => $pharmacist->id,
+    ]);
+
+    Livewire::actingAs($pharmacist)
+        ->test(MedicineIndex::class)
+        ->call('confirmDelete', $medicine->id)
+        ->call('deleteConfirmed')
+        ->assertSet('showDeleteModal', false)
+        ->assertSet('successMessage', 'Obat berhasil dihapus.')
+        ->assertDontSee('Obat Hapus');
+
+    expect(Medicine::query()->find($medicine->id))->toBeNull();
+    expect(StockMutation::query()->count())->toBe(0);
+});
+
+test('medicine index prevents delete when medicine has sale items', function () {
+    $pharmacist = User::factory()->create(['role' => 'pharmacist']);
+    $medicine = Medicine::factory()->create(['name' => 'Obat Terjual']);
+
+    Schema::create('sale_items', function ($table) {
+        $table->id();
+        $table->unsignedBigInteger('sale_id');
+        $table->foreignId('medicine_id');
+    });
+
+    DB::table('sale_items')->insert([
+        'sale_id' => 1,
+        'medicine_id' => $medicine->id,
+    ]);
+
+    Livewire::actingAs($pharmacist)
+        ->test(MedicineIndex::class)
+        ->call('confirmDelete', $medicine->id)
+        ->call('deleteConfirmed')
+        ->assertSet('errorMessage', 'Obat tidak bisa dihapus karena sudah pernah dijual. Nonaktifkan saja.')
+        ->assertSee('Obat tidak bisa dihapus karena sudah pernah dijual. Nonaktifkan saja.');
+
+    expect(Medicine::query()->find($medicine->id))->not->toBeNull();
 });
