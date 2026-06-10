@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Livewire\Inventaris\MedicineIndex;
+use App\Livewire\Inventaris\MutasiStok;
 use App\Livewire\Inventaris\StokOpname;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +38,10 @@ Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
 Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
     ->get('/sistem/inventaris/stok-opname', StokOpname::class)
     ->name('inventaris.stok-opname');
+
+Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
+    ->get('/sistem/inventaris/mutasi', MutasiStok::class)
+    ->name('inventaris.mutasi');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');

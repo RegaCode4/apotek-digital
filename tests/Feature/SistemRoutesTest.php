@@ -17,6 +17,7 @@ test('guests are redirected from protected sistem routes to login', function (st
     'users' => ['sistem.users'],
     'medicines index' => ['inventaris.medicines.index'],
     'stok opname' => ['inventaris.stok-opname'],
+    'mutasi stok' => ['inventaris.mutasi'],
 ]);
 
 test('dashboard shows authenticated user name and role', function () {
@@ -45,6 +46,7 @@ test('admin can access all sistem modules', function (string $routeName) {
     'users' => ['sistem.users'],
     'medicines index' => ['inventaris.medicines.index'],
     'stok opname' => ['inventaris.stok-opname'],
+    'mutasi stok' => ['inventaris.mutasi'],
 ]);
 
 test('pharmacist can access dashboard inventaris laporan and pos', function (string $routeName) {
@@ -58,6 +60,7 @@ test('pharmacist can access dashboard inventaris laporan and pos', function (str
     'pos' => ['sistem.pos'],
     'medicines index' => ['inventaris.medicines.index'],
     'stok opname' => ['inventaris.stok-opname'],
+    'mutasi stok' => ['inventaris.mutasi'],
 ]);
 
 test('pharmacist cannot access user management', function () {
@@ -83,4 +86,5 @@ test('cashier cannot access inventaris laporan or user management', function (st
     'users' => ['sistem.users'],
     'medicines index' => ['inventaris.medicines.index'],
     'stok opname' => ['inventaris.stok-opname'],
+    'mutasi stok' => ['inventaris.mutasi'],
 ]);
