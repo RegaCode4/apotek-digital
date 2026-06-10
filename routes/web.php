@@ -5,15 +5,27 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
 
-Route::prefix('sistem')->group(function () {
-    Route::get('/login', [AuthController::class, 'showLogin'])->name('sistem.login');
-    Route::post('/login', [AuthController::class, 'login'])->name('sistem.login.post');
-    Route::post('/logout', [AuthController::class, 'logout'])->name('sistem.logout');
+Route::prefix('sistem')->name('sistem.')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Placeholder dashboard route for redirection target
-    Route::get('/dashboard', function () {
-        return 'Dashboard Sistem';
-    })->name('dashboard.sistem');
+    Route::middleware(['auth.apotek'])->group(function () {
+        Route::get('/dashboard', fn () => view('sistem.dashboard'))->name('dashboard');
+    });
+
+    Route::middleware(['auth.apotek', 'role:admin,pharmacist'])->group(function () {
+        Route::get('/inventaris', fn () => view('sistem.inventaris'))->name('inventaris');
+        Route::get('/laporan', fn () => view('sistem.laporan'))->name('laporan');
+    });
+
+    Route::middleware(['auth.apotek', 'role:cashier,admin,pharmacist'])->group(function () {
+        Route::get('/pos', fn () => view('sistem.pos'))->name('pos');
+    });
+
+    Route::middleware(['auth.apotek', 'role:admin'])->group(function () {
+        Route::get('/users', fn () => view('sistem.users'))->name('users');
+    });
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
