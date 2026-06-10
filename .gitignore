@@ -26,3 +26,5 @@ yarn-error.log
 .kiro/
 .cursor/
 boost.json
+PRD.MD
+.agents/
