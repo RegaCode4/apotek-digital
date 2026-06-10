@@ -1,4 +1,10 @@
 <div>
+    @if ($successMessage || session('success'))
+        <div class="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+            {{ $successMessage ?? session('success') }}
+        </div>
+    @endif
+
     <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <h2 class="text-2xl font-semibold text-zinc-900">Daftar Obat</h2>
@@ -7,6 +13,7 @@
 
         <button
             type="button"
+            wire:click="$dispatch('open-medicine-form')"
             class="inline-flex items-center justify-center rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800"
         >
             Tambah Obat
@@ -120,6 +127,7 @@
                                 <div class="flex justify-end gap-2">
                                     <button
                                         type="button"
+                                        wire:click="$dispatch('open-medicine-form', { medicineId: {{ $medicine->id }} })"
                                         class="rounded-md border border-zinc-300 bg-white px-2.5 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50"
                                     >
                                         Edit
@@ -150,4 +158,6 @@
             </div>
         @endif
     </div>
+
+    <livewire:inventaris.medicine-form />
 </div>

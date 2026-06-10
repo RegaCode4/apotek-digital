@@ -8,6 +8,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -24,6 +25,8 @@ class MedicineIndex extends Component
 
     public string $requiresPrescription = '';
 
+    public ?string $successMessage = null;
+
     public function updatingSearch(): void
     {
         $this->resetPage();
@@ -36,6 +39,17 @@ class MedicineIndex extends Component
 
     public function updatingRequiresPrescription(): void
     {
+        $this->resetPage();
+    }
+
+    #[On('medicine-saved')]
+    public function refreshMedicines(?string $message = null): void
+    {
+        if ($message !== null) {
+            $this->successMessage = $message;
+            session()->flash('success', $message);
+        }
+
         $this->resetPage();
     }
 
