@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Livewire\Inventaris\MedicineIndex;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
@@ -27,6 +28,10 @@ Route::prefix('sistem')->name('sistem.')->group(function () {
         Route::get('/users', fn () => view('sistem.users'))->name('users');
     });
 });
+
+Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
+    ->get('/sistem/inventaris/obat', MedicineIndex::class)
+    ->name('inventaris.medicines.index');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
