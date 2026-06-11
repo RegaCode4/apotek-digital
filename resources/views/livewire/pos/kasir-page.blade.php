@@ -1,3 +1,4 @@
+<div>
 <div class="flex h-[calc(100vh-8rem)] gap-4 overflow-hidden">
 
     {{-- ════════════════════════════════════════════════════════
@@ -374,4 +375,5 @@
             </div>
         </div>
     </div>
+</div>
 </div>
