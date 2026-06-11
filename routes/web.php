@@ -1,9 +1,12 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Pos\StrukController;
 use App\Livewire\Inventaris\MedicineIndex;
 use App\Livewire\Inventaris\MutasiStok;
 use App\Livewire\Inventaris\StokOpname;
+use App\Livewire\Pos\KasirPage;
+use App\Livewire\Pos\RiwayatTransaksi;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
@@ -42,6 +45,18 @@ Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
 Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
     ->get('/sistem/inventaris/mutasi', MutasiStok::class)
     ->name('inventaris.mutasi');
+
+Route::middleware(['auth.apotek', 'role:admin,pharmacist,cashier'])
+    ->get('/sistem/pos', KasirPage::class)
+    ->name('pos.kasir');
+
+Route::middleware(['auth.apotek'])
+    ->get('/sistem/pos/struk/{sale}', StrukController::class)
+    ->name('pos.struk');
+
+Route::middleware(['auth.apotek', 'role:admin,pharmacist,cashier'])
+    ->get('/sistem/pos/riwayat', RiwayatTransaksi::class)
+    ->name('pos.riwayat');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
