@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\DashboardService;
 use App\Services\PosService;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
@@ -17,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(PosService::class);
+        $this->app->singleton(DashboardService::class);
     }
 
     /**
