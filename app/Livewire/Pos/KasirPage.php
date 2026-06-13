@@ -224,6 +224,7 @@ class KasirPage extends Component
 
         if (empty($this->cart)) {
             $this->errorMessage = 'Keranjang belanja masih kosong.';
+            $this->dispatch('notify', type: 'warning', message: 'Keranjang belanja masih kosong.');
 
             return;
         }
@@ -231,6 +232,7 @@ class KasirPage extends Component
         // Blokir jika BPJS belum terverifikasi atau tidak aktif
         if ($this->paymentMethod === 'bpjs' && ! $this->bpjsVerified) {
             $this->errorMessage = 'Verifikasi peserta BPJS harus dilakukan dan statusnya aktif sebelum memproses transaksi.';
+            $this->dispatch('notify', type: 'error', message: $this->errorMessage);
 
             return;
         }
@@ -238,6 +240,7 @@ class KasirPage extends Component
         foreach ($this->cart as $item) {
             if ($item['requires_prescription'] && empty($item['prescription_no'])) {
                 $this->errorMessage = "No. Resep wajib diisi untuk obat: {$item['name']}.";
+                $this->dispatch('notify', type: 'error', message: $this->errorMessage);
 
                 return;
             }
@@ -257,8 +260,10 @@ class KasirPage extends Component
             $this->lastSaleId = $sale->id;
             $this->resetCart();
             $this->showSuccessModal = true;
+            $this->dispatch('notify', type: 'success', message: "Transaksi {$sale->invoice_no} berhasil disimpan.");
         } catch (RuntimeException $e) {
             $this->errorMessage = $e->getMessage();
+            $this->dispatch('notify', type: 'error', message: $e->getMessage());
         }
     }
 

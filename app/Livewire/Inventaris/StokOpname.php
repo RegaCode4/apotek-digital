@@ -69,7 +69,7 @@ class StokOpname extends Component
         }
 
         $this->successMessage = "Berhasil menyimpan {$adjustedCount} penyesuaian stok.";
-        session()->flash('success', $this->successMessage);
+        $this->dispatch('notify', type: 'success', message: $this->successMessage);
         $this->reason = '';
         $this->initializePhysicalStocks();
     }

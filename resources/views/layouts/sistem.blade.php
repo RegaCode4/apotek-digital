@@ -41,6 +41,8 @@
         {{ $slot }}
     </main>
 
+    <livewire:components.toast-notification />
+
     @livewireScripts
 </body>
 </html>

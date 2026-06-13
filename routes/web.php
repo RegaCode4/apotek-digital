@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Pos\StrukController;
+use App\Livewire\Admin\UserManagement;
 use App\Livewire\Inventaris\MedicineIndex;
 use App\Livewire\Inventaris\MutasiStok;
 use App\Livewire\Inventaris\StokOpname;
@@ -74,6 +75,10 @@ Route::middleware(['auth.apotek'])
 Route::middleware(['auth.apotek', 'role:admin,pharmacist,cashier'])
     ->get('/sistem/pos/riwayat', RiwayatTransaksi::class)
     ->name('pos.riwayat');
+
+Route::middleware(['auth.apotek', 'role:admin'])
+    ->get('/sistem/admin/users', UserManagement::class)
+    ->name('admin.users');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');

@@ -141,7 +141,7 @@ class DashboardService
 
         $rows = Sale::query()
             ->select(
-                DB::raw('YEARWEEK(sale_date, 1) as yw'),
+                DB::raw("DATE_FORMAT(sale_date, '%Y-%u') as yw"),
                 DB::raw('SUM(grand_total) as total')
             )
             ->where('sale_date', '>=', now()->subWeeks(7)->startOfWeek())
@@ -151,7 +151,8 @@ class DashboardService
 
         for ($i = 7; $i >= 0; $i--) {
             $weekStart = now()->subWeeks($i)->startOfWeek();
-            $yw = $weekStart->format('oW'); // ISO year + 2-digit week
+            // DATE_FORMAT('%Y-%u') produces e.g. "2025-03" — match Carbon's format
+            $yw = $weekStart->format('Y').'-'.str_pad($weekStart->format('W'), 2, '0', STR_PAD_LEFT);
 
             $labels[] = $weekStart->format('j M');
             $data[] = (float) ($rows[$yw] ?? 0);

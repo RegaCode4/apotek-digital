@@ -130,8 +130,8 @@
 
             {{-- User Management (admin only) --}}
             @if (auth()->user()->role === 'admin')
-                @php $isUsers = request()->routeIs('sistem.users'); @endphp
-                <a href="{{ route('sistem.users') }}"
+                @php $isUsers = request()->routeIs('admin.users'); @endphp
+                <a href="{{ route('admin.users') }}"
                    class="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors mb-0.5
                        {{ $isUsers ? 'bg-zinc-900 text-white' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900' }}"
                    aria-current="{{ $isUsers ? 'page' : 'false' }}"
@@ -194,6 +194,8 @@
         </main>
     </div>
 </div>
+
+@livewire('components.toast-notification')
 
 @livewireScripts
 </body>

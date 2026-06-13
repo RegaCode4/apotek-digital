@@ -118,11 +118,10 @@ class MedicineForm extends Component
             ? 'Obat berhasil diperbarui.'
             : 'Obat berhasil ditambahkan.';
 
-        session()->flash('success', $message);
-
         $this->show = false;
         $this->resetForm();
         $this->dispatch('medicine-saved', message: $message);
+        $this->dispatch('notify', type: 'success', message: $message);
     }
 
     public function render(): View
