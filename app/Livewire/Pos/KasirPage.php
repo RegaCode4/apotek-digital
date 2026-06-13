@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pos;
 
+use App\Contracts\BpjsServiceInterface;
 use App\Models\Medicine;
 use App\Models\User;
 use App\Services\PosService;
@@ -18,24 +19,24 @@ use RuntimeException;
 #[Title('POS / Kasir')]
 class KasirPage extends Component
 {
-    // ──────────────────────────────────────────────
-    // Panel kiri — pencarian obat
-    // ──────────────────────────────────────────────
-
+    // ── Panel kiri — pencarian obat ───────────────────────────
     public string $search = '';
 
-    // ──────────────────────────────────────────────
-    // Keranjang belanja
-    // Format item: [medicine_id, name, unit_price, requires_prescription, quantity, prescription_no]
-    // ──────────────────────────────────────────────
-
-    /** @var array<int, array{medicine_id: int, name: string, unit_price: float, requires_prescription: bool, quantity: int, prescription_no: string}> */
+    // ── Keranjang belanja ─────────────────────────────────────
+    /**
+     * @var array<int, array{
+     *   medicine_id: int,
+     *   name: string,
+     *   unit_price: float,
+     *   requires_prescription: bool,
+     *   quantity: int,
+     *   prescription_no: string,
+     *   is_fornas: bool
+     * }>
+     */
     public array $cart = [];
 
-    // ──────────────────────────────────────────────
-    // Form checkout
-    // ──────────────────────────────────────────────
-
+    // ── Form checkout ─────────────────────────────────────────
     public string $buyerName = '';
 
     public string $paymentMethod = 'cash';
@@ -44,10 +45,15 @@ class KasirPage extends Component
 
     public bool $taxEnabled = false;
 
-    // ──────────────────────────────────────────────
-    // State UI
-    // ──────────────────────────────────────────────
+    // ── BPJS state ────────────────────────────────────────────
+    public string $bpjsNumber = '';
 
+    /** @var array{status: string, name: string|null, kelas: string|null}|null */
+    public ?array $bpjsVerification = null;
+
+    public bool $bpjsVerified = false;
+
+    // ── UI state ──────────────────────────────────────────────
     public bool $showSuccessModal = false;
 
     public string $lastInvoiceNo = '';
@@ -56,9 +62,27 @@ class KasirPage extends Component
 
     public ?string $errorMessage = null;
 
-    // ──────────────────────────────────────────────
-    // Computed — pencarian obat
-    // ──────────────────────────────────────────────
+    // ── Constructor injection ─────────────────────────────────
+    private BpjsServiceInterface $bpjs;
+
+    public function boot(BpjsServiceInterface $bpjs): void
+    {
+        $this->bpjs = $bpjs;
+    }
+
+    // ── Watchers ──────────────────────────────────────────────
+
+    /**
+     * Reset BPJS state when payment method changes away from bpjs.
+     */
+    public function updatedPaymentMethod(): void
+    {
+        if ($this->paymentMethod !== 'bpjs') {
+            $this->resetBpjs();
+        }
+    }
+
+    // ── Computed — pencarian obat ─────────────────────────────
 
     /**
      * @return Collection<int, Medicine>
@@ -80,9 +104,7 @@ class KasirPage extends Component
             ->get();
     }
 
-    // ──────────────────────────────────────────────
-    // Computed — kalkulasi keranjang
-    // ──────────────────────────────────────────────
+    // ── Computed — kalkulasi keranjang ────────────────────────
 
     public function getCartSubtotalProperty(): float
     {
@@ -105,9 +127,7 @@ class KasirPage extends Component
         return max(0, $this->cartSubtotal - $this->discountAmount + $this->taxAmount);
     }
 
-    // ──────────────────────────────────────────────
-    // Aksi — keranjang
-    // ──────────────────────────────────────────────
+    // ── Aksi — keranjang ──────────────────────────────────────
 
     public function addToCart(int $medicineId): void
     {
@@ -117,7 +137,7 @@ class KasirPage extends Component
             return;
         }
 
-        // Jika sudah ada di keranjang, tambah qty
+        // Jika sudah ada di keranjang, tambah qty saja
         foreach ($this->cart as $index => $item) {
             if ($item['medicine_id'] === $medicineId) {
                 $this->cart[$index]['quantity']++;
@@ -127,6 +147,11 @@ class KasirPage extends Component
             }
         }
 
+        // Cek fornas saat ditambahkan ke keranjang
+        $isFornas = $this->paymentMethod === 'bpjs'
+            ? $this->bpjs->isFornas($medicine->id)
+            : true; // Tidak relevan untuk non-BPJS, default true agar badge tidak muncul
+
         $this->cart[] = [
             'medicine_id' => $medicine->id,
             'name' => $medicine->name,
@@ -134,6 +159,7 @@ class KasirPage extends Component
             'requires_prescription' => (bool) $medicine->requires_prescription,
             'quantity' => 1,
             'prescription_no' => '',
+            'is_fornas' => $isFornas,
         ];
 
         $this->search = '';
@@ -158,15 +184,38 @@ class KasirPage extends Component
         $this->cart = array_values($this->cart);
     }
 
-    // ──────────────────────────────────────────────
-    // Aksi — proses transaksi
-    // ──────────────────────────────────────────────
+    // ── Aksi — BPJS ───────────────────────────────────────────
+
+    public function verifyBpjs(): void
+    {
+        $this->bpjsVerification = null;
+        $this->bpjsVerified = false;
+
+        if (empty(trim($this->bpjsNumber))) {
+            $this->errorMessage = 'Masukkan nomor BPJS terlebih dahulu.';
+
+            return;
+        }
+
+        $this->errorMessage = null;
+        $result = $this->bpjs->verifyMember($this->bpjsNumber);
+        $this->bpjsVerification = $result;
+        $this->bpjsVerified = $result['status'] === 'aktif';
+
+        // Re-evaluate is_fornas for all existing cart items
+        if ($this->bpjsVerified) {
+            foreach ($this->cart as $index => $item) {
+                $this->cart[$index]['is_fornas'] = $this->bpjs->isFornas($item['medicine_id']);
+            }
+        }
+    }
+
+    // ── Aksi — proses transaksi ───────────────────────────────
 
     public function processTransaction(PosService $posService): void
     {
         $this->errorMessage = null;
 
-        // Validasi form dasar
         $this->validate([
             'buyerName' => ['required', 'string', 'max:100'],
             'paymentMethod' => ['required', 'in:cash,transfer,bpjs,insurance'],
@@ -179,8 +228,14 @@ class KasirPage extends Component
             return;
         }
 
-        // Validasi resep untuk setiap item yang membutuhkannya
-        foreach ($this->cart as $index => $item) {
+        // Blokir jika BPJS belum terverifikasi atau tidak aktif
+        if ($this->paymentMethod === 'bpjs' && ! $this->bpjsVerified) {
+            $this->errorMessage = 'Verifikasi peserta BPJS harus dilakukan dan statusnya aktif sebelum memproses transaksi.';
+
+            return;
+        }
+
+        foreach ($this->cart as $item) {
             if ($item['requires_prescription'] && empty($item['prescription_no'])) {
                 $this->errorMessage = "No. Resep wajib diisi untuk obat: {$item['name']}.";
 
@@ -213,9 +268,7 @@ class KasirPage extends Component
         $this->lastInvoiceNo = '';
     }
 
-    // ──────────────────────────────────────────────
-    // Render
-    // ──────────────────────────────────────────────
+    // ── Render ────────────────────────────────────────────────
 
     public function render(): View
     {
@@ -227,9 +280,7 @@ class KasirPage extends Component
         ]);
     }
 
-    // ──────────────────────────────────────────────
-    // Helpers privat
-    // ──────────────────────────────────────────────
+    // ── Private helpers ───────────────────────────────────────
 
     /**
      * @return array<int, array{medicine_id: int, quantity: int, unit_price: float, discount: float, prescription_no: ?string}>
@@ -246,7 +297,7 @@ class KasirPage extends Component
     }
 
     /**
-     * @return array{buyer_name: string, payment_method: string, subtotal: float, discount_amount: float, tax_amount: float, grand_total: float, bpjs_claim_no: null, notes: null}
+     * @return array{buyer_name: string, payment_method: string, subtotal: float, discount_amount: float, tax_amount: float, grand_total: float, bpjs_claim_no: string|null, notes: null}
      */
     private function buildSaleData(): array
     {
@@ -257,9 +308,21 @@ class KasirPage extends Component
             'discount_amount' => $this->discountAmount,
             'tax_amount' => $this->taxAmount,
             'grand_total' => $this->grandTotal,
-            'bpjs_claim_no' => null,
+            'bpjs_claim_no' => $this->paymentMethod === 'bpjs' ? $this->bpjsNumber : null,
             'notes' => null,
         ];
+    }
+
+    private function resetBpjs(): void
+    {
+        $this->bpjsNumber = '';
+        $this->bpjsVerification = null;
+        $this->bpjsVerified = false;
+
+        // Reset is_fornas flags — no longer relevant
+        foreach ($this->cart as $index => $item) {
+            $this->cart[$index]['is_fornas'] = true;
+        }
     }
 
     private function resetCart(): void
@@ -271,5 +334,6 @@ class KasirPage extends Component
         $this->taxEnabled = false;
         $this->errorMessage = null;
         $this->lastSaleId = 0;
+        $this->resetBpjs();
     }
 }

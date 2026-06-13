@@ -1,5 +1,5 @@
 <div>
-<div class="flex h-[calc(100vh-8rem)] gap-4 overflow-hidden">
+<div class="flex min-h-0 gap-4">
 
     {{-- ════════════════════════════════════════════════════════
          KOLOM KIRI — Pencarian & Katalog Obat
@@ -22,7 +22,7 @@
         </div>
 
         {{-- Hasil pencarian --}}
-        <div class="flex-1 overflow-y-auto">
+        <div>
             @if (strlen($search) >= 2)
                 @forelse ($searchResults as $medicine)
                     @php $outOfStock = $medicine->stock <= 0; @endphp
@@ -78,10 +78,10 @@
     {{-- ════════════════════════════════════════════════════════
          KOLOM KANAN — Keranjang Belanja
     ════════════════════════════════════════════════════════ --}}
-    <div class="flex flex-1 flex-col gap-4 overflow-hidden">
+    <div class="flex flex-1 flex-col gap-4">
 
         {{-- Header keranjang --}}
-        <div class="flex shrink-0 items-center justify-between rounded-xl border border-zinc-200 bg-white px-4 py-3 shadow-sm">
+        <div class="flex items-center justify-between rounded-xl border border-zinc-200 bg-white px-4 py-3 shadow-sm">
             <h2 class="text-base font-semibold text-zinc-900">Keranjang Belanja</h2>
             @if (! empty($cart))
                 <span class="rounded-full bg-zinc-900 px-2.5 py-0.5 text-xs font-medium text-white">
@@ -92,13 +92,13 @@
 
         {{-- Error message --}}
         @if ($errorMessage)
-            <div class="shrink-0 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+            <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
                 {{ $errorMessage }}
             </div>
         @endif
 
         {{-- List item keranjang --}}
-        <div class="flex-1 overflow-y-auto">
+        <div>
             @if (empty($cart))
                 <div class="flex h-full items-center justify-center rounded-xl border border-dashed border-zinc-300 bg-white">
                     <div class="text-center">
@@ -113,7 +113,18 @@
                             <div class="flex items-start gap-3">
                                 {{-- Info obat --}}
                                 <div class="min-w-0 flex-1">
-                                    <p class="text-sm font-medium text-zinc-900">{{ $item['name'] }}</p>
+                                    <div class="flex flex-wrap items-center gap-1.5">
+                                        <p class="text-sm font-medium text-zinc-900">{{ $item['name'] }}</p>
+                                        {{-- Non-Fornas badge — hanya muncul saat BPJS dan obat tidak ditanggung --}}
+                                        @if ($paymentMethod === 'bpjs' && ! $item['is_fornas'])
+                                            <span
+                                                title="Obat ini tidak ditanggung BPJS, pembayaran menjadi tanggungan pasien"
+                                                class="inline-flex cursor-help items-center rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700"
+                                            >
+                                                ⚠ Non-Fornas
+                                            </span>
+                                        @endif
+                                    </div>
                                     <p class="mt-0.5 text-xs text-zinc-500">
                                         Rp {{ number_format($item['unit_price'], 0, ',', '.') }} / pcs
                                     </p>
@@ -185,7 +196,7 @@
 
         {{-- Summary & Checkout --}}
         @if (! empty($cart))
-            <div class="shrink-0 space-y-3">
+            <div class="space-y-3">
                 {{-- Summary kalkulasi --}}
                 <div class="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
                     <div class="space-y-2 text-sm">
@@ -279,12 +290,72 @@
                         </div>
                     </div>
 
+                    {{-- Panel BPJS — muncul hanya saat payment method = bpjs --}}
+                    @if ($paymentMethod === 'bpjs')
+                        <div class="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 p-3">
+                            <p class="mb-2 text-xs font-semibold text-emerald-800">Verifikasi Peserta BPJS</p>
+
+                            <div class="flex gap-2">
+                                <input
+                                    type="text"
+                                    wire:model.live="bpjsNumber"
+                                    placeholder="13 digit nomor BPJS..."
+                                    maxlength="13"
+                                    class="flex-1 rounded-lg border border-emerald-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                                    aria-label="Nomor BPJS"
+                                />
+                                <button
+                                    type="button"
+                                    wire:click="verifyBpjs"
+                                    wire:loading.attr="disabled"
+                                    wire:target="verifyBpjs"
+                                    class="rounded-lg bg-emerald-700 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-800 disabled:opacity-60"
+                                >
+                                    <span wire:loading.remove wire:target="verifyBpjs">Verifikasi</span>
+                                    <span wire:loading wire:target="verifyBpjs">...</span>
+                                </button>
+                            </div>
+
+                            {{-- Hasil verifikasi --}}
+                            @if ($bpjsVerification !== null)
+                                @if ($bpjsVerified)
+                                    <div class="mt-2 flex items-center gap-2 rounded-md bg-emerald-100 px-3 py-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 text-emerald-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <div class="min-w-0 flex-1">
+                                            <p class="text-xs font-semibold text-emerald-800">
+                                                {{ $bpjsVerification['name'] }}
+                                            </p>
+                                            <p class="text-[10px] text-emerald-600">
+                                                Kelas {{ $bpjsVerification['kelas'] }} · Terverifikasi
+                                            </p>
+                                        </div>
+                                        <span class="inline-flex rounded-full bg-emerald-200 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
+                                            AKTIF
+                                        </span>
+                                    </div>
+                                @else
+                                    <div class="mt-2 flex items-center gap-2 rounded-md bg-red-100 px-3 py-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0 text-red-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <p class="text-xs font-medium text-red-700">
+                                            Peserta tidak aktif atau nomor tidak valid.
+                                        </p>
+                                    </div>
+                                @endif
+                            @endif
+                        </div>
+                    @endif
+
                     {{-- Tombol proses --}}
                     <button
                         type="button"
                         wire:click="processTransaction"
                         wire:loading.attr="disabled"
                         wire:target="processTransaction"
+                        @disabled($paymentMethod === 'bpjs' && ! $bpjsVerified)
                         class="flex w-full items-center justify-center rounded-xl bg-zinc-900 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         <span wire:loading.remove wire:target="processTransaction">

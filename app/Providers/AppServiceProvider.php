@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Contracts\BpjsServiceInterface;
 use App\Services\DashboardService;
+use App\Services\MockBpjsService;
 use App\Services\PosService;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
@@ -19,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(PosService::class);
         $this->app->singleton(DashboardService::class);
+        $this->app->bind(BpjsServiceInterface::class, MockBpjsService::class);
     }
 
     /**
