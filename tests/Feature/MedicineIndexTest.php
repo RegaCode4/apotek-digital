@@ -1,12 +1,12 @@
 <?php
 
 use App\Livewire\Inventaris\MedicineIndex;
+use App\Models\Category;
 use App\Models\Medicine;
 use App\Models\StockMutation;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -34,19 +34,20 @@ test('pharmacist can access medicine index page', function () {
         ->assertSee('Tambah Obat');
 });
 
-test('medicine index lists medicines in table', function () {
+test('medicine index lists medicines with category name from relation', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
+    $category = Category::create(['name' => 'Analgesik', 'description' => null]);
     $medicine = Medicine::factory()->create([
         'name' => 'Paracetamol 500mg',
         'generic_name' => 'Paracetamol',
-        'category' => 'analgesik',
+        'category_id' => $category->id,
     ]);
 
     Livewire::actingAs($pharmacist)
         ->test(MedicineIndex::class)
         ->assertSee('Paracetamol 500mg')
         ->assertSee('Paracetamol')
-        ->assertSee('analgesik');
+        ->assertSee('Analgesik');
 });
 
 test('medicine index search filters by name and generic name', function () {
@@ -62,27 +63,30 @@ test('medicine index search filters by name and generic name', function () {
         ->assertDontSee('Paracetamol 500mg');
 });
 
-test('medicine index filters by category and prescription requirement', function () {
+test('medicine index filters by category_id', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
+
+    $catA = Category::create(['name' => 'Analgesik', 'description' => null]);
+    $catB = Category::create(['name' => 'Vitamin', 'description' => null]);
 
     Medicine::factory()->create([
         'name' => 'Obat A',
-        'category' => 'analgesik',
+        'category_id' => $catA->id,
         'requires_prescription' => true,
     ]);
 
     Medicine::factory()->create([
         'name' => 'Obat B',
-        'category' => 'vitamin',
+        'category_id' => $catB->id,
         'requires_prescription' => false,
     ]);
 
     Livewire::actingAs($pharmacist)
         ->test(MedicineIndex::class)
-        ->set('category', 'analgesik')
+        ->set('categoryId', (string) $catA->id)
         ->assertSee('Obat A')
         ->assertDontSee('Obat B')
-        ->set('category', '')
+        ->set('categoryId', '')
         ->set('requiresPrescription', '1')
         ->assertSee('Obat A')
         ->assertDontSee('Obat B');
@@ -161,15 +165,25 @@ test('medicine index prevents delete when medicine has sale items', function () 
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
     $medicine = Medicine::factory()->create(['name' => 'Obat Terjual']);
 
-    Schema::create('sale_items', function ($table) {
-        $table->id();
-        $table->unsignedBigInteger('sale_id');
-        $table->foreignId('medicine_id');
-    });
+    $cashier = User::factory()->create(['role' => 'cashier']);
+    $sale = DB::table('sales')->insertGetId([
+        'invoice_no' => 'INV-TEST-001',
+        'buyer_name' => 'Test Buyer',
+        'cashier_id' => $cashier->id,
+        'payment_method' => 'cash',
+        'subtotal' => 10000,
+        'discount_amount' => 0,
+        'tax_amount' => 0,
+        'grand_total' => 10000,
+        'sale_date' => now(),
+    ]);
 
     DB::table('sale_items')->insert([
-        'sale_id' => 1,
+        'sale_id' => $sale,
         'medicine_id' => $medicine->id,
+        'quantity' => 1,
+        'unit_price' => 10000,
+        'subtotal' => 10000,
     ]);
 
     Livewire::actingAs($pharmacist)

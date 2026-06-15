@@ -11,7 +11,7 @@ test('medicine has correct fillable attributes', function () {
     expect($medicine->getFillable())->toBe([
         'name',
         'generic_name',
-        'category',
+        'category_id',
         'manufacturer',
         'unit',
         'price',
@@ -28,7 +28,7 @@ test('medicine has correct casts', function () {
 
     expect($medicine->getCasts())
         ->toHaveKey('requires_prescription', 'boolean')
-        ->toHaveKey('expiry_date', 'date')
+        ->toHaveKey('expiry_date', 'date:Y-m-d')
         ->toHaveKey('price', 'decimal:2');
 });
 

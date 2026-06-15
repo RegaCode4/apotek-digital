@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Inventaris;
 
+use App\Models\Category;
 use App\Models\Medicine;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
@@ -23,7 +24,8 @@ class MedicineIndex extends Component
 
     public string $search = '';
 
-    public string $category = '';
+    /** Filter by category_id (FK ke tabel categories) */
+    public string $categoryId = '';
 
     public string $requiresPrescription = '';
 
@@ -42,7 +44,7 @@ class MedicineIndex extends Component
         $this->resetPage();
     }
 
-    public function updatingCategory(): void
+    public function updatingCategoryId(): void
     {
         $this->resetPage();
     }
@@ -103,13 +105,14 @@ class MedicineIndex extends Component
     public function getMedicinesProperty(): LengthAwarePaginator
     {
         return Medicine::query()
+            ->with('category')
             ->when($this->search !== '', function (Builder $query): void {
                 $query->where(function (Builder $query): void {
                     $query->where('name', 'like', '%'.$this->search.'%')
                         ->orWhere('generic_name', 'like', '%'.$this->search.'%');
                 });
             })
-            ->when($this->category !== '', fn (Builder $query): Builder => $query->where('category', $this->category))
+            ->when($this->categoryId !== '', fn (Builder $query): Builder => $query->where('category_id', $this->categoryId))
             ->when($this->requiresPrescription !== '', function (Builder $query): void {
                 $query->where('requires_prescription', $this->requiresPrescription === '1');
             })
@@ -118,15 +121,15 @@ class MedicineIndex extends Component
     }
 
     /**
-     * @return Collection<int, string>
+     * Load semua kategori dari tabel categories untuk dropdown filter.
+     *
+     * @return Collection<int, Category>
      */
     public function getCategoriesProperty(): Collection
     {
-        return Medicine::query()
-            ->whereNotNull('category')
-            ->distinct()
-            ->orderBy('category')
-            ->pluck('category');
+        return Category::query()
+            ->orderBy('name')
+            ->get(['id', 'name']);
     }
 
     public function render(): View

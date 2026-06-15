@@ -97,6 +97,7 @@
                     >
                         @foreach ([
                             ['route' => 'inventaris.medicines.index', 'label' => 'Daftar Obat'],
+                            ['route' => 'inventaris.kategori',        'label' => 'Kategori Obat'],
                             ['route' => 'inventaris.stok-opname',     'label' => 'Stok Opname'],
                             ['route' => 'inventaris.mutasi',          'label' => 'Mutasi Stok'],
                         ] as $item)

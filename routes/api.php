@@ -8,4 +8,4 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/medicines', fn () => Medicine::orderBy('name')->get());
+Route::get('/medicines', fn () => Medicine::with('category')->orderBy('name')->get());

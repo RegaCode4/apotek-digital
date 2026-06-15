@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Services\DashboardService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 
@@ -81,6 +82,16 @@ test('test_pharmacist_can_access_inventaris_route', function () {
 
 test('test_admin_can_access_all_routes', function () {
     $admin = createUser('admin');
+
+    // Mock DashboardService agar tidak crash di SQLite (DATE_FORMAT tidak didukung)
+    $mock = Mockery::mock(DashboardService::class);
+    $mock->shouldReceive('getTodayRevenue')->andReturn(0.0)->byDefault();
+    $mock->shouldReceive('getTodayTransactionCount')->andReturn(0)->byDefault();
+    $mock->shouldReceive('getLowStockMedicines')->andReturn(collect())->byDefault();
+    $mock->shouldReceive('getExpiringSoonMedicines')->andReturn(collect())->byDefault();
+    $mock->shouldReceive('getSalesChartData')->andReturn(['labels' => [], 'data' => []])->byDefault();
+    $mock->shouldReceive('getTopSellingMedicines')->andReturn(collect())->byDefault();
+    app()->instance(DashboardService::class, $mock);
 
     $this->actingAs($admin)
         ->get(route('sistem.dashboard'))

@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable([
     'name',
     'generic_name',
-    'category',
     'category_id',
     'manufacturer',
     'unit',

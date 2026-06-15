@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
 use App\Models\Medicine;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -20,8 +21,8 @@ class MedicineFactory extends Factory
         return [
             'name' => fake()->words(2, true),
             'generic_name' => fake()->words(2, true),
-            'category' => fake()->randomElement(['analgesik', 'antibiotik', 'vitamin', 'antasida']),
-            'category_id' => null,
+            'category_id' => Category::query()->inRandomOrder()->value('id')
+                ?? Category::factory()->create()->id,
             'manufacturer' => fake()->company(),
             'unit' => 'tablet',
             'price' => fake()->randomFloat(2, 5000, 150000),

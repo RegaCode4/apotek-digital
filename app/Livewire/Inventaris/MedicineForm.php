@@ -21,8 +21,6 @@ class MedicineForm extends Component
 
     public string $generic_name = '';
 
-    public string $category = '';
-
     public ?int $category_id = null;
 
     public string $manufacturer = '';
@@ -54,7 +52,6 @@ class MedicineForm extends Component
 
             $this->name = $medicine->name;
             $this->generic_name = $medicine->generic_name ?? '';
-            $this->category = $medicine->category ?? '';
             $this->category_id = $medicine->category_id;
             $this->manufacturer = $medicine->manufacturer ?? '';
             $this->unit = $medicine->unit;
@@ -87,7 +84,6 @@ class MedicineForm extends Component
             $attributes = [
                 'name' => $validated['name'],
                 'generic_name' => $validated['generic_name'] ?: null,
-                'category' => $validated['category'] ?: null,
                 'category_id' => $validated['category_id'] ?: null,
                 'manufacturer' => $validated['manufacturer'] ?: null,
                 'unit' => $validated['unit'],
@@ -144,7 +140,6 @@ class MedicineForm extends Component
         return [
             'name' => ['required', 'string', 'max:200'],
             'generic_name' => ['nullable', 'string', 'max:200'],
-            'category' => ['nullable', 'string', 'max:50'],
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'manufacturer' => ['nullable', 'string', 'max:100'],
             'unit' => ['required', 'string', 'max:20'],
@@ -163,7 +158,6 @@ class MedicineForm extends Component
         $this->originalStock = null;
         $this->name = '';
         $this->generic_name = '';
-        $this->category = '';
         $this->category_id = null;
         $this->manufacturer = '';
         $this->unit = 'tablet';

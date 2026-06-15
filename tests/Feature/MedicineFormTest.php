@@ -19,7 +19,6 @@ test('medicine form can create a new medicine and record initial stock mutation'
         ->assertSet('show', true)
         ->set('name', 'Paracetamol 500mg')
         ->set('generic_name', 'Paracetamol')
-        ->set('category', 'analgesik')
         ->set('unit', 'tablet')
         ->set('price', '15000')
         ->set('stock', 50)

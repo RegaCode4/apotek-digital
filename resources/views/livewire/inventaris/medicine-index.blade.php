@@ -40,15 +40,15 @@
             </div>
 
             <div>
-                <label for="category" class="mb-1.5 block text-sm font-medium text-zinc-700">Kategori</label>
+                <label for="categoryId" class="mb-1.5 block text-sm font-medium text-zinc-700">Kategori</label>
                 <select
-                    id="category"
-                    wire:model.live="category"
+                    id="categoryId"
+                    wire:model.live="categoryId"
                     class="block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500"
                 >
                     <option value="">Semua kategori</option>
-                    @foreach ($categories as $item)
-                        <option value="{{ $item }}">{{ $item }}</option>
+                    @foreach ($categories as $cat)
+                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -93,7 +93,7 @@
                         <tr wire:key="medicine-{{ $medicine->id }}" class="hover:bg-zinc-50/80">
                             <td class="px-4 py-3 font-medium text-zinc-900">{{ $medicine->name }}</td>
                             <td class="px-4 py-3 text-zinc-600">{{ $medicine->generic_name ?? '—' }}</td>
-                            <td class="px-4 py-3 text-zinc-600">{{ $medicine->category ?? '—' }}</td>
+                            <td class="px-4 py-3 text-zinc-600">{{ $medicine->category?->name ?? '—' }}</td>
                             <td class="px-4 py-3">
                                 @if ($isLowStock)
                                     <span class="inline-flex rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-700">
