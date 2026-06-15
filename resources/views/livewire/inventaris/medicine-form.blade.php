@@ -63,9 +63,18 @@
                         </div>
 
                         <div>
-                            <label for="category" class="mb-1.5 block text-sm font-medium text-zinc-700">Kategori</label>
-                            <input id="category" type="text" wire:model="category" class="block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500" />
-                            @error('category') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                            <label for="category_id" class="mb-1.5 block text-sm font-medium text-zinc-700">Kategori</label>
+                            <select
+                                id="category_id"
+                                wire:model="category_id"
+                                class="block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 @error('category_id') border-red-500 @enderror"
+                            >
+                                <option value="">— Pilih Kategori —</option>
+                                @foreach ($categoryOptions as $option)
+                                    <option value="{{ $option->id }}">{{ $option->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('category_id') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                         </div>
 
                         <div>

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Inventaris;
 
+use App\Models\Category;
 use App\Models\Medicine;
 use App\Models\StockMutation;
 use Illuminate\Contracts\View\View;
@@ -21,6 +22,8 @@ class MedicineForm extends Component
     public string $generic_name = '';
 
     public string $category = '';
+
+    public ?int $category_id = null;
 
     public string $manufacturer = '';
 
@@ -52,6 +55,7 @@ class MedicineForm extends Component
             $this->name = $medicine->name;
             $this->generic_name = $medicine->generic_name ?? '';
             $this->category = $medicine->category ?? '';
+            $this->category_id = $medicine->category_id;
             $this->manufacturer = $medicine->manufacturer ?? '';
             $this->unit = $medicine->unit;
             $this->price = (string) $medicine->price;
@@ -84,6 +88,7 @@ class MedicineForm extends Component
                 'name' => $validated['name'],
                 'generic_name' => $validated['generic_name'] ?: null,
                 'category' => $validated['category'] ?: null,
+                'category_id' => $validated['category_id'] ?: null,
                 'manufacturer' => $validated['manufacturer'] ?: null,
                 'unit' => $validated['unit'],
                 'price' => $validated['price'],
@@ -126,7 +131,9 @@ class MedicineForm extends Component
 
     public function render(): View
     {
-        return view('livewire.inventaris.medicine-form');
+        return view('livewire.inventaris.medicine-form', [
+            'categoryOptions' => Category::query()->orderBy('name')->get(['id', 'name']),
+        ]);
     }
 
     /**
@@ -138,6 +145,7 @@ class MedicineForm extends Component
             'name' => ['required', 'string', 'max:200'],
             'generic_name' => ['nullable', 'string', 'max:200'],
             'category' => ['nullable', 'string', 'max:50'],
+            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'manufacturer' => ['nullable', 'string', 'max:100'],
             'unit' => ['required', 'string', 'max:20'],
             'price' => ['required', 'numeric', 'min:0'],
@@ -156,6 +164,7 @@ class MedicineForm extends Component
         $this->name = '';
         $this->generic_name = '';
         $this->category = '';
+        $this->category_id = null;
         $this->manufacturer = '';
         $this->unit = 'tablet';
         $this->price = '';

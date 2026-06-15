@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'name',
     'generic_name',
     'category',
+    'category_id',
     'manufacturer',
     'unit',
     'price',
@@ -40,6 +42,14 @@ class Medicine extends Model
             'expiry_date' => 'date:Y-m-d',
             'price' => 'decimal:2',
         ];
+    }
+
+    /**
+     * Get the category this medicine belongs to.
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 
     /**

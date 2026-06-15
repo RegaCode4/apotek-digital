@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Pos\StrukController;
 use App\Livewire\Admin\UserManagement;
+use App\Livewire\Inventaris\CategoryManagement;
 use App\Livewire\Inventaris\MedicineIndex;
 use App\Livewire\Inventaris\MutasiStok;
 use App\Livewire\Inventaris\StokOpname;
@@ -63,6 +64,10 @@ Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
 Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
     ->get('/sistem/inventaris/mutasi', MutasiStok::class)
     ->name('inventaris.mutasi');
+
+Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
+    ->get('/sistem/inventaris/kategori', CategoryManagement::class)
+    ->name('inventaris.kategori');
 
 Route::middleware(['auth.apotek', 'role:admin,pharmacist,cashier'])
     ->get('/sistem/pos', KasirPage::class)

@@ -21,6 +21,7 @@ class MedicineFactory extends Factory
             'name' => fake()->words(2, true),
             'generic_name' => fake()->words(2, true),
             'category' => fake()->randomElement(['analgesik', 'antibiotik', 'vitamin', 'antasida']),
+            'category_id' => null,
             'manufacturer' => fake()->company(),
             'unit' => 'tablet',
             'price' => fake()->randomFloat(2, 5000, 150000),
