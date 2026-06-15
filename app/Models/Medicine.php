@@ -37,7 +37,7 @@ class Medicine extends Model
     {
         return [
             'requires_prescription' => 'boolean',
-            'expiry_date' => 'date',
+            'expiry_date' => 'date:Y-m-d',
             'price' => 'decimal:2',
         ];
     }
