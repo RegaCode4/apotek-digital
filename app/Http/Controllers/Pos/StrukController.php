@@ -17,7 +17,7 @@ class StrukController extends Controller
         $sale->loadMissing(['saleItems.medicine', 'cashier']);
 
         $pdf = Pdf::loadView('pdf.struk', ['sale' => $sale])
-            ->setPaper([0, 0, 226.77, 700], 'portrait'); // 80mm thermal width
+            ->setPaper([0, 0, 164.41, 841.89], 'portrait'); // 58mm thermal width
 
         return $pdf->stream("struk-{$sale->invoice_no}.pdf");
     }

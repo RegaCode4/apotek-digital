@@ -11,10 +11,11 @@
 
         body {
             font-family: 'Courier New', Courier, monospace;
-            font-size: 11px;
+            font-size: 9px;
             color: #111;
-            padding: 12px 10px;
-            width: 100%;
+            padding: 4px 4px;
+            width: 52mm;
+            margin: 0 auto;
         }
 
         /* ── Header ── */
@@ -26,14 +27,14 @@
         }
 
         .header h1 {
-            font-size: 14px;
+            font-size: 11px;
             font-weight: bold;
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
 
         .header p {
-            font-size: 10px;
+            font-size: 8px;
             color: #444;
             margin-top: 2px;
         }
@@ -49,13 +50,13 @@
         }
 
         .meta td {
-            font-size: 10px;
+            font-size: 8px;
             padding: 1px 0;
             vertical-align: top;
         }
 
         .meta td:first-child {
-            width: 80px;
+            width: 55px;
             color: #555;
         }
 
@@ -76,34 +77,34 @@
         }
 
         .items thead td {
-            font-size: 10px;
+            font-size: 8px;
             font-weight: bold;
             padding: 2px 0;
             border-bottom: 1px dashed #999;
         }
 
         .items tbody td {
-            font-size: 10px;
+            font-size: 8px;
             padding: 3px 0;
             vertical-align: top;
         }
 
         .items .name {
-            width: 50%;
+            width: 45%;
         }
 
         .items .qty {
-            width: 12%;
+            width: 10%;
             text-align: center;
         }
 
         .items .price {
-            width: 19%;
+            width: 20%;
             text-align: right;
         }
 
         .items .subtotal {
-            width: 19%;
+            width: 25%;
             text-align: right;
         }
 
@@ -115,7 +116,7 @@
         }
 
         .summary td {
-            font-size: 10px;
+            font-size: 8px;
             padding: 2px 0;
         }
 
@@ -128,7 +129,7 @@
         }
 
         .summary .grand-total td {
-            font-size: 12px;
+            font-size: 10px;
             font-weight: bold;
             padding-top: 4px;
             border-top: 1px dashed #555;
@@ -140,7 +141,7 @@
             margin-top: 10px;
             padding-top: 8px;
             text-align: center;
-            font-size: 10px;
+            font-size: 8px;
             color: #555;
         }
     </style>
@@ -150,8 +151,8 @@
     {{-- ═══════════════════════════ HEADER ═══════════════════════════ --}}
     <div class="header">
         <h1>Apotek Digital</h1>
-        <p>Jl. Kesehatan No. 1, Jakarta</p>
-        <p>Telp: (021) 000-0000</p>
+        <p>Jl. Benteng No.1, Cupak Tangah, Kec. Pauh, Kota Padang, Sumatera Barat 25176</p>
+        <p>Telp: +6282278954406</p>
     </div>
 
     {{-- ═══════════════════════════ META INFO ═══════════════════════════ --}}
