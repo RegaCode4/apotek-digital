@@ -59,7 +59,7 @@
         <div class="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
             <h3 class="mb-4 text-sm font-semibold text-zinc-900">Top 5 Obat Terlaris</h3>
 
-            <div class="relative h-56">
+            <div class="relative h-56" wire:ignore>
                 <canvas
                     id="topMedicinesBarChart"
                     aria-label="Grafik 5 obat terlaris"
@@ -85,83 +85,110 @@
     Chart.defaults.color       = tickColor;
 
     // ── 1. Line chart — sales over time ───────────────────────
-    const lineCtx = document.getElementById('salesLineChart').getContext('2d');
+    const lineCanvas = document.getElementById('salesLineChart');
 
     const initialData = @json($chartData);
 
-    const gradient = lineCtx.createLinearGradient(0, 0, 0, 200);
-    gradient.addColorStop(0,   'rgba(24, 24, 27, 0.15)');  // zinc-900
-    gradient.addColorStop(1,   'rgba(24, 24, 27, 0)');
+    // Factory so the gradient can be recreated after destroy/reinit
+    function buildSalesChartOptions(ctx) {
+        const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+        gradient.addColorStop(0, 'rgba(24, 24, 27, 0.15)'); // zinc-900
+        gradient.addColorStop(1, 'rgba(24, 24, 27, 0)');
 
-    const salesChart = new Chart(lineCtx, {
-        type: 'line',
-        data: {
-            labels:   initialData.labels,
-            datasets: [{
-                label:           'Pendapatan',
-                data:            initialData.data,
-                borderColor:     '#18181b',      // zinc-900
-                backgroundColor: gradient,
-                borderWidth:     2,
-                pointBackgroundColor: '#18181b',
-                pointRadius:     3,
-                pointHoverRadius: 5,
-                tension:         0.35,
-                fill:            true,
-            }],
-        },
-        options: {
-            responsive:          true,
-            maintainAspectRatio: false,
-            interaction: { mode: 'index', intersect: false },
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: (ctx) => ' ' + formatRupiah(ctx.parsed.y),
+        return {
+            type: 'line',
+            data: {
+                labels:   [],
+                datasets: [{
+                    label:                'Pendapatan',
+                    data:                 [],
+                    borderColor:          '#18181b',
+                    backgroundColor:      gradient,
+                    borderWidth:          2,
+                    pointBackgroundColor: '#18181b',
+                    pointRadius:          3,
+                    pointHoverRadius:     5,
+                    tension:              0.35,
+                    fill:                 true,
+                }],
+            },
+            options: {
+                responsive:          true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => ' ' + formatRupiah(ctx.parsed.y),
+                        },
                     },
                 },
-            },
-            scales: {
-                x: {
-                    grid: { color: gridColor },
-                    ticks: { maxRotation: 0, maxTicksLimit: 8 },
-                },
-                y: {
-                    grid:       { color: gridColor },
-                    beginAtZero: true,
-                    ticks: {
-                        callback: (v) => {
-                            if (v >= 1_000_000) return 'Rp ' + (v / 1_000_000).toFixed(1) + 'jt';
-                            if (v >= 1_000)     return 'Rp ' + (v / 1_000).toFixed(0) + 'rb';
-                            return formatRupiah(v);
+                scales: {
+                    x: {
+                        grid:  { color: gridColor },
+                        ticks: { maxRotation: 0, maxTicksLimit: 8 },
+                    },
+                    y: {
+                        grid:         { color: gridColor },
+                        beginAtZero:  true,
+                        suggestedMax: 10000,
+                        ticks: {
+                            precision: 0,
+                            callback: (v) => {
+                                if (v % 1 !== 0)    return null;
+                                if (v >= 1_000_000) return 'Rp ' + (v / 1_000_000).toFixed(1) + 'jt';
+                                if (v >= 1_000)     return 'Rp ' + (v / 1_000).toFixed(0) + 'rb';
+                                return 'Rp ' + v.toLocaleString('id-ID');
+                            },
                         },
                     },
                 },
             },
-        },
-    });
+        };
+    }
 
-    // Listen for Livewire period-change event and update the chart in place
+    // Destroy any pre-existing Chart instance on this canvas, then create fresh
+    function initSalesChart(labels, data) {
+        const existing = Chart.getChart(lineCanvas);
+        if (existing) {
+            existing.destroy();
+        }
+
+        const ctx     = lineCanvas.getContext('2d');
+        const config  = buildSalesChartOptions(ctx);
+        config.data.labels              = labels;
+        config.data.datasets[0].data    = data;
+
+        return new Chart(ctx, config);
+    }
+
+    let salesChart = initSalesChart(initialData.labels, initialData.data);
+
+    // Listen for Livewire period-change event — destroy and recreate so gradient
+    // and axes are always consistent with the new dataset
     $wire.on('update-sales-chart', ({ chartData }) => {
-        salesChart.data.labels         = chartData.labels;
-        salesChart.data.datasets[0].data = chartData.data;
-        salesChart.update('active');
+        salesChart = initSalesChart(chartData.labels, chartData.data);
     });
 
     // ── 2. Bar chart — top medicines ──────────────────────────
-    const barCtx     = document.getElementById('topMedicinesBarChart').getContext('2d');
-    const topData    = @json($topMedicines);
+    const barCanvas = document.getElementById('topMedicinesBarChart');
+    const topData   = @json($topMedicines);
+    const barColors = ['#18181b', '#3f3f46', '#71717a', '#a1a1aa', '#d4d4d8'];
 
-    const barColors  = ['#18181b', '#3f3f46', '#71717a', '#a1a1aa', '#d4d4d8'];
+    const existingBar = Chart.getChart(barCanvas);
+    if (existingBar) {
+        existingBar.destroy();
+    }
 
-    new Chart(barCtx, {
+    new Chart(barCanvas.getContext('2d'), {
         type: 'bar',
         data: {
             labels:   topData.map(m => m.name.length > 16 ? m.name.slice(0, 15) + '…' : m.name),
             datasets: [{
                 label:           'Terjual (pcs)',
-                data:            topData.map(m => m.total_qty),
+                // cast to Number — DB raw SUM returns a string
+                data:            topData.map(m => Number(m.total_qty)),
                 backgroundColor: barColors,
                 borderRadius:    4,
                 borderSkipped:   false,
@@ -170,7 +197,7 @@
         options: {
             responsive:          true,
             maintainAspectRatio: false,
-            indexAxis: 'y',     // horizontal bar — fits long medicine names
+            indexAxis: 'y',
             plugins: {
                 legend: { display: false },
                 tooltip: {

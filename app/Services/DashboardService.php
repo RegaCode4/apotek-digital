@@ -115,12 +115,12 @@ class DashboardService
                 DB::raw('DATE(sale_date) as day'),
                 DB::raw('SUM(grand_total) as total')
             )
-            ->where('sale_date', '>=', now()->subDays(6)->startOfDay())
+            ->where('sale_date', '>=', now()->subDays(13)->startOfDay())
             ->groupBy('day')
             ->orderBy('day')
             ->pluck('total', 'day');
 
-        for ($i = 6; $i >= 0; $i--) {
+        for ($i = 13; $i >= 0; $i--) {
             $date = now()->subDays($i)->toDateString();
             $carbon = Carbon::parse($date);
 

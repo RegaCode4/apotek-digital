@@ -3,6 +3,7 @@
 namespace App\Livewire\Pos;
 
 use App\Contracts\BpjsServiceInterface;
+use App\Models\Category;
 use App\Models\Medicine;
 use App\Models\User;
 use App\Services\PosService;
@@ -10,6 +11,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -21,6 +23,9 @@ class KasirPage extends Component
 {
     // ── Panel kiri — pencarian obat ───────────────────────────
     public string $search = '';
+
+    /** ID kategori aktif untuk filter; null = semua kategori. */
+    public ?int $categoryId = null;
 
     // ── Keranjang belanja ─────────────────────────────────────
     /**
@@ -85,23 +90,78 @@ class KasirPage extends Component
     // ── Computed — pencarian obat ─────────────────────────────
 
     /**
+     * Apakah daftar sedang difilter (lewat teks pencarian atau kategori).
+     */
+    public function getIsFilteringProperty(): bool
+    {
+        return strlen($this->search) >= 2 || $this->categoryId !== null;
+    }
+
+    /**
+     * Daftar kategori untuk filter.
+     *
+     * @return Collection<int, Category>
+     */
+    public function getCategoriesProperty(): Collection
+    {
+        return Category::query()->orderBy('name')->get();
+    }
+
+    /**
      * @return Collection<int, Medicine>
      */
     public function getSearchResultsProperty(): Collection
     {
-        if (strlen($this->search) < 2) {
+        if (! $this->isFiltering) {
             return collect();
         }
 
         return Medicine::query()
-            ->where(function (Builder $query): void {
-                $query->where('name', 'like', '%'.$this->search.'%')
-                    ->orWhere('generic_name', 'like', '%'.$this->search.'%');
+            ->when($this->categoryId !== null, fn (Builder $q) => $q->where('category_id', $this->categoryId))
+            ->when(strlen($this->search) >= 2, function (Builder $query): void {
+                $term = $this->search;
+                $query->where(function (Builder $q) use ($term): void {
+                    $q->where('name', 'like', '%'.$term.'%')
+                        ->orWhere('generic_name', 'like', '%'.$term.'%')
+                        ->orWhereHas('category', fn (Builder $c) => $c->where('name', 'like', '%'.$term.'%'));
+                });
             })
             ->orderByDesc('stock')
             ->orderBy('name')
-            ->limit(20)
+            ->limit(40)
             ->get();
+    }
+
+    // ── Aksi — filter kategori ────────────────────────────────
+
+    public function selectCategory(?int $categoryId): void
+    {
+        $this->categoryId = $this->categoryId === $categoryId ? null : $categoryId;
+    }
+
+    /**
+     * Obat terlaris — ditampilkan saat belum ada pencarian.
+     *
+     * @return Collection<int, Medicine>
+     */
+    public function getTopMedicinesProperty(): Collection
+    {
+        $topIds = DB::table('sale_items')
+            ->select('medicine_id', DB::raw('SUM(quantity) as total_qty'))
+            ->groupBy('medicine_id')
+            ->orderByDesc('total_qty')
+            ->limit(8)
+            ->pluck('medicine_id');
+
+        if ($topIds->isEmpty()) {
+            return collect();
+        }
+
+        return Medicine::query()
+            ->whereIn('id', $topIds)
+            ->get()
+            ->sortBy(fn (Medicine $m): int => $topIds->search($m->id))
+            ->values();
     }
 
     // ── Computed — kalkulasi keranjang ────────────────────────
@@ -279,6 +339,9 @@ class KasirPage extends Component
     {
         return view('livewire.pos.kasir-page', [
             'searchResults' => $this->searchResults,
+            'topMedicines' => $this->topMedicines,
+            'categories' => $this->categories,
+            'isFiltering' => $this->isFiltering,
             'cartSubtotal' => $this->cartSubtotal,
             'taxAmount' => $this->taxAmount,
             'grandTotal' => $this->grandTotal,

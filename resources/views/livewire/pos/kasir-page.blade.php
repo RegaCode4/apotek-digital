@@ -4,7 +4,7 @@
     {{-- ════════════════════════════════════════════════════════
          KOLOM KIRI — Pencarian & Katalog Obat
     ════════════════════════════════════════════════════════ --}}
-    <div class="flex w-[420px] shrink-0 flex-col gap-4">
+    <div class="flex w-[560px] shrink-0 flex-col gap-4">
 
         {{-- Header panel kiri --}}
         <div class="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
@@ -19,31 +19,78 @@
             @if (strlen($search) > 0 && strlen($search) < 2)
                 <p class="mt-1.5 text-xs text-zinc-400">Ketik minimal 2 karakter...</p>
             @endif
-        </div>
 
-        {{-- Hasil pencarian --}}
-        <div>
-            @if (strlen($search) >= 2)
-                @forelse ($searchResults as $medicine)
-                    @php $outOfStock = $medicine->stock <= 0; @endphp
+            {{-- Filter kategori --}}
+            @if ($categories->isNotEmpty())
+                <div class="mt-3 flex flex-wrap gap-1.5">
                     <button
                         type="button"
-                        wire:click="{{ $outOfStock ? '' : 'addToCart(' . $medicine->id . ')' }}"
-                        wire:key="result-{{ $medicine->id }}"
-                        @disabled($outOfStock)
-                        class="mb-2 flex w-full items-center justify-between rounded-xl border p-3 text-left transition-colors
-                            {{ $outOfStock
-                                ? 'cursor-not-allowed border-red-200 bg-red-50 opacity-70'
-                                : 'cursor-pointer border-zinc-200 bg-white hover:border-zinc-300 hover:bg-zinc-50 active:bg-zinc-100' }}"
+                        wire:click="selectCategory(null)"
+                        class="rounded-full border px-2.5 py-1 text-xs font-medium transition-colors
+                            {{ $categoryId === null
+                                ? 'border-zinc-900 bg-zinc-900 text-white'
+                                : 'border-zinc-300 bg-white text-zinc-600 hover:border-zinc-400 hover:bg-zinc-50' }}"
                     >
-                        <div class="min-w-0 flex-1 pr-3">
-                            <p class="truncate text-sm font-medium {{ $outOfStock ? 'text-red-700' : 'text-zinc-900' }}">
+                        Semua
+                    </button>
+                    @foreach ($categories as $category)
+                        <button
+                            type="button"
+                            wire:click="selectCategory({{ $category->id }})"
+                            wire:key="cat-{{ $category->id }}"
+                            class="rounded-full border px-2.5 py-1 text-xs font-medium transition-colors
+                                {{ $categoryId === $category->id
+                                    ? 'border-zinc-900 bg-zinc-900 text-white'
+                                    : 'border-zinc-300 bg-white text-zinc-600 hover:border-zinc-400 hover:bg-zinc-50' }}"
+                        >
+                            {{ $category->name }}
+                        </button>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+
+        {{-- Daftar obat — hasil filter, atau obat terlaris saat belum memfilter --}}
+        <div>
+            @php
+                $medicines = $isFiltering ? $searchResults : $topMedicines;
+            @endphp
+
+            @if ($isFiltering || $medicines->isNotEmpty())
+                <div class="mb-2 flex items-center gap-2">
+                    <h3 class="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                        {{ $isFiltering ? 'Hasil Pencarian' : 'Obat Terlaris' }}
+                    </h3>
+                    @unless ($isFiltering)
+                        <span class="rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-medium text-zinc-500">
+                            Paling sering terjual
+                        </span>
+                    @endunless
+                </div>
+            @endif
+
+            @if ($medicines->isNotEmpty())
+                <div class="grid grid-cols-2 gap-2">
+                    @foreach ($medicines as $medicine)
+                        @php $outOfStock = $medicine->stock <= 0; @endphp
+                        <button
+                            type="button"
+                            wire:click="{{ $outOfStock ? '' : 'addToCart(' . $medicine->id . ')' }}"
+                            wire:key="med-{{ $medicine->id }}"
+                            @disabled($outOfStock)
+                            class="flex h-full flex-col rounded-xl border p-3 text-left transition-colors
+                                {{ $outOfStock
+                                    ? 'cursor-not-allowed border-red-200 bg-red-50 opacity-70'
+                                    : 'cursor-pointer border-zinc-200 bg-white hover:border-zinc-300 hover:bg-zinc-50 active:bg-zinc-100' }}"
+                        >
+                            <p class="line-clamp-2 text-sm font-medium {{ $outOfStock ? 'text-red-700' : 'text-zinc-900' }}">
                                 {{ $medicine->name }}
                             </p>
                             @if ($medicine->generic_name)
-                                <p class="truncate text-xs text-zinc-500">{{ $medicine->generic_name }}</p>
+                                <p class="mt-0.5 truncate text-xs text-zinc-500">{{ $medicine->generic_name }}</p>
                             @endif
-                            <div class="mt-1 flex items-center gap-2">
+
+                            <div class="mt-2 flex flex-wrap items-center gap-1.5">
                                 @if ($medicine->requires_prescription)
                                     <span class="inline-flex rounded-full bg-sky-100 px-1.5 py-0.5 text-[10px] font-medium text-sky-700">
                                         Resep
@@ -55,21 +102,24 @@
                                     <span class="text-xs text-zinc-500">Stok: {{ $medicine->stock }}</span>
                                 @endif
                             </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-sm font-semibold text-zinc-900">
+
+                            <p class="mt-2 text-sm font-semibold text-zinc-900">
                                 Rp {{ number_format($medicine->price, 0, ',', '.') }}
                             </p>
-                        </div>
-                    </button>
-                @empty
-                    <div class="rounded-xl border border-zinc-200 bg-white p-6 text-center text-sm text-zinc-500">
+                        </button>
+                    @endforeach
+                </div>
+            @elseif ($isFiltering)
+                <div class="rounded-xl border border-zinc-200 bg-white p-6 text-center text-sm text-zinc-500">
+                    @if (strlen($search) >= 2)
                         Tidak ada obat ditemukan untuk "{{ $search }}".
-                    </div>
-                @endforelse
+                    @else
+                        Tidak ada obat pada kategori ini.
+                    @endif
+                </div>
             @else
                 <div class="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center text-sm text-zinc-400">
-                    Hasil pencarian akan muncul di sini
+                    Belum ada data obat terlaris. Ketik untuk mencari obat.
                 </div>
             @endif
         </div>
