@@ -15,19 +15,46 @@
 </head>
 <body class="min-h-screen bg-zinc-100 text-zinc-900 antialiased">
 
-<div class="flex min-h-screen" x-data="{ sidebarOpen: true, inventarisOpen: false }">
+<div class="flex min-h-screen" x-data="{
+    sidebarOpen: localStorage.getItem('sidebar-collapsed') !== 'true',
+    inventarisOpen: false,
+    toggle() {
+        this.sidebarOpen = !this.sidebarOpen;
+        localStorage.setItem('sidebar-collapsed', !this.sidebarOpen);
+    }
+}">
 
     {{-- ══════════════════════════════════════════════
          SIDEBAR
     ══════════════════════════════════════════════ --}}
     <aside
         :class="sidebarOpen ? 'w-56' : 'w-14'"
-        class="relative flex shrink-0 flex-col border-r border-zinc-200 bg-white transition-all duration-200"
+        class="relative flex shrink-0 flex-col border-r border-zinc-200 bg-white transition-all duration-300 ease-in-out"
     >
-        {{-- Logo / Brand --}}
+        {{-- Logo / Brand + Toggle Button --}}
         <div class="flex h-14 items-center gap-2.5 border-b border-zinc-100 px-3">
             <img src="/logo.svg" alt="Apotek Digital" class="h-8 w-8 shrink-0 rounded-lg">
-            <span x-show="sidebarOpen" class="text-sm font-semibold text-zinc-900 truncate">Apotek Digital</span>
+            <span
+                x-show="sidebarOpen"
+                x-transition:enter="transition-opacity duration-150 delay-100"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="transition-opacity duration-100"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                class="flex-1 truncate text-sm font-semibold text-zinc-900"
+            >Apotek Digital</span>
+            <button
+                type="button"
+                @click="toggle()"
+                class="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
+                :aria-label="sidebarOpen ? 'Tutup sidebar' : 'Buka sidebar'"
+                :title="sidebarOpen ? 'Tutup sidebar' : 'Buka sidebar'"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-300" :class="sidebarOpen ? '' : 'rotate-180'" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+            </button>
         </div>
 
         {{-- Navigation --}}
@@ -35,30 +62,36 @@
 
             {{-- Dashboard --}}
             @php $isDashboard = request()->routeIs('sistem.dashboard'); @endphp
-            <a href="{{ route('sistem.dashboard') }}"
-               class="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors mb-0.5
-                   {{ $isDashboard ? 'bg-zinc-900 text-white' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900' }}"
-               aria-current="{{ $isDashboard ? 'page' : 'false' }}"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-                </svg>
-                <span x-show="sidebarOpen" class="truncate">Dashboard</span>
-            </a>
+            <div class="group/nav relative mb-0.5">
+                <a href="{{ route('sistem.dashboard') }}"
+                   class="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors
+                       {{ $isDashboard ? 'bg-zinc-900 text-white' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900' }}"
+                   aria-current="{{ $isDashboard ? 'page' : 'false' }}"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                    </svg>
+                    <span x-show="sidebarOpen" x-transition:enter="transition-opacity duration-150 delay-100" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="truncate">Dashboard</span>
+                </a>
+                <span x-show="!sidebarOpen" class="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-md bg-zinc-900 px-2 py-1 text-xs font-medium text-white opacity-0 shadow transition-opacity group-hover/nav:opacity-100">Dashboard</span>
+            </div>
 
             {{-- POS / Kasir --}}
             @php $isPosGroup = request()->routeIs('pos.kasir') || request()->routeIs('pos.riwayat'); @endphp
             <div class="mb-0.5">
-                <a href="{{ route('pos.kasir') }}"
-                   class="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors
-                       {{ $isPosGroup ? 'bg-zinc-900 text-white' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900' }}"
-                   aria-current="{{ request()->routeIs('pos.kasir') ? 'page' : 'false' }}"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
-                    </svg>
-                    <span x-show="sidebarOpen" class="truncate">POS / Kasir</span>
-                </a>
+                <div class="group/nav relative">
+                    <a href="{{ route('pos.kasir') }}"
+                       class="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors
+                           {{ $isPosGroup ? 'bg-zinc-900 text-white' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900' }}"
+                       aria-current="{{ request()->routeIs('pos.kasir') ? 'page' : 'false' }}"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/>
+                        </svg>
+                        <span x-show="sidebarOpen" x-transition:enter="transition-opacity duration-150 delay-100" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="truncate">POS / Kasir</span>
+                    </a>
+                    <span x-show="!sidebarOpen" class="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-md bg-zinc-900 px-2 py-1 text-xs font-medium text-white opacity-0 shadow transition-opacity group-hover/nav:opacity-100">POS / Kasir</span>
+                </div>
                 <a href="{{ route('pos.riwayat') }}"
                    x-show="sidebarOpen"
                    class="flex items-center gap-2.5 rounded-lg px-2.5 py-2 pl-8 text-xs font-medium transition-colors
@@ -73,21 +106,24 @@
             @php $isInventarisGroup = request()->routeIs('inventaris.*'); @endphp
             @if (in_array(auth()->user()->role, ['admin', 'pharmacist']))
                 <div class="mb-0.5">
-                    <button
-                        type="button"
-                        @click="inventarisOpen = !inventarisOpen"
-                        class="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors
-                            {{ $isInventarisGroup ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900' }}"
-                        :aria-expanded="inventarisOpen"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                            <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM14 11a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1h-1a1 1 0 110-2h1v-1a1 1 0 011-1z"/>
-                        </svg>
-                        <span x-show="sidebarOpen" class="flex-1 truncate text-left">Inventaris</span>
-                        <svg x-show="sidebarOpen" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 shrink-0 transition-transform" :class="inventarisOpen ? 'rotate-180' : ''" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                        </svg>
-                    </button>
+                    <div class="group/nav relative">
+                        <button
+                            type="button"
+                            @click="sidebarOpen && (inventarisOpen = !inventarisOpen)"
+                            class="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors
+                                {{ $isInventarisGroup ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900' }}"
+                            :aria-expanded="inventarisOpen"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM14 11a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1h-1a1 1 0 110-2h1v-1a1 1 0 011-1z"/>
+                            </svg>
+                            <span x-show="sidebarOpen" x-transition:enter="transition-opacity duration-150 delay-100" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="flex-1 truncate text-left">Inventaris</span>
+                            <svg x-show="sidebarOpen" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 shrink-0 transition-transform" :class="inventarisOpen ? 'rotate-180' : ''" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                        <span x-show="!sidebarOpen" class="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-md bg-zinc-900 px-2 py-1 text-xs font-medium text-white opacity-0 shadow transition-opacity group-hover/nav:opacity-100">Inventaris</span>
+                    </div>
 
                     <div
                         x-show="sidebarOpen && (inventarisOpen || {{ $isInventarisGroup ? 'true' : 'false' }})"
@@ -115,43 +151,49 @@
 
             {{-- Laporan (admin & pharmacist only) --}}
             @if (in_array(auth()->user()->role, ['admin', 'pharmacist']))
-                @php $isLaporan = request()->routeIs('sistem.laporan'); @endphp
-                <a href="{{ route('sistem.laporan') }}"
-                   class="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors mb-0.5
-                       {{ $isLaporan ? 'bg-zinc-900 text-white' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900' }}"
-                   aria-current="{{ $isLaporan ? 'page' : 'false' }}"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"/>
-                    </svg>
-                    <span x-show="sidebarOpen" class="truncate">Laporan</span>
-                </a>
+                @php $isLaporan = request()->routeIs('laporan.index'); @endphp
+                <div class="group/nav relative mb-0.5">
+                    <a href="{{ route('laporan.index') }}"
+                       class="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors
+                           {{ $isLaporan ? 'bg-zinc-900 text-white' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900' }}"
+                       aria-current="{{ $isLaporan ? 'page' : 'false' }}"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"/>
+                        </svg>
+                        <span x-show="sidebarOpen" x-transition:enter="transition-opacity duration-150 delay-100" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="truncate">Laporan</span>
+                    </a>
+                    <span x-show="!sidebarOpen" class="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-md bg-zinc-900 px-2 py-1 text-xs font-medium text-white opacity-0 shadow transition-opacity group-hover/nav:opacity-100">Laporan</span>
+                </div>
             @endif
 
             {{-- User Management (admin only) --}}
             @if (auth()->user()->role === 'admin')
                 @php $isUsers = request()->routeIs('admin.users'); @endphp
-                <a href="{{ route('admin.users') }}"
-                   class="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors mb-0.5
-                       {{ $isUsers ? 'bg-zinc-900 text-white' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900' }}"
-                   aria-current="{{ $isUsers ? 'page' : 'false' }}"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
-                    </svg>
-                    <span x-show="sidebarOpen" class="truncate">User Management</span>
-                </a>
+                <div class="group/nav relative mb-0.5">
+                    <a href="{{ route('admin.users') }}"
+                       class="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors
+                           {{ $isUsers ? 'bg-zinc-900 text-white' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900' }}"
+                       aria-current="{{ $isUsers ? 'page' : 'false' }}"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                        </svg>
+                        <span x-show="sidebarOpen" x-transition:enter="transition-opacity duration-150 delay-100" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="truncate">User Management</span>
+                    </a>
+                    <span x-show="!sidebarOpen" class="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-md bg-zinc-900 px-2 py-1 text-xs font-medium text-white opacity-0 shadow transition-opacity group-hover/nav:opacity-100">User Management</span>
+                </div>
             @endif
 
         </nav>
 
         {{-- User info + logout --}}
         <div class="border-t border-zinc-100 p-2">
-            <div class="flex items-center gap-2.5 rounded-lg px-2.5 py-2">
+            <div class="group/nav relative flex items-center gap-2.5 rounded-lg px-2.5 py-2">
                 <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-zinc-200 text-xs font-bold text-zinc-700">
                     {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                 </div>
-                <div x-show="sidebarOpen" class="min-w-0 flex-1">
+                <div x-show="sidebarOpen" x-transition:enter="transition-opacity duration-150 delay-100" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="min-w-0 flex-1">
                     <p class="truncate text-xs font-medium text-zinc-800">{{ auth()->user()->name }}</p>
                     <p class="truncate text-[10px] capitalize text-zinc-400">{{ auth()->user()->role }}</p>
                 </div>
@@ -163,19 +205,9 @@
                         </svg>
                     </button>
                 </form>
+                {{-- Tooltip nama user saat collapsed --}}
+                <span x-show="!sidebarOpen" class="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-md bg-zinc-900 px-2 py-1 text-xs font-medium text-white opacity-0 shadow transition-opacity group-hover/nav:opacity-100">{{ auth()->user()->name }}</span>
             </div>
-
-            {{-- Collapse toggle --}}
-            <button
-                type="button"
-                @click="sidebarOpen = !sidebarOpen"
-                class="mt-1 flex w-full items-center justify-center rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600"
-                :aria-label="sidebarOpen ? 'Tutup sidebar' : 'Buka sidebar'"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 transition-transform" :class="sidebarOpen ? '' : 'rotate-180'" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
-            </button>
         </div>
     </aside>
 

@@ -180,7 +180,7 @@
                                         </span>
                                     </td>
                                     <td class="px-4 py-2.5 text-center text-zinc-500">{{ $medicine->min_stock }}</td>
-                                    <td class="px-4 py-2.5 text-zinc-500">{{ $medicine->category ?? '—' }}</td>
+                                    <td class="px-4 py-2.5 text-zinc-500">{{ $medicine->category->name ?? '-' }}</td>
                                 </tr>
                             @empty
                                 <tr>
@@ -221,7 +221,7 @@
                                             {{ $daysLeft }}h
                                         </span>
                                     </td>
-                                    <td class="px-4 py-2.5 text-zinc-500">{{ $medicine->category ?? '—' }}</td>
+                                    <td class="px-4 py-2.5 text-zinc-500">{{ $medicine->category->name ?? '-' }}</td>
                                 </tr>
                             @empty
                                 <tr>

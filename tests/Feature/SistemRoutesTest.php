@@ -28,7 +28,7 @@ test('guests are redirected from protected sistem routes to login', function (st
 })->with([
     'dashboard' => ['sistem.dashboard'],
     'inventaris' => ['sistem.inventaris'],
-    'laporan' => ['sistem.laporan'],
+    'laporan' => ['laporan.index'],
     'pos (kasir)' => ['pos.kasir'],
     'users' => ['sistem.users'],
     'medicines index' => ['inventaris.medicines.index'],
@@ -61,7 +61,7 @@ test('admin can access all sistem modules', function (string $routeName) {
 })->with([
     'dashboard' => ['sistem.dashboard'],
     'inventaris' => ['sistem.inventaris'],
-    'laporan' => ['sistem.laporan'],
+    'laporan' => ['laporan.index'],
     'pos (kasir)' => ['pos.kasir'],
     'users' => ['sistem.users'],
     'medicines index' => ['inventaris.medicines.index'],
@@ -78,7 +78,7 @@ test('pharmacist can access dashboard inventaris laporan and pos', function (str
 })->with([
     'dashboard' => ['sistem.dashboard'],
     'inventaris' => ['sistem.inventaris'],
-    'laporan' => ['sistem.laporan'],
+    'laporan' => ['laporan.index'],
     'pos (kasir)' => ['pos.kasir'],
     'medicines index' => ['inventaris.medicines.index'],
     'stok opname' => ['inventaris.stok-opname'],
@@ -106,7 +106,7 @@ test('cashier cannot access inventaris laporan or user management', function (st
     $this->actingAs($cashier)->get(route($routeName))->assertForbidden();
 })->with([
     'inventaris' => ['sistem.inventaris'],
-    'laporan' => ['sistem.laporan'],
+    'laporan' => ['laporan.index'],
     'users' => ['sistem.users'],
     'medicines index' => ['inventaris.medicines.index'],
     'stok opname' => ['inventaris.stok-opname'],

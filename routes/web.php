@@ -7,6 +7,7 @@ use App\Livewire\Inventaris\CategoryManagement;
 use App\Livewire\Inventaris\MedicineIndex;
 use App\Livewire\Inventaris\MutasiStok;
 use App\Livewire\Inventaris\StokOpname;
+use App\Livewire\Laporan\LaporanPage;
 use App\Livewire\Pos\KasirPage;
 use App\Livewire\Pos\RiwayatTransaksi;
 use App\Models\Sale;
@@ -41,7 +42,6 @@ Route::prefix('sistem')->name('sistem.')->group(function () {
 
     Route::middleware(['auth.apotek', 'role:admin,pharmacist'])->group(function () {
         Route::get('/inventaris', fn () => view('sistem.inventaris'))->name('inventaris');
-        Route::get('/laporan', fn () => view('sistem.laporan'))->name('laporan');
     });
 
     Route::middleware(['auth.apotek', 'role:cashier,admin,pharmacist'])->group(function () {
@@ -84,6 +84,10 @@ Route::middleware(['auth.apotek', 'role:admin,pharmacist,cashier'])
 Route::middleware(['auth.apotek', 'role:admin'])
     ->get('/sistem/admin/users', UserManagement::class)
     ->name('admin.users');
+
+Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
+    ->get('/sistem/laporan', LaporanPage::class)
+    ->name('laporan.index');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
