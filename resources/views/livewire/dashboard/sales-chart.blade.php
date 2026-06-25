@@ -4,17 +4,17 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     @endassets
 
-    <div class="grid gap-4 lg:grid-cols-3">
+    <div class="grid gap-6 lg:grid-cols-3">
 
         {{-- ══════════════════════════════════════════════════
              LINE CHART — Penjualan Periodik (2/3 width)
         ═══════════════════════════════════════════════════ --}}
-        <div class="lg:col-span-2 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+        <div class="lg:col-span-2 card-brutal p-4">
             <div class="mb-4 flex items-center justify-between gap-3">
-                <h3 class="text-sm font-semibold text-zinc-900">Grafik Penjualan</h3>
+                <h3 class="text-sm font-bold text-[var(--color-ink)]">Grafik Penjualan</h3>
 
                 {{-- Period toggle --}}
-                <div class="flex rounded-lg border border-zinc-200 bg-zinc-50 p-0.5 gap-0.5" role="group" aria-label="Pilih periode">
+                <div class="flex rounded-lg border-2 border-[var(--color-brutal)] bg-[var(--color-surface-muted)] p-0.5 gap-0.5" role="group" aria-label="Pilih periode">
                     @foreach (['daily' => 'Harian', 'weekly' => 'Mingguan', 'monthly' => 'Bulanan'] as $value => $label)
                         <button
                             type="button"
@@ -22,10 +22,10 @@
                             wire:loading.attr="disabled"
                             wire:target="setPeriod"
                             aria-pressed="{{ $period === $value ? 'true' : 'false' }}"
-                            class="rounded-md px-3 py-1 text-xs font-medium transition-colors
+                            class="rounded-md px-3 py-1 text-xs font-semibold transition-all border-2 cursor-pointer
                                 {{ $period === $value
-                                    ? 'bg-white text-zinc-900 shadow-sm'
-                                    : 'text-zinc-500 hover:text-zinc-700' }}"
+                                    ? 'bg-[var(--color-primary-soft)] text-[var(--color-primary-contrast)] border-[var(--color-brutal)] shadow-[1px_1px_0_var(--color-brutal)]'
+                                    : 'bg-transparent text-[var(--color-muted)] hover:text-[var(--color-ink)] border-transparent' }}"
                         >
                             {{ $label }}
                         </button>
@@ -45,7 +45,7 @@
                     wire:target="setPeriod"
                     class="absolute inset-0 flex items-center justify-center rounded-lg bg-white/70"
                 >
-                    <svg class="h-5 w-5 animate-spin text-zinc-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                    <svg class="h-5 w-5 animate-spin text-[var(--color-primary)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                     </svg>
@@ -56,8 +56,8 @@
         {{-- ══════════════════════════════════════════════════
              BAR CHART — Top 5 Obat Terlaris (1/3 width)
         ═══════════════════════════════════════════════════ --}}
-        <div class="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
-            <h3 class="mb-4 text-sm font-semibold text-zinc-900">Top 5 Obat Terlaris</h3>
+        <div class="card-brutal p-4">
+            <h3 class="mb-4 text-sm font-bold text-[var(--color-ink)]">Top 5 Obat Terlaris</h3>
 
             <div class="relative h-56" wire:ignore>
                 <canvas
@@ -77,9 +77,9 @@
         'Rp ' + new Intl.NumberFormat('id-ID').format(value);
 
     // ── Common chart defaults ──────────────────────────────────
-    const gridColor  = 'rgba(0,0,0,0.06)';
-    const tickColor  = '#71717a'; // zinc-500
-    const fontFamily = "'Inter', ui-sans-serif, system-ui, sans-serif";
+    const gridColor  = '#E2E8F0'; // border-soft
+    const tickColor  = '#64748B'; // muted
+    const fontFamily = "'Instrument Sans', ui-sans-serif, system-ui, sans-serif";
 
     Chart.defaults.font.family = fontFamily;
     Chart.defaults.color       = tickColor;
@@ -92,8 +92,8 @@
     // Factory so the gradient can be recreated after destroy/reinit
     function buildSalesChartOptions(ctx) {
         const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-        gradient.addColorStop(0, 'rgba(24, 24, 27, 0.15)'); // zinc-900
-        gradient.addColorStop(1, 'rgba(24, 24, 27, 0)');
+        gradient.addColorStop(0, 'rgba(20, 184, 166, 0.25)'); // primary/teal soft gradient
+        gradient.addColorStop(1, 'rgba(20, 184, 166, 0)');
 
         return {
             type: 'line',
@@ -102,12 +102,12 @@
                 datasets: [{
                     label:                'Pendapatan',
                     data:                 [],
-                    borderColor:          '#18181b',
+                    borderColor:          '#14B8A6', // primary (teal)
                     backgroundColor:      gradient,
-                    borderWidth:          2,
-                    pointBackgroundColor: '#18181b',
-                    pointRadius:          3,
-                    pointHoverRadius:     5,
+                    borderWidth:          3,
+                    pointBackgroundColor: '#14B8A6',
+                    pointRadius:          4,
+                    pointHoverRadius:     6,
                     tension:              0.35,
                     fill:                 true,
                 }],
@@ -174,7 +174,7 @@
     // ── 2. Bar chart — top medicines ──────────────────────────
     const barCanvas = document.getElementById('topMedicinesBarChart');
     const topData   = @json($topMedicines);
-    const barColors = ['#18181b', '#3f3f46', '#71717a', '#a1a1aa', '#d4d4d8'];
+    const barColors = ['#14B8A6', '#0D9488', '#2DD4BF', '#99F6E4', '#CCFBF1']; // Soft Neubrutal Mint palette
 
     const existingBar = Chart.getChart(barCanvas);
     if (existingBar) {
@@ -190,6 +190,8 @@
                 // cast to Number — DB raw SUM returns a string
                 data:            topData.map(m => Number(m.total_qty)),
                 backgroundColor: barColors,
+                borderColor:     '#0B1220', // brutal border color
+                borderWidth:     1.5,
                 borderRadius:    4,
                 borderSkipped:   false,
             }],
