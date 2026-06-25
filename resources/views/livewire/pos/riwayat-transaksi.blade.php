@@ -158,11 +158,11 @@
                                             <thead class="bg-[var(--color-surface-muted)] border-b border-[var(--color-brutal)]">
                                                 <tr>
                                                     <th scope="col" class="px-3 py-2 text-left font-bold text-[var(--color-ink)]">Nama Obat</th>
-                                                    <th scope="col" class="px-3 py-2 text-left font-bold text-[var(--color-ink)]">No. Resep</th>
+                                                    <th scope="col" class="px-3 py-2 text-center font-bold text-[var(--color-ink)]">No. Resep</th>
                                                     <th scope="col" class="px-3 py-2 text-center font-bold text-[var(--color-ink)]">Qty</th>
-                                                    <th scope="col" class="px-3 py-2 text-right font-bold text-[var(--color-ink)]">Harga Satuan</th>
-                                                    <th scope="col" class="px-3 py-2 text-right font-bold text-[var(--color-ink)]">Diskon</th>
-                                                    <th scope="col" class="px-3 py-2 text-right font-bold text-[var(--color-ink)]">Subtotal</th>
+                                                    <th scope="col" class="px-3 py-2 text-left font-bold text-[var(--color-ink)]">Harga Satuan</th>
+                                                    <th scope="col" class="px-3 py-2 text-left font-bold text-[var(--color-ink)]">Diskon</th>
+                                                    <th scope="col" class="px-3 py-2 text-left font-bold text-[var(--color-ink)]">Subtotal</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="divide-y divide-[var(--color-border-soft)]">
@@ -171,21 +171,21 @@
                                                         <td class="px-3 py-2 font-bold text-[var(--color-ink)]">
                                                             {{ $item->medicine?->name ?? '—' }}
                                                         </td>
-                                                        <td class="px-3 py-2 font-semibold text-[var(--color-muted)]">
+                                                        <td class="px-3 py-2 text-center font-semibold text-[var(--color-muted)]">
                                                             {{ $item->prescription_no ?? '—' }}
                                                         </td>
                                                         <td class="px-3 py-2 text-center font-bold text-[var(--color-ink)]">{{ $item->quantity }}</td>
-                                                        <td class="px-3 py-2 text-right font-semibold text-[var(--color-ink)]">
+                                                        <td class="px-3 py-2 text-left font-semibold text-[var(--color-ink)]">
                                                             Rp {{ number_format($item->unit_price, 0, ',', '.') }}
                                                         </td>
-                                                        <td class="px-3 py-2 text-right font-semibold text-[var(--color-danger)]">
+                                                        <td class="px-3 py-2 text-left font-semibold text-[var(--color-danger)]">
                                                             @if ($item->discount > 0)
                                                                 - Rp {{ number_format($item->discount, 0, ',', '.') }}
                                                             @else
                                                                 —
                                                             @endif
                                                         </td>
-                                                        <td class="px-3 py-2 text-right font-bold text-[var(--color-ink)]">
+                                                        <td class="px-3 py-2 text-left font-bold text-[var(--color-ink)]">
                                                             Rp {{ number_format($item->subtotal, 0, ',', '.') }}
                                                         </td>
                                                     </tr>

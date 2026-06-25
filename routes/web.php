@@ -14,7 +14,7 @@ use App\Models\Sale;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome')->name('home');
+Route::redirect('/', '/sistem/login')->name('home');
 
 Route::prefix('sistem')->name('sistem.')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');

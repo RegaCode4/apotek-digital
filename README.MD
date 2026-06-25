@@ -12,7 +12,7 @@
 
 ##  Preview
 
-> ![Dashboard](./docs/dashboard.png)
+> ![Dashboard](./docs/dashboard-Soft-Neubrutal-Mint.png)
 
 ---
 
