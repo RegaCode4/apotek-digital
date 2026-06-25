@@ -23,21 +23,46 @@
     --color-zinc-900: #171717;
     --color-zinc-950: #0a0a0a;
 
-    --color-accent: var(--color-neutral-800);
-    --color-accent-content: var(--color-neutral-800);
+    /* === BRAND: Soft Neubrutal Mint === */
+    --color-primary: #14B8A6;
+    --color-primary-hover: #0D9488;
+    --color-primary-soft: #CCFBF1;
+    --color-primary-contrast: #06221F;
+
+    --color-bg: #F7FAF9;
+    --color-surface: #FFFFFF;
+    --color-surface-muted: #F1F5F9;
+    --color-ink: #0F172A;
+    --color-muted: #64748B;
+    --color-brutal: #0B1220;
+    --color-border-soft: #E2E8F0;
+
+    --color-sidebar: #0B1220;
+    --color-sidebar-text: #E2E8F0;
+    --color-sidebar-muted: #94A3B8;
+
+    --color-success: #22C55E;  --color-success-soft: #DCFCE7;
+    --color-warning: #F59E0B;  --color-warning-soft: #FEF3C7;
+    --color-danger:  #EF4444;  --color-danger-soft:  #FEE2E2;
+    --color-info:    #3B82F6;  --color-info-soft:    #DBEAFE;
+
+    --radius-brutal: 12px;
+
+    /* Flux mengikuti accent -> arahkan ke teal */
+    --color-accent: var(--color-primary);
+    --color-accent-content: var(--color-primary);
     --color-accent-foreground: var(--color-white);
 }
 
 @layer theme {
     .dark {
-        --color-accent: var(--color-white);
-        --color-accent-content: var(--color-white);
-        --color-accent-foreground: var(--color-neutral-800);
+        --color-accent: var(--color-primary);
+        --color-accent-content: var(--color-primary-soft);
+        --color-accent-foreground: var(--color-zinc-950);
     }
 }
 
 @layer base {
-
     *,
     ::after,
     ::before,
@@ -47,24 +72,52 @@
     }
 }
 
-[data-flux-field]:not(ui-radio, ui-checkbox) {
-    @apply grid gap-2;
+/* === Utility neubrutal === */
+@layer components {
+    .card-brutal {
+        background: var(--color-surface);
+        border: 2px solid var(--color-brutal);
+        border-radius: var(--radius-brutal);
+        box-shadow: 4px 4px 0 var(--color-brutal);
+    }
+    .card-brutal-lg { box-shadow: 6px 6px 0 var(--color-brutal); }
+
+    .btn-brutal {
+        display: inline-flex; align-items: center; gap: .5rem;
+        border: 2px solid var(--color-brutal);
+        border-radius: var(--radius-brutal);
+        box-shadow: 4px 4px 0 var(--color-brutal);
+        font-weight: 600;
+        transition: transform .05s ease, box-shadow .05s ease;
+    }
+    .btn-brutal:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--color-brutal); }
+    .btn-primary   { background: var(--color-primary); color: #fff; }
+    .btn-primary:hover { background: var(--color-primary-hover); }
+    .btn-secondary { background: var(--color-surface); color: var(--color-ink); }
+    .btn-danger    { background: var(--color-danger); color: #fff; }
+
+    .badge-brutal {
+        display: inline-flex; align-items: center; gap: .25rem;
+        border: 2px solid var(--color-brutal);
+        border-radius: 999px;
+        padding: 2px 10px; font-size: 12px; font-weight: 600;
+    }
+
+    .input-brutal {
+        background: var(--color-surface);
+        border: 2px solid var(--color-brutal);
+        border-radius: var(--radius-brutal);
+        padding: .5rem .75rem;
+    }
+    .input-brutal:focus { outline: 2px solid var(--color-primary); outline-offset: 1px; }
 }
 
-[data-flux-label] {
-    @apply  !mb-0 !leading-tight;
-}
-
+/* === Override Flux bawaan (JANGAN dihapus) === */
+[data-flux-field]:not(ui-radio, ui-checkbox) { @apply grid gap-2; }
+[data-flux-label] { @apply !mb-0 !leading-tight; }
 input:focus[data-flux-control],
 textarea:focus[data-flux-control],
 select:focus[data-flux-control] {
     @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
 }
-
-/* \[:where(&)\]:size-4 {
-    @apply size-4;
-} */
-
-[x-cloak] {
-    display: none !important;
-}
+[x-cloak] { display: none !important; }
