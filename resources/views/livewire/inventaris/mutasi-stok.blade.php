@@ -74,9 +74,9 @@
                     <tr>
                         <th scope="col" class="px-4 py-3 text-left font-bold">Tanggal</th>
                         <th scope="col" class="px-4 py-3 text-left font-bold">Nama Obat</th>
-                        <th scope="col" class="px-4 py-3 text-left font-bold">Tipe</th>
-                        <th scope="col" class="px-4 py-3 text-left font-bold">Jumlah</th>
-                        <th scope="col" class="px-4 py-3 text-left font-bold">Referensi</th>
+                        <th scope="col" class="px-4 py-3 text-center font-bold">Tipe</th>
+                        <th scope="col" class="px-4 py-3 text-center font-bold">Jumlah</th>
+                        <th scope="col" class="px-4 py-3 text-center font-bold">Referensi</th>
                         <th scope="col" class="px-4 py-3 text-left font-bold">Catatan</th>
                         <th scope="col" class="px-4 py-3 text-left font-bold">Dicatat Oleh</th>
                     </tr>
@@ -90,7 +90,7 @@
                             <td class="px-4 py-3 font-bold text-[var(--color-ink)]">
                                 {{ $mutation->medicine?->name ?? '—' }}
                             </td>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 text-center">
                                 @php
                                     $badgeClasses = match ($mutation->type) {
                                         'in' => 'bg-[var(--color-success-soft)] text-[var(--color-success)]',
@@ -104,14 +104,14 @@
                                     {{ $this->typeLabel($mutation->type) }}
                                 </span>
                             </td>
-                            <td class="px-4 py-3 text-[var(--color-ink)] font-bold">
+                            <td class="px-4 py-3 text-center text-[var(--color-ink)] font-bold">
                                 @if ($mutation->quantity > 0)
                                     +{{ $mutation->quantity }}
                                 @else
                                     {{ $mutation->quantity }}
                                 @endif
                             </td>
-                            <td class="px-4 py-3 text-[var(--color-muted)] font-medium">
+                            <td class="px-4 py-3 text-center text-[var(--color-muted)] font-medium">
                                 {{ $mutation->reference_id ?? '—' }}
                             </td>
                             <td class="px-4 py-3 text-[var(--color-muted)] font-medium max-w-xs truncate" title="{{ $mutation->notes }}">

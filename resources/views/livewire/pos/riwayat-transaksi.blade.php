@@ -72,10 +72,10 @@
                         <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-[var(--color-ink)]">Tanggal</th>
                         <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-[var(--color-ink)]">Nama Pembeli</th>
                         <th scope="col" class="px-4 py-3 text-center text-xs font-bold text-[var(--color-ink)]">Item</th>
-                        <th scope="col" class="px-4 py-3 text-right text-xs font-bold text-[var(--color-ink)]">Grand Total</th>
-                        <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-[var(--color-ink)]">Pembayaran</th>
+                        <th scope="col" class="px-4 py-3 text-center text-xs font-bold text-[var(--color-ink)]">Grand Total</th>
+                        <th scope="col" class="px-4 py-3 text-center text-xs font-bold text-[var(--color-ink)]">Pembayaran</th>
                         <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-[var(--color-ink)]">Kasir</th>
-                        <th scope="col" class="px-4 py-3 text-right text-xs font-bold text-[var(--color-ink)]">Aksi</th>
+                        <th scope="col" class="px-4 py-3 text-center text-xs font-bold text-[var(--color-ink)]">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-[var(--color-border-soft)]">
@@ -110,16 +110,16 @@
                                     {{ $sale->sale_items_count }}
                                 </span>
                             </td>
-                            <td class="whitespace-nowrap px-4 py-3 text-right font-extrabold text-[var(--color-ink)]">
+                            <td class="whitespace-nowrap px-4 py-3 text-center font-extrabold text-[var(--color-ink)]">
                                 Rp {{ number_format($sale->grand_total, 0, ',', '.') }}
                             </td>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 text-center">
                                 <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold {{ $paymentBadge }}">
                                     {{ strtoupper($sale->payment_method) }}
                                 </span>
                             </td>
                             <td class="px-4 py-3 text-[var(--color-ink)] font-medium">{{ $sale->cashier?->name ?? '—' }}</td>
-                            <td class="whitespace-nowrap px-4 py-3 text-right">
+                            <td class="whitespace-nowrap px-4 py-3 text-center">
                                 {{-- Stop click propagation so row expand doesn't fire when clicking the link --}}
                                 <a
                                     href="{{ route('pos.struk', $sale->id) }}"

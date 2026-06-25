@@ -140,8 +140,8 @@
                             <th scope="col" class="px-4 py-3 text-left font-bold">Pembeli</th>
                             <th scope="col" class="px-4 py-3 text-left font-bold">Kasir</th>
                             <th scope="col" class="px-4 py-3 text-center font-bold">Total Item</th>
-                            <th scope="col" class="px-4 py-3 text-right font-bold">Grand Total</th>
-                            <th scope="col" class="px-4 py-3 text-left font-bold">Metode Bayar</th>
+                            <th scope="col" class="px-4 py-3 text-center font-bold">Grand Total</th>
+                            <th scope="col" class="px-4 py-3 text-center font-bold">Metode Bayar</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y-2 divide-[var(--color-brutal)]">
@@ -170,11 +170,11 @@
                                         {{ $sale->sale_items_count }}
                                     </span>
                                 </td>
-                                <td class="whitespace-nowrap px-4 py-3 text-right font-extrabold text-[var(--color-ink)]">
+                                <td class="whitespace-nowrap px-4 py-3 text-center font-extrabold text-[var(--color-ink)]">
                                     Rp {{ number_format($sale->grand_total, 0, ',', '.') }}
                                 </td>
-                                <td class="px-4 py-3">
-                                    <span class="badge-brutal px-2.5 py-0.5 text-xs font-bold shadow-[1px_1px_0_var(--color-brutal)] {{ $paymentBadge }}">
+                                <td class="px-4 py-3 text-center">
+                                    <span class="badge-brutal whitespace-nowrap px-2.5 py-0.5 text-xs font-bold shadow-[1px_1px_0_var(--color-brutal)] {{ $paymentBadge }}">
                                         {{ strtoupper($sale->payment_method) }}
                                     </span>
                                 </td>
@@ -273,8 +273,8 @@
                         <tr>
                             <th scope="col" class="px-4 py-3 text-left font-bold">Tanggal</th>
                             <th scope="col" class="px-4 py-3 text-left font-bold">Nama Obat</th>
-                            <th scope="col" class="px-4 py-3 text-left font-bold">Tipe</th>
-                            <th scope="col" class="px-4 py-3 text-left font-bold">Jumlah</th>
+                            <th scope="col" class="px-4 py-3 text-center font-bold">Tipe</th>
+                            <th scope="col" class="px-4 py-3 text-center font-bold">Jumlah</th>
                             <th scope="col" class="px-4 py-3 text-left font-bold">Keterangan</th>
                             <th scope="col" class="px-4 py-3 text-left font-bold">Dicatat Oleh</th>
                         </tr>
@@ -298,12 +298,12 @@
                                 <td class="px-4 py-3 font-bold text-[var(--color-ink)]">
                                     {{ $mutation->medicine?->name ?? '—' }}
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="px-4 py-3 text-center">
                                     <span class="badge-brutal px-2.5 py-0.5 text-xs font-bold shadow-[1px_1px_0_var(--color-brutal)] {{ $mutationBadge }}">
                                         {{ $this->typeLabel($mutation->type) }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-3 text-[var(--color-ink)] font-bold">
+                                <td class="px-4 py-3 text-center text-[var(--color-ink)] font-bold">
                                     @if ($mutation->quantity > 0)
                                         +{{ $mutation->quantity }}
                                     @else
@@ -398,11 +398,11 @@
                     <thead class="bg-[var(--color-surface-muted)] text-[var(--color-ink)]">
                         <tr>
                             <th scope="col" class="px-4 py-3 text-left font-bold">Tanggal</th>
-                            <th scope="col" class="px-4 py-3 text-right font-bold">Cash</th>
-                            <th scope="col" class="px-4 py-3 text-right font-bold">Transfer</th>
-                            <th scope="col" class="px-4 py-3 text-right font-bold">BPJS</th>
-                            <th scope="col" class="px-4 py-3 text-right font-bold">Asuransi</th>
-                            <th scope="col" class="px-4 py-3 text-right font-bold">Total Hari</th>
+                            <th scope="col" class="px-4 py-3 text-center font-bold">Cash</th>
+                            <th scope="col" class="px-4 py-3 text-center font-bold">Transfer</th>
+                            <th scope="col" class="px-4 py-3 text-center font-bold">BPJS</th>
+                            <th scope="col" class="px-4 py-3 text-center font-bold">Asuransi</th>
+                            <th scope="col" class="px-4 py-3 text-center font-bold">Total Hari</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y-2 divide-[var(--color-brutal)]">
@@ -417,19 +417,19 @@
                             @endphp
                             <tr wire:key="pend-{{ $tanggal }}" class="transition-colors hover:bg-[var(--color-primary-soft)]">
                                 <td class="whitespace-nowrap px-4 py-3 font-bold text-[var(--color-ink)]">{{ $tanggal }}</td>
-                                <td class="whitespace-nowrap px-4 py-3 text-right text-[var(--color-ink)] font-semibold">
+                                <td class="whitespace-nowrap px-4 py-3 text-center text-[var(--color-ink)] font-semibold">
                                     {{ $cash > 0 ? 'Rp '.number_format($cash, 0, ',', '.') : '—' }}
                                 </td>
-                                <td class="whitespace-nowrap px-4 py-3 text-right text-[var(--color-ink)] font-semibold">
+                                <td class="whitespace-nowrap px-4 py-3 text-center text-[var(--color-ink)] font-semibold">
                                     {{ $transfer > 0 ? 'Rp '.number_format($transfer, 0, ',', '.') : '—' }}
                                 </td>
-                                <td class="whitespace-nowrap px-4 py-3 text-right text-[var(--color-ink)] font-semibold">
+                                <td class="whitespace-nowrap px-4 py-3 text-center text-[var(--color-ink)] font-semibold">
                                     {{ $bpjs > 0 ? 'Rp '.number_format($bpjs, 0, ',', '.') : '—' }}
                                 </td>
-                                <td class="whitespace-nowrap px-4 py-3 text-right text-[var(--color-ink)] font-semibold">
+                                <td class="whitespace-nowrap px-4 py-3 text-center text-[var(--color-ink)] font-semibold">
                                     {{ $insurance > 0 ? 'Rp '.number_format($insurance, 0, ',', '.') : '—' }}
                                 </td>
-                                <td class="whitespace-nowrap px-4 py-3 text-right font-extrabold text-[var(--color-ink)]">
+                                <td class="whitespace-nowrap px-4 py-3 text-center font-extrabold text-[var(--color-ink)]">
                                     Rp {{ number_format($dayTotal, 0, ',', '.') }}
                                 </td>
                             </tr>
@@ -466,7 +466,7 @@
                             <th scope="col" class="px-4 py-3 text-center font-bold">Stok</th>
                             <th scope="col" class="px-4 py-3 text-left font-bold">Tanggal Kedaluwarsa</th>
                             <th scope="col" class="px-4 py-3 text-center font-bold">Sisa Hari</th>
-                            <th scope="col" class="px-4 py-3 text-left font-bold">Status</th>
+                            <th scope="col" class="px-4 py-3 text-center font-bold">Status</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y-2 divide-[var(--color-brutal)]">
@@ -485,7 +485,7 @@
                                     {{ $medicine->expiry_date?->format('d M Y') }}
                                 </td>
                                 <td class="px-4 py-3 text-center font-extrabold text-[var(--color-ink)]">{{ $daysLeft }}</td>
-                                <td class="px-4 py-3">
+                                <td class="px-4 py-3 text-center">
                                     <span class="badge-brutal px-2.5 py-0.5 text-xs font-bold shadow-[1px_1px_0_var(--color-brutal)] {{ $badgeColorClass }}">
                                         {{ $badgeLabel }}
                                     </span>
@@ -526,7 +526,7 @@
                             <th scope="col" class="px-4 py-3 text-center font-bold">Stok Saat Ini</th>
                             <th scope="col" class="px-4 py-3 text-center font-bold">Min. Stok</th>
                             <th scope="col" class="px-4 py-3 text-center font-bold">Selisih</th>
-                            <th scope="col" class="px-4 py-3 text-left font-bold">Status</th>
+                            <th scope="col" class="px-4 py-3 text-center font-bold">Status</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y-2 divide-[var(--color-brutal)]">
@@ -540,7 +540,7 @@
                                 <td class="px-4 py-3 text-center font-extrabold text-[var(--color-ink)]">
                                     {{ $medicine->min_stock - $medicine->stock }}
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="px-4 py-3 text-center">
                                     @if ($medicine->stock === 0)
                                         <span class="badge-brutal bg-[var(--color-danger-soft)] text-[var(--color-danger)] px-2.5 py-0.5 text-xs font-bold shadow-[1px_1px_0_var(--color-brutal)]">
                                             Habis

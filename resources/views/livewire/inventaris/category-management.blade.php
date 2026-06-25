@@ -36,7 +36,7 @@
                         <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-[var(--color-ink)]">Nama Kategori</th>
                         <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-[var(--color-ink)]">Deskripsi</th>
                         <th scope="col" class="px-4 py-3 text-center text-xs font-bold text-[var(--color-ink)]">Jumlah Obat</th>
-                        <th scope="col" class="px-4 py-3 text-right text-xs font-bold text-[var(--color-ink)]">Aksi</th>
+                        <th scope="col" class="px-4 py-3 text-center text-xs font-bold text-[var(--color-ink)]">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-[var(--color-border-soft)]">
@@ -55,7 +55,7 @@
                                 </span>
                             </td>
                             <td class="px-4 py-3">
-                                <div class="flex items-center justify-end gap-2.5">
+                                <div class="flex items-center justify-center gap-2.5">
                                     <button
                                         type="button"
                                         wire:click="openEditModal({{ $category->id }})"

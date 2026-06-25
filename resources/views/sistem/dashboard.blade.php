@@ -55,7 +55,7 @@
                         <tr>
                             <th scope="col" class="px-4 py-2.5 text-left text-xs font-bold text-[var(--color-ink)]">Invoice</th>
                             <th scope="col" class="px-4 py-2.5 text-left text-xs font-bold text-[var(--color-ink)]">Pembeli</th>
-                            <th scope="col" class="px-4 py-2.5 text-right text-xs font-bold text-[var(--color-ink)]">Total</th>
+                            <th scope="col" class="px-4 py-2.5 text-center text-xs font-bold text-[var(--color-ink)]">Total</th>
                             <th scope="col" class="px-4 py-2.5 text-left text-xs font-bold text-[var(--color-ink)]">Waktu</th>
                         </tr>
                     </thead>
@@ -66,7 +66,7 @@
                                     <span class="font-mono text-xs font-semibold text-[var(--color-ink)]">{{ $sale->invoice_no }}</span>
                                 </td>
                                 <td class="px-4 py-2.5 text-[var(--color-ink)]">{{ $sale->buyer_name }}</td>
-                                <td class="px-4 py-2.5 text-right text-xs font-bold text-[var(--color-ink)]">
+                                <td class="px-4 py-2.5 text-center text-xs font-bold text-[var(--color-ink)] whitespace-nowrap">
                                     Rp {{ number_format($sale->grand_total, 0, ',', '.') }}
                                 </td>
                                 <td class="px-4 py-2.5 text-xs text-[var(--color-muted)]">

@@ -42,9 +42,9 @@
                 <thead class="bg-[var(--color-surface-muted)] text-[var(--color-ink)]">
                     <tr>
                         <th scope="col" class="px-4 py-3 text-left font-bold">Nama Obat</th>
-                        <th scope="col" class="px-4 py-3 text-left font-bold">Stok Sistem</th>
-                        <th scope="col" class="px-4 py-3 text-left font-bold">Stok Fisik</th>
-                        <th scope="col" class="px-4 py-3 text-left font-bold">Selisih</th>
+                        <th scope="col" class="px-4 py-3 text-center font-bold">Stok Sistem</th>
+                        <th scope="col" class="px-4 py-3 text-center font-bold">Stok Fisik</th>
+                        <th scope="col" class="px-4 py-3 text-center font-bold">Selisih</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y-2 divide-[var(--color-brutal)]">
@@ -55,8 +55,8 @@
                         @endphp
                         <tr wire:key="opname-{{ $medicine->id }}" class="hover:bg-[var(--color-primary-soft)] transition-colors duration-150">
                             <td class="px-4 py-3 font-bold text-[var(--color-ink)]">{{ $medicine->name }}</td>
-                            <td class="px-4 py-3 font-semibold text-[var(--color-muted)]">{{ $medicine->stock }}</td>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 text-center font-semibold text-[var(--color-muted)]">{{ $medicine->stock }}</td>
+                            <td class="px-4 py-3 text-center">
                                 <input
                                     type="number"
                                     min="0"
@@ -67,7 +67,7 @@
                                     <p class="mt-1 text-xs font-bold text-[var(--color-danger)]">{{ $message }}</p>
                                 @enderror
                             </td>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 text-center">
                                 @if ($difference < 0)
                                     <span class="badge-brutal bg-[var(--color-danger-soft)] text-[var(--color-danger)] text-xs font-bold shadow-[1px_1px_0_var(--color-brutal)]">
                                         {{ $difference }}

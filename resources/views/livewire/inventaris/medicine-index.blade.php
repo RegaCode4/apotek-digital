@@ -76,12 +76,12 @@
                         <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-[var(--color-ink)]">Nama</th>
                         <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-[var(--color-ink)]">Generik</th>
                         <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-[var(--color-ink)]">Kategori</th>
-                        <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-[var(--color-ink)]">Stok</th>
-                        <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-[var(--color-ink)]">Min. Stok</th>
-                        <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-[var(--color-ink)]">Harga</th>
-                        <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-[var(--color-ink)]">Kedaluwarsa</th>
-                        <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-[var(--color-ink)]">Resep</th>
-                        <th scope="col" class="px-4 py-3 text-right text-xs font-bold text-[var(--color-ink)]">Aksi</th>
+                        <th scope="col" class="px-4 py-3 text-center text-xs font-bold text-[var(--color-ink)]">Stok</th>
+                        <th scope="col" class="px-4 py-3 text-center text-xs font-bold text-[var(--color-ink)]">Min. Stok</th>
+                        <th scope="col" class="px-4 py-3 text-center text-xs font-bold text-[var(--color-ink)]">Harga</th>
+                        <th scope="col" class="px-4 py-3 text-center text-xs font-bold text-[var(--color-ink)]">Kedaluwarsa</th>
+                        <th scope="col" class="px-4 py-3 text-center text-xs font-bold text-[var(--color-ink)]">Resep</th>
+                        <th scope="col" class="px-4 py-3 text-center text-xs font-bold text-[var(--color-ink)]">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-[var(--color-border-soft)]">
@@ -94,7 +94,7 @@
                             <td class="px-4 py-3 font-bold text-[var(--color-ink)]">{{ $medicine->name }}</td>
                             <td class="px-4 py-3 text-[var(--color-ink)] font-medium">{{ $medicine->generic_name ?? '—' }}</td>
                             <td class="px-4 py-3 text-[var(--color-ink)] font-medium">{{ $medicine->category?->name ?? '—' }}</td>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 text-center">
                                 @if ($isLowStock)
                                     <span class="badge-brutal bg-[var(--color-danger-soft)] text-[var(--color-danger)] text-xs font-bold shadow-[1px_1px_0_var(--color-brutal)]">
                                         {{ $medicine->stock }}
@@ -103,34 +103,34 @@
                                     <span class="text-[var(--color-ink)] font-semibold">{{ $medicine->stock }}</span>
                                 @endif
                             </td>
-                            <td class="px-4 py-3 text-[var(--color-muted)] font-semibold">{{ $medicine->min_stock }}</td>
-                            <td class="px-4 py-3 text-[var(--color-ink)] font-bold">Rp {{ number_format($medicine->price, 0, ',', '.') }}</td>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 text-center text-[var(--color-muted)] font-semibold">{{ $medicine->min_stock }}</td>
+                            <td class="px-4 py-3 text-center whitespace-nowrap text-[var(--color-ink)] font-bold">Rp {{ number_format($medicine->price, 0, ',', '.') }}</td>
+                            <td class="px-4 py-3 text-center">
                                 @if ($medicine->expiry_date)
                                     @if ($isExpiringSoon)
-                                        <span class="badge-brutal bg-[var(--color-warning-soft)] text-[var(--color-warning)] text-xs font-bold shadow-[1px_1px_0_var(--color-brutal)]">
+                                        <span class="badge-brutal whitespace-nowrap bg-[var(--color-warning-soft)] text-[var(--color-warning)] text-xs font-bold shadow-[1px_1px_0_var(--color-brutal)]">
                                             {{ $medicine->expiry_date->format('d M Y') }}
                                         </span>
                                     @else
-                                        <span class="text-[var(--color-ink)] font-medium">{{ $medicine->expiry_date->format('d M Y') }}</span>
+                                        <span class="whitespace-nowrap text-[var(--color-ink)] font-medium">{{ $medicine->expiry_date->format('d M Y') }}</span>
                                     @endif
                                 @else
                                     <span class="text-[var(--color-muted)] font-semibold">—</span>
                                 @endif
                             </td>
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 text-center">
                                 @if ($medicine->requires_prescription)
-                                    <span class="badge-brutal bg-[var(--color-info-soft)] text-[var(--color-ink)] text-xs font-bold shadow-[1px_1px_0_var(--color-brutal)]">
+                                    <span class="badge-brutal whitespace-nowrap bg-[var(--color-info-soft)] text-[var(--color-ink)] text-xs font-bold shadow-[1px_1px_0_var(--color-brutal)]">
                                         Wajib resep
                                     </span>
                                 @else
-                                    <span class="badge-brutal bg-[var(--color-surface-muted)] text-[var(--color-muted)] text-xs font-bold shadow-[1px_1px_0_var(--color-brutal)]">
+                                    <span class="badge-brutal whitespace-nowrap bg-[var(--color-surface-muted)] text-[var(--color-muted)] text-xs font-bold shadow-[1px_1px_0_var(--color-brutal)]">
                                         Tanpa resep
                                     </span>
                                 @endif
                             </td>
                             <td class="px-4 py-3">
-                                <div class="flex justify-end gap-2.5">
+                                <div class="flex justify-center gap-2.5">
                                     <button
                                         type="button"
                                         wire:click="$dispatch('open-medicine-form', { medicineId: {{ $medicine->id }} })"

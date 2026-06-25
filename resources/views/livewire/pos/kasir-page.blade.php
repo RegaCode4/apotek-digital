@@ -281,11 +281,11 @@
                                 id="taxEnabled"
                                 role="switch"
                                 aria-checked="{{ $taxEnabled ? 'true' : 'false' }}"
-                                class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-[var(--color-brutal)] shadow-[1px_1px_0_var(--color-brutal)] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2
+                                class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-[var(--color-brutal)] shadow-[1px_1px_0_var(--color-brutal)] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2
                                     {{ $taxEnabled ? 'bg-[var(--color-primary)]' : 'bg-[var(--color-surface-muted)]' }}"
                             >
                                 <span
-                                    class="pointer-events-none inline-block h-4 w-4 transform rounded-full border border-[var(--color-brutal)] bg-white shadow ring-0 transition duration-200 ease-in-out
+                                    class="pointer-events-none inline-block h-4 w-4 transform rounded-full border border-[var(--color-brutal)] bg-white shadow ring-0 transition duration-200 ease-in-out ml-0.5
                                         {{ $taxEnabled ? 'translate-x-5' : 'translate-x-0' }}"
                                 ></span>
                             </button>
