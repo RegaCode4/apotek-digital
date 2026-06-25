@@ -28,3 +28,4 @@ yarn-error.log
 boost.json
 PRD.MD
 .agents/
+docs/design.md

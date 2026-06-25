@@ -15,7 +15,7 @@
         x-transition:leave="ease-in duration-150"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        class="fixed inset-0 bg-zinc-900/50"
+        class="fixed inset-0 bg-[var(--color-brutal)]/40 backdrop-blur-xs"
         wire:click="close"
     ></div>
 
@@ -25,16 +25,16 @@
                 x-show="show"
                 x-transition
                 @click.stop
-                class="w-full max-w-2xl rounded-xl border border-zinc-200 bg-white shadow-xl"
+                class="w-full max-w-2xl card-brutal card-brutal-lg bg-[var(--color-surface)]"
             >
-                <div class="flex items-center justify-between border-b border-zinc-200 px-6 py-4">
-                    <h3 id="medicine-form-title" class="text-lg font-semibold text-zinc-900">
+                <div class="flex items-center justify-between border-b-2 border-[var(--color-brutal)] bg-[var(--color-surface-muted)] rounded-t-[var(--radius-brutal)] px-6 py-4">
+                    <h3 id="medicine-form-title" class="text-lg font-bold text-[var(--color-ink)]">
                         {{ $medicineId ? 'Edit Obat' : 'Tambah Obat' }}
                     </h3>
                     <button
                         type="button"
                         wire:click="close"
-                        class="rounded-md p-1 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600"
+                        class="rounded-md p-1.5 text-[var(--color-muted)] hover:bg-white/10 hover:text-[var(--color-ink)] border border-transparent hover:border-[var(--color-brutal)] transition-all cursor-pointer"
                     >
                         <span class="sr-only">Tutup</span>
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -46,71 +46,71 @@
                 <form wire:submit="save" class="space-y-5 px-6 py-5">
                     <div class="grid gap-4 sm:grid-cols-2">
                         <div class="sm:col-span-2">
-                            <label for="name" class="mb-1.5 block text-sm font-medium text-zinc-700">Nama Obat <span class="text-red-500">*</span></label>
+                            <label for="name" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Nama Obat <span class="text-[var(--color-danger)]">*</span></label>
                             <input
                                 id="name"
                                 type="text"
                                 wire:model="name"
-                                class="block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 @error('name') border-red-500 @enderror"
+                                class="block w-full input-brutal text-sm text-[var(--color-ink)] placeholder-[var(--color-muted)] focus:outline-none @error('name') border-[var(--color-danger)] @enderror"
                             />
-                            @error('name') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                            @error('name') <p class="mt-1 text-xs font-bold text-[var(--color-danger)]">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
-                            <label for="generic_name" class="mb-1.5 block text-sm font-medium text-zinc-700">Nama Generik</label>
-                            <input id="generic_name" type="text" wire:model="generic_name" class="block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500" />
-                            @error('generic_name') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                            <label for="generic_name" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Nama Generik</label>
+                            <input id="generic_name" type="text" wire:model="generic_name" class="block w-full input-brutal text-sm text-[var(--color-ink)] placeholder-[var(--color-muted)] focus:outline-none" />
+                            @error('generic_name') <p class="mt-1 text-xs font-bold text-[var(--color-danger)]">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
-                            <label for="category_id" class="mb-1.5 block text-sm font-medium text-zinc-700">Kategori</label>
+                            <label for="category_id" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Kategori</label>
                             <select
                                 id="category_id"
                                 wire:model="category_id"
-                                class="block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 @error('category_id') border-red-500 @enderror"
+                                class="block w-full input-brutal text-sm text-[var(--color-ink)] focus:outline-none @error('category_id') border-[var(--color-danger)] @enderror"
                             >
                                 <option value="">— Pilih Kategori —</option>
                                 @foreach ($categoryOptions as $option)
                                     <option value="{{ $option->id }}">{{ $option->name }}</option>
                                 @endforeach
                             </select>
-                            @error('category_id') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                            @error('category_id') <p class="mt-1 text-xs font-bold text-[var(--color-danger)]">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
-                            <label for="manufacturer" class="mb-1.5 block text-sm font-medium text-zinc-700">Produsen</label>
-                            <input id="manufacturer" type="text" wire:model="manufacturer" class="block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500" />
-                            @error('manufacturer') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                            <label for="manufacturer" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Produsen</label>
+                            <input id="manufacturer" type="text" wire:model="manufacturer" class="block w-full input-brutal text-sm text-[var(--color-ink)] placeholder-[var(--color-muted)] focus:outline-none" />
+                            @error('manufacturer') <p class="mt-1 text-xs font-bold text-[var(--color-danger)]">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
-                            <label for="unit" class="mb-1.5 block text-sm font-medium text-zinc-700">Satuan <span class="text-red-500">*</span></label>
-                            <input id="unit" type="text" wire:model="unit" class="block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500" />
-                            @error('unit') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                            <label for="unit" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Satuan <span class="text-[var(--color-danger)]">*</span></label>
+                            <input id="unit" type="text" wire:model="unit" class="block w-full input-brutal text-sm text-[var(--color-ink)] placeholder-[var(--color-muted)] focus:outline-none" />
+                            @error('unit') <p class="mt-1 text-xs font-bold text-[var(--color-danger)]">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
-                            <label for="price" class="mb-1.5 block text-sm font-medium text-zinc-700">Harga <span class="text-red-500">*</span></label>
-                            <input id="price" type="number" step="0.01" min="0" wire:model="price" class="block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500" />
-                            @error('price') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                            <label for="price" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Harga <span class="text-[var(--color-danger)]">*</span></label>
+                            <input id="price" type="number" step="0.01" min="0" wire:model="price" class="block w-full input-brutal text-sm text-[var(--color-ink)] placeholder-[var(--color-muted)] focus:outline-none" />
+                            @error('price') <p class="mt-1 text-xs font-bold text-[var(--color-danger)]">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
-                            <label for="stock" class="mb-1.5 block text-sm font-medium text-zinc-700">Stok <span class="text-red-500">*</span></label>
-                            <input id="stock" type="number" min="0" wire:model="stock" class="block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500" />
-                            @error('stock') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                            <label for="stock" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Stok <span class="text-[var(--color-danger)]">*</span></label>
+                            <input id="stock" type="number" min="0" wire:model="stock" class="block w-full input-brutal text-sm text-[var(--color-ink)] placeholder-[var(--color-muted)] focus:outline-none" />
+                            @error('stock') <p class="mt-1 text-xs font-bold text-[var(--color-danger)]">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
-                            <label for="min_stock" class="mb-1.5 block text-sm font-medium text-zinc-700">Min. Stok <span class="text-red-500">*</span></label>
-                            <input id="min_stock" type="number" min="0" wire:model="min_stock" class="block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500" />
-                            @error('min_stock') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                            <label for="min_stock" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Min. Stok <span class="text-[var(--color-danger)]">*</span></label>
+                            <input id="min_stock" type="number" min="0" wire:model="min_stock" class="block w-full input-brutal text-sm text-[var(--color-ink)] placeholder-[var(--color-muted)] focus:outline-none" />
+                            @error('min_stock') <p class="mt-1 text-xs font-bold text-[var(--color-danger)]">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
-                            <label for="expiry_date" class="mb-1.5 block text-sm font-medium text-zinc-700">Tanggal Kedaluwarsa</label>
-                            <input id="expiry_date" type="date" wire:model="expiry_date" class="block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500" />
-                            @error('expiry_date') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                            <label for="expiry_date" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Tanggal Kedaluwarsa</label>
+                            <input id="expiry_date" type="date" wire:model="expiry_date" class="block w-full input-brutal text-sm text-[var(--color-ink)] focus:outline-none" />
+                            @error('expiry_date') <p class="mt-1 text-xs font-bold text-[var(--color-danger)]">{{ $message }}</p> @enderror
                         </div>
 
                         <div class="flex items-center sm:col-span-2">
@@ -118,39 +118,39 @@
                                 id="requires_prescription"
                                 type="checkbox"
                                 wire:model="requires_prescription"
-                                class="h-4 w-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-500"
+                                class="h-5 w-5 rounded border-2 border-[var(--color-brutal)] text-[var(--color-primary)] focus:ring-[var(--color-primary)] focus:ring-offset-2 cursor-pointer"
                             />
-                            <label for="requires_prescription" class="ml-2 text-sm text-zinc-700">Wajib resep dokter</label>
+                            <label for="requires_prescription" class="ml-2 text-sm font-bold text-[var(--color-ink)] cursor-pointer">Wajib resep dokter</label>
                         </div>
 
                         <div class="sm:col-span-2">
-                            <label for="description" class="mb-1.5 block text-sm font-medium text-zinc-700">Deskripsi</label>
+                            <label for="description" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Deskripsi</label>
                             <textarea
                                 id="description"
                                 rows="3"
                                 wire:model="description"
-                                class="block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500"
+                                class="block w-full input-brutal text-sm text-[var(--color-ink)] placeholder-[var(--color-muted)] focus:outline-none"
                             ></textarea>
-                            @error('description') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                            @error('description') <p class="mt-1 text-xs font-bold text-[var(--color-danger)]">{{ $message }}</p> @enderror
                         </div>
                     </div>
 
-                    <div class="flex justify-end gap-3 border-t border-zinc-200 pt-4">
+                    <div class="flex justify-end gap-2.5 border-t-2 border-[var(--color-brutal)] pt-4">
                         <button
                             type="button"
                             wire:click="close"
-                            class="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+                            class="btn-brutal btn-secondary px-4 py-2 text-sm font-bold cursor-pointer shadow-[2px_2px_0_var(--color-brutal)]"
                         >
                             Batal
                         </button>
                         <button
                             type="submit"
-                            class="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+                            class="btn-brutal btn-primary px-4 py-2 text-sm font-bold cursor-pointer shadow-[2px_2px_0_var(--color-brutal)]"
                             wire:loading.attr="disabled"
                             wire:target="save"
                         >
                             <span wire:loading.remove wire:target="save">Simpan</span>
-                            <span wire:loading wire:target="save">Menyimpan...</span>
+                            <span wire:loading wire:target="save">...</span>
                         </button>
                     </div>
                 </form>
