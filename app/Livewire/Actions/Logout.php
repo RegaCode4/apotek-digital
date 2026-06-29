@@ -5,11 +5,10 @@ namespace App\Livewire\Actions;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
+/** Keluarkan pengguna saat ini dari aplikasi */
 class Logout
 {
-    /**
-     * Log the current user out of the application.
-     */
+    /** Logout, invalidasi sesi, dan redirect ke halaman utama */
     public function __invoke()
     {
         Auth::guard('web')->logout();

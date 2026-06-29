@@ -25,13 +25,13 @@
 }">
 
     {{-- ══════════════════════════════════════════════
-         SIDEBAR
+         BILAH SISI
     ══════════════════════════════════════════════ --}}
     <aside
         :class="sidebarOpen ? 'w-56' : 'w-14'"
         class="relative flex shrink-0 flex-col border-r-2 border-[var(--color-brutal)] bg-[var(--color-sidebar)] transition-all duration-300 ease-in-out text-[var(--color-sidebar-text)]"
     >
-        {{-- Logo / Brand + Toggle Button --}}
+        {{-- Logo / Merek + Tombol Toggle --}}
         <div class="flex h-14 items-center gap-2.5 border-b-2 border-[var(--color-brutal)] px-3 bg-[var(--color-sidebar)]">
             <img src="/logo.svg" alt="Apotek Digital" class="h-8 w-8 shrink-0 rounded-lg border border-[var(--color-brutal)]">
             <span
@@ -57,7 +57,7 @@
             </button>
         </div>
 
-        {{-- Navigation --}}
+        {{-- Navigasi --}}
         <nav class="flex-1 overflow-y-auto p-2 space-y-1" aria-label="Navigasi utama">
 
             {{-- Dashboard --}}
@@ -108,7 +108,7 @@
                 </a>
             </div>
 
-            {{-- Inventaris (dropdown) --}}
+            {{-- Inventaris (tarik turun) --}}
             @php $isInventarisGroup = request()->routeIs('inventaris.*'); @endphp
             @if (in_array(auth()->user()->role, ['admin', 'pharmacist']))
                 <div class="mb-0.5 space-y-1">
@@ -159,7 +159,7 @@
                 </div>
             @endif
 
-            {{-- Laporan (admin & pharmacist only) --}}
+            {{-- Laporan (admin & apoteker saja) --}}
             @if (in_array(auth()->user()->role, ['admin', 'pharmacist']))
                 @php $isLaporan = request()->routeIs('laporan.index'); @endphp
                 <div class="group/nav relative mb-0.5">
@@ -179,7 +179,7 @@
                 </div>
             @endif
 
-            {{-- User Management (admin only) --}}
+            {{-- Manajemen Pengguna (admin saja) --}}
             @if (auth()->user()->role === 'admin')
                 @php $isUsers = request()->routeIs('admin.users'); @endphp
                 <div class="group/nav relative mb-0.5">
@@ -201,7 +201,7 @@
 
         </nav>
 
-        {{-- User info + logout --}}
+        {{-- Info pengguna + logout --}}
         <div class="border-t-2 border-[var(--color-brutal)] p-2">
             <div class="group/nav relative flex items-center gap-2.5 rounded-lg px-2.5 py-2">
                 <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary-soft)] text-xs font-bold text-[var(--color-primary-contrast)] border-2 border-[var(--color-brutal)] shadow-[1px_1px_0_var(--color-brutal)]">
@@ -219,17 +219,17 @@
                         </svg>
                     </button>
                 </form>
-                {{-- Tooltip nama user saat collapsed --}}
+                {{-- Tooltip nama pengguna saat diciutkan --}}
                 <span x-show="!sidebarOpen" class="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-md border border-[var(--color-brutal)] bg-[var(--color-brutal)] px-2 py-1 text-xs font-medium text-[var(--color-sidebar-text)] opacity-0 shadow transition-opacity group-hover/nav:opacity-100">{{ auth()->user()->name }}</span>
             </div>
         </div>
     </aside>
 
-    {{-- ══════════════════════════════════════════════
-         MAIN CONTENT AREA
-    ══════════════════════════════════════════════ --}}
+        {{-- ══════════════════════════════════════════════
+             AREA KONTEN UTAMA
+        ══════════════════════════════════════════════ --}}
     <div class="flex min-w-0 flex-1 flex-col">
-        {{-- Top bar --}}
+        {{-- Bilah atas --}}
         <header class="flex h-14 shrink-0 items-center justify-between border-b-2 border-[var(--color-brutal)] bg-[var(--color-surface)] px-6">
             <h1 class="text-base font-bold text-[var(--color-ink)]">{{ $title ?? 'Sistem Internal' }}</h1>
             <p class="text-xs font-medium text-[var(--color-muted)]">{{ now()->translatedFormat('l, d F Y') }}</p>

@@ -1,19 +1,20 @@
 <?php
 
+/** Feature test untuk halaman dashboard internal apotek: akses guest dan authenticated user. */
+
 use App\Models\User;
 use App\Services\DashboardService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-/**
- * Test akses sistem.dashboard (internal apotek), bukan Fortify default /dashboard.
- */
+// Test: guest diarahkan ke login saat akses dashboard
 test('guests are redirected to sistem login when accessing sistem dashboard', function () {
     $response = $this->get(route('sistem.dashboard'));
     $response->assertRedirect(route('sistem.login'));
 });
 
+// Test: user terautentikasi bisa mengunjungi dashboard
 test('authenticated users can visit the sistem dashboard', function () {
     $mock = Mockery::mock(DashboardService::class);
     $mock->shouldReceive('getTodayRevenue')->andReturn(0.0)->byDefault();

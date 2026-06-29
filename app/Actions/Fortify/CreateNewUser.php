@@ -8,12 +8,13 @@ use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
+/** Membuat pengguna baru. */
 class CreateNewUser implements CreatesNewUsers
 {
     use PasswordValidationRules, ProfileValidationRules;
 
     /**
-     * Validate and create a newly registered user.
+     * Memvalidasi dan membuat pengguna yang baru terdaftar.
      *
      * @param  array<string, string>  $input
      */

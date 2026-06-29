@@ -23,7 +23,7 @@
     --color-zinc-900: #171717;
     --color-zinc-950: #0a0a0a;
 
-    /* === BRAND: Soft Neubrutal Mint === */
+    /* === BRAND: Mint Neubrutal Lembut === */
     --color-primary: #14B8A6;
     --color-primary-hover: #0D9488;
     --color-primary-soft: #CCFBF1;
@@ -72,7 +72,7 @@
     }
 }
 
-/* === Utility neubrutal === */
+/* === Utilitas neubrutal === */
 @layer components {
     .card-brutal {
         background: var(--color-surface);
@@ -112,7 +112,7 @@
     .input-brutal:focus { outline: 2px solid var(--color-primary); outline-offset: 1px; }
 }
 
-/* === Override Flux bawaan (JANGAN dihapus) === */
+/* === Timpa Flux bawaan (JANGAN dihapus) === */
 [data-flux-field]:not(ui-radio, ui-checkbox) { @apply grid gap-2; }
 [data-flux-label] { @apply !mb-0 !leading-tight; }
 input:focus[data-flux-control],
@@ -122,7 +122,7 @@ select:focus[data-flux-control] {
 }
 [x-cloak] { display: none !important; }
 
-/* === Custom scrollbar === */
+/* === Scrollbar khusus === */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;

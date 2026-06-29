@@ -7,10 +7,13 @@ use App\Models\Sale;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Response;
 
+/**
+ * Membuat PDF struk untuk penjualan yang selesai.
+ */
 class StrukController extends Controller
 {
     /**
-     * Generate and stream a PDF receipt for the given sale.
+     * Membuat dan mengalirkan PDF struk untuk penjualan yang diberikan.
      */
     public function __invoke(Sale $sale): Response
     {

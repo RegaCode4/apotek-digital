@@ -14,12 +14,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'notes',
     'created_by',
 ])]
+/**
+ * Mencatat mutasi stok obat (masuk/keluar) dengan referensi transaksi.
+ */
 class StockMutation extends Model
 {
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Casting atribut ke tipe data tertentu.
      */
     protected function casts(): array
     {
@@ -29,7 +30,7 @@ class StockMutation extends Model
     }
 
     /**
-     * Get the medicine that owns the stock mutation.
+     * Mendapatkan obat yang memiliki mutasi stok ini.
      */
     public function medicine(): BelongsTo
     {
@@ -37,7 +38,7 @@ class StockMutation extends Model
     }
 
     /**
-     * Get the user who created the stock mutation.
+     * Mendapatkan pengguna yang membuat mutasi stok ini.
      */
     public function createdBy(): BelongsTo
     {

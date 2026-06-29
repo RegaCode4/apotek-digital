@@ -7,10 +7,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Mengalihkan pengguna yang belum login ke halaman login.
+ */
 class EnsureAuthenticated
 {
     /**
-     * Handle an incoming request.
+     * Menangani permintaan masuk.
      *
      * @param  Closure(Request): (Response)  $next
      */

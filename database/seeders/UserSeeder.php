@@ -6,6 +6,9 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
+/**
+ * Seed users table with default admin, pharmacist, and cashier accounts.
+ */
 class UserSeeder extends Seeder
 {
     /**

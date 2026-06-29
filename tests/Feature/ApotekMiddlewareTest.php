@@ -1,11 +1,14 @@
 <?php
 
+/** Feature test untuk middleware auth.apotek dan role: akses guest, authenticated, dan role-based. */
+
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
 
 uses(RefreshDatabase::class);
 
+// Test: middleware auth.apotek mengarahkan guest ke login
 test('auth.apotek middleware redirects guests to sistem login', function () {
     Route::middleware(['auth.apotek'])->get('/_test/auth-apotek', fn () => 'protected');
 
@@ -14,6 +17,7 @@ test('auth.apotek middleware redirects guests to sistem login', function () {
     $response->assertRedirect(route('sistem.login'));
 });
 
+// Test: middleware auth.apotek mengizinkan user terautentikasi
 test('auth.apotek middleware allows authenticated users', function () {
     Route::middleware(['auth.apotek'])->get('/_test/auth-apotek', fn () => 'protected');
 
@@ -25,6 +29,7 @@ test('auth.apotek middleware allows authenticated users', function () {
     $response->assertSee('protected');
 });
 
+// Test: middleware role mengizinkan user dengan role cocok
 test('role middleware allows users with matching role', function () {
     Route::middleware(['auth.apotek', 'role:admin,pharmacist'])->get('/_test/role-protected', fn () => 'role ok');
 
@@ -35,6 +40,7 @@ test('role middleware allows users with matching role', function () {
     $this->actingAs($pharmacist)->get('/_test/role-protected')->assertOk();
 });
 
+// Test: middleware role mengembalikan 403 untuk role tidak cocok
 test('role middleware aborts with 403 for users without matching role', function () {
     Route::middleware(['auth.apotek', 'role:admin,pharmacist'])->get('/_test/role-protected', fn () => 'role ok');
 

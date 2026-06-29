@@ -11,7 +11,7 @@
         </p>
     </div>
 
-    {{-- ── Filter panel ── --}}
+    {{-- ── Panel filter ── --}}
     <div class="mb-6 card-brutal p-4">
         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <div>
@@ -91,7 +91,7 @@
                             };
                         @endphp
 
-                        {{-- Main row ── clickable to expand ── --}}
+                        {{-- Baris utama ── klik untuk memperluas ── --}}
                         <tr
                             wire:key="sale-{{ $sale->id }}"
                             wire:click="toggleDetail({{ $sale->id }})"
@@ -120,7 +120,7 @@
                             </td>
                             <td class="px-4 py-3 text-[var(--color-ink)] font-medium">{{ $sale->cashier?->name ?? '—' }}</td>
                             <td class="whitespace-nowrap px-4 py-3 text-center">
-                                {{-- Stop click propagation so row expand doesn't fire when clicking the link --}}
+                                {{-- Hentikan propagasi klik agar baris tidak meluas saat mengeklik tautan --}}
                                 <a
                                     href="{{ route('pos.struk', $sale->id) }}"
                                     target="_blank"
@@ -134,7 +134,7 @@
                                     Struk
                                 </a>
 
-                                {{-- Expand indicator --}}
+                                {{-- Indikator perluas --}}
                                 <span class="ml-1 inline-flex items-center text-[var(--color-muted)]">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -149,7 +149,7 @@
                             </td>
                         </tr>
 
-                        {{-- Expanded detail row ── sale items accordion ── --}}
+                        {{-- Baris detail yang diperluas ── akordeon item penjualan ── --}}
                         @if ($isExpanded)
                             <tr wire:key="detail-{{ $sale->id }}">
                                 <td colspan="8" class="bg-[var(--color-surface-muted)] px-6 py-4">
@@ -197,7 +197,7 @@
                                             </tbody>
                                         </table>
 
-                                        {{-- Summary footer ── --}}
+                                        {{-- Footer ringkasan ── --}}
                                         <div class="border-t-2 border-[var(--color-brutal)] bg-[var(--color-surface-muted)] px-4 py-3">
                                             <div class="flex flex-wrap items-center justify-end gap-x-6 gap-y-2 text-xs font-semibold">
                                                 <span class="text-[var(--color-muted)]">

@@ -60,12 +60,12 @@
                 <path fill-rule="evenodd" d="{{ $styles['path'] }}" clip-rule="evenodd"/>
             </svg>
 
-            {{-- Message --}}
+            {{-- Pesan --}}
             <p class="flex-1 text-sm font-medium {{ $styles['text'] }}">
                 {{ $toast['message'] }}
             </p>
 
-            {{-- Close button --}}
+            {{-- Tombol tutup --}}
             <button
                 type="button"
                 @click="show = false; setTimeout(() => $wire.dismiss({{ $toast['id'] }}), 200)"

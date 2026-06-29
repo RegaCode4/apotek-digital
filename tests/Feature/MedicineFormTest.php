@@ -1,5 +1,7 @@
 <?php
 
+/** Feature test untuk form obat (MedicineForm): create, edit, validasi, dan stock mutation. */
+
 use App\Livewire\Inventaris\MedicineForm;
 use App\Livewire\Inventaris\MedicineIndex;
 use App\Models\Medicine;
@@ -10,6 +12,7 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
+// Test: membuat obat baru dan mencatat stock mutation awal
 test('medicine form can create a new medicine and record initial stock mutation', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
 
@@ -41,6 +44,7 @@ test('medicine form can create a new medicine and record initial stock mutation'
         ->created_by->toBe($pharmacist->id);
 });
 
+// Test: mengedit obat dan mencatat mutasi jika stok bertambah
 test('medicine form can edit medicine and record stock increase mutation only', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
 
@@ -69,6 +73,7 @@ test('medicine form can edit medicine and record stock increase mutation only', 
         ->created_by->toBe($pharmacist->id);
 });
 
+// Test: tidak mencatat mutasi jika stok tidak bertambah saat edit
 test('medicine form does not record stock mutation when stock is not increased on edit', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
 
@@ -87,6 +92,7 @@ test('medicine form does not record stock mutation when stock is not increased o
     expect($medicine->fresh()->stock)->toBe(15);
 });
 
+// Test: validasi field required pada form obat
 test('medicine form validates required fields', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
 
@@ -100,6 +106,7 @@ test('medicine form validates required fields', function () {
         ->assertHasErrors(['name', 'price', 'stock']);
 });
 
+// Test: form mengirim event sukses setelah simpan
 test('medicine form dispatches success message after save', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
 
@@ -115,6 +122,7 @@ test('medicine form dispatches success message after save', function () {
         ->assertDispatched('medicine-saved', message: 'Obat berhasil ditambahkan.');
 });
 
+// Test: index menampilkan pesan sukses setelah event medicine-saved
 test('medicine index shows success message after medicine saved event', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
 
@@ -124,6 +132,7 @@ test('medicine index shows success message after medicine saved event', function
         ->assertSee('Obat berhasil ditambahkan.');
 });
 
+// Test: index merefresh daftar setelah event medicine-saved
 test('medicine index refreshes list after medicine saved event', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
 

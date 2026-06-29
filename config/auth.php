@@ -1,3 +1,4 @@
+/**Konfigurasi autentikasi: guard, provider, password reset, dan throttle.*/
 <?php
 
 use App\Models\User;

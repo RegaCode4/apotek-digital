@@ -1,3 +1,4 @@
+/**Konfigurasi database: koneksi, driver, host, port, dan pengaturan migration.*/
 <?php
 
 use Illuminate\Support\Str;

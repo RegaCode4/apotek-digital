@@ -1,5 +1,7 @@
 <?php
 
+/** Feature test untuk manajemen kategori (CategoryManagement): akses, CRUD, dan search. */
+
 use App\Livewire\Inventaris\CategoryManagement;
 use App\Models\Category;
 use App\Models\Medicine;
@@ -11,6 +13,7 @@ uses(RefreshDatabase::class);
 
 // ── Route access ──────────────────────────────────────────────────────────────
 
+// Test: admin bisa akses halaman kategori
 test('admin can access category management page', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -19,6 +22,7 @@ test('admin can access category management page', function () {
         ->assertOk();
 });
 
+// Test: pharmacist bisa akses halaman kategori
 test('pharmacist can access category management page', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
 
@@ -27,6 +31,7 @@ test('pharmacist can access category management page', function () {
         ->assertOk();
 });
 
+// Test: cashier tidak bisa akses halaman kategori
 test('cashier cannot access category management page', function () {
     $cashier = User::factory()->create(['role' => 'cashier']);
 
@@ -37,6 +42,7 @@ test('cashier cannot access category management page', function () {
 
 // ── Create ────────────────────────────────────────────────────────────────────
 
+// Test: membuat kategori baru
 test('can create a new category', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -53,6 +59,7 @@ test('can create a new category', function () {
     expect(Category::where('name', 'Sistem Imun')->exists())->toBeTrue();
 });
 
+// Test: validasi nama kategori wajib diisi
 test('category name is required', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -64,6 +71,7 @@ test('category name is required', function () {
         ->assertHasErrors(['formName']);
 });
 
+// Test: nama kategori harus unik saat create
 test('category name must be unique on create', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     Category::create(['name' => 'Sistem Imun', 'description' => null]);
@@ -78,6 +86,7 @@ test('category name must be unique on create', function () {
 
 // ── Edit ──────────────────────────────────────────────────────────────────────
 
+// Test: mengedit kategori yang sudah ada
 test('can edit an existing category', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $category = Category::create(['name' => 'Lama', 'description' => null]);
@@ -94,6 +103,7 @@ test('can edit an existing category', function () {
     expect($category->fresh()->name)->toBe('Baru');
 });
 
+// Test: validasi nama unik saat edit, tapi boleh pakai nama yang sama
 test('category name must be unique on edit but allows keeping same name', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $category = Category::create(['name' => 'Sistem Imun', 'description' => null]);
@@ -110,6 +120,7 @@ test('category name must be unique on edit but allows keeping same name', functi
 
 // ── Delete ────────────────────────────────────────────────────────────────────
 
+// Test: menghapus kategori yang tidak memiliki obat
 test('can delete a category with no medicines', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $category = Category::create(['name' => 'Hapus Saya', 'description' => null]);
@@ -125,6 +136,7 @@ test('can delete a category with no medicines', function () {
     expect(Category::find($category->id))->toBeNull();
 });
 
+// Test: tidak bisa menghapus kategori yang masih dipakai obat
 test('cannot delete a category that is used by medicines', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $category = Category::create(['name' => 'Dipakai', 'description' => null]);
@@ -144,6 +156,7 @@ test('cannot delete a category that is used by medicines', function () {
 
 // ── Search ────────────────────────────────────────────────────────────────────
 
+// Test: mencari kategori berdasarkan nama
 test('can search categories by name', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     Category::create(['name' => 'Sistem Kardiovaskular', 'description' => null]);

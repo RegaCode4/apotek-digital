@@ -2,17 +2,18 @@
 
 namespace App\Contracts;
 
+/** Kontrak layanan BPJS. */
 interface BpjsServiceInterface
 {
     /**
-     * Verify a BPJS member by their membership number.
+     * Memverifikasi anggota BPJS berdasarkan nomor kepesertaannya.
      *
      * @return array{status: string, name: string|null, kelas: string|null}
      */
     public function verifyMember(string $bpjsNumber): array;
 
     /**
-     * Check whether a medicine is listed on the National Formulary (Fornas).
+     * Memeriksa apakah suatu obat terdaftar dalam Formularium Nasional (Fornas).
      */
     public function isFornas(int $medicineId): bool;
 }

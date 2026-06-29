@@ -28,15 +28,15 @@
         </a>
     </div>
 
-    {{-- ── KPI Panel ── --}}
+    {{-- ── Panel KPI ── --}}
     <livewire:dashboard.kpi-panel />
 
-    {{-- ── Sales Chart ── --}}
+    {{-- ── Grafik Penjualan ── --}}
     <div class="mt-6">
         <livewire:dashboard.sales-chart />
     </div>
 
-    {{-- ── Bottom Panel: Transaksi Terbaru + Ringkasan Pembayaran ── --}}
+    {{-- ── Panel Bawah: Transaksi Terbaru + Ringkasan Pembayaran ── --}}
     <div class="mt-6 grid gap-6 lg:grid-cols-2">
 
         {{-- Transaksi Terbaru --}}
@@ -85,7 +85,7 @@
             </div>
         </div>
 
-        {{-- Ringkasan Pendapatan per Payment Method (hari ini) --}}
+        {{-- Ringkasan Pendapatan per Metode Pembayaran (hari ini) --}}
         <div class="card-brutal">
             <div class="border-b-2 border-[var(--color-brutal)] bg-[var(--color-surface-muted)] rounded-t-[var(--radius-brutal)] px-4 py-3">
                 <h3 class="text-sm font-bold text-[var(--color-ink)]">Pendapatan per Metode Bayar</h3>
@@ -119,7 +119,7 @@
                                 <p class="text-xs text-[var(--color-muted)]">{{ $row->count }} transaksi</p>
                             </div>
                         </div>
-                        {{-- Progress bar --}}
+                        {{-- Bilah progres --}}
                         <div class="mt-2 h-2.5 w-full overflow-hidden rounded-full border-2 border-[var(--color-brutal)] bg-[var(--color-surface-muted)]">
                             <div class="h-full bg-[var(--color-primary)] transition-all" style="width: {{ $pct }}%"></div>
                         </div>

@@ -17,7 +17,7 @@
         </button>
     </div>
 
-    {{-- ── Search ── --}}
+    {{-- ── Cari ── --}}
     <div class="mb-6 card-brutal p-4 bg-[var(--color-surface)]">
         <div>
             <label for="search" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Cari User</label>
@@ -96,7 +96,7 @@
                                         Edit
                                     </button>
 
-                                    {{-- Toggle active --}}
+                                    {{-- Alihkan aktif --}}
                                     @if (! $isSelf)
                                         <button
                                             type="button"
@@ -108,7 +108,7 @@
                                         </button>
                                     @endif
 
-                                    {{-- Reset password --}}
+                                    {{-- Atur ulang kata sandi --}}
                                     <button
                                         type="button"
                                         wire:click="resetPassword({{ $user->id }})"
@@ -204,7 +204,7 @@
                         @enderror
                     </div>
 
-                    {{-- Password (create only) --}}
+                    {{-- Kata sandi (hanya buat) --}}
                     @if (! $editingUserId)
                         <div>
                             <label for="formPassword" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">
@@ -242,7 +242,7 @@
                         @enderror
                     </div>
 
-                    {{-- Status aktif (edit only) --}}
+                    {{-- Status aktif (hanya edit) --}}
                     @if ($editingUserId)
                         <div class="flex items-center justify-between card-brutal px-3 py-2.5 bg-[var(--color-surface-muted)]">
                             <label for="formIsActive" class="text-sm font-bold text-[var(--color-ink)]">
@@ -267,7 +267,7 @@
                     @endif
                 </div>
 
-                {{-- Actions --}}
+                {{-- Aksi --}}
                 <div class="mt-6 flex justify-end gap-2.5">
                     <button
                         type="button"

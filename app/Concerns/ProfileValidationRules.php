@@ -6,10 +6,11 @@ use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rule;
 
+/** Aturan validasi profil. */
 trait ProfileValidationRules
 {
     /**
-     * Get the validation rules used to validate user profiles.
+     * Mendapatkan aturan validasi yang digunakan untuk memvalidasi profil pengguna.
      *
      * @return array<string, array<int, ValidationRule|array<mixed>|string>>
      */
@@ -22,7 +23,7 @@ trait ProfileValidationRules
     }
 
     /**
-     * Get the validation rules used to validate user names.
+     * Mendapatkan aturan validasi yang digunakan untuk memvalidasi nama pengguna.
      *
      * @return array<int, ValidationRule|array<mixed>|string>
      */
@@ -32,7 +33,7 @@ trait ProfileValidationRules
     }
 
     /**
-     * Get the validation rules used to validate user emails.
+     * Mendapatkan aturan validasi yang digunakan untuk memvalidasi email pengguna.
      *
      * @return array<int, ValidationRule|array<mixed>|string>
      */

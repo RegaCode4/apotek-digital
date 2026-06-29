@@ -15,6 +15,7 @@ use Livewire\Component;
 
 #[Layout('layouts.sistem')]
 #[Title('Stok Opname')]
+/** Stok Opname — penyesuaian stok fisik seluruh obat. */
 class StokOpname extends Component
 {
     /** @var array<int, int> */
@@ -24,11 +25,13 @@ class StokOpname extends Component
 
     public ?string $successMessage = null;
 
+    /** Inisialisasi stok fisik dari nilai stok database. */
     public function mount(): void
     {
         $this->initializePhysicalStocks();
     }
 
+    /** Simpan semua penyesuaian stok sekaligus. */
     public function saveAllAdjustments(): void
     {
         $this->validate([
@@ -82,6 +85,7 @@ class StokOpname extends Component
         return $this->medicines();
     }
 
+    /** Waktu opname terakhir dari mutasi tipe adjustment. */
     public function getLastOpnameAtProperty(): ?Carbon
     {
         $lastOpname = StockMutation::query()
@@ -92,6 +96,7 @@ class StokOpname extends Component
         return $lastOpname ? Carbon::parse($lastOpname) : null;
     }
 
+    /** Menampilkan halaman stok opname. */
     public function render(): View
     {
         return view('livewire.inventaris.stok-opname', [
@@ -108,6 +113,7 @@ class StokOpname extends Component
         return Medicine::query()->orderBy('name')->get();
     }
 
+    /** Mengatur stok fisik awal sama dengan stok database. */
     protected function initializePhysicalStocks(): void
     {
         $this->physicalStocks = $this->medicines()

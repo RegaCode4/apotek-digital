@@ -17,7 +17,7 @@
         </button>
     </div>
 
-    {{-- ── Search ── --}}
+    {{-- ── Cari ── --}}
     <div class="mb-4 card-brutal p-4 bg-[var(--color-surface)]">
         <input
             type="search"

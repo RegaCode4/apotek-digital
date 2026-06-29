@@ -1,5 +1,5 @@
 <div>
-    {{-- Chart.js via CDN — loaded once per page via @assets --}}
+    {{-- Chart.js via CDN — dimuat sekali per halaman melalui @assets --}}
     @assets
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     @endassets
@@ -7,13 +7,13 @@
     <div class="grid gap-6 lg:grid-cols-3">
 
         {{-- ══════════════════════════════════════════════════
-             LINE CHART — Penjualan Periodik (2/3 width)
+             GRAFIK GARIS — Penjualan Periodik (2/3 lebar)
         ═══════════════════════════════════════════════════ --}}
         <div class="lg:col-span-2 card-brutal p-4">
             <div class="mb-4 flex items-center justify-between gap-3">
                 <h3 class="text-sm font-bold text-[var(--color-ink)]">Grafik Penjualan</h3>
 
-                {{-- Period toggle --}}
+                {{-- Toggle periode --}}
                 <div class="flex rounded-lg border-2 border-[var(--color-brutal)] bg-[var(--color-surface-muted)] p-0.5 gap-0.5" role="group" aria-label="Pilih periode">
                     @foreach (['daily' => 'Harian', 'weekly' => 'Mingguan', 'monthly' => 'Bulanan'] as $value => $label)
                         <button
@@ -39,7 +39,7 @@
                     aria-label="Grafik penjualan {{ ['daily'=>'7 hari','weekly'=>'8 minggu','monthly'=>'12 bulan'][$period] }}"
                     role="img"
                 ></canvas>
-                {{-- Loading overlay --}}
+                {{-- Overlay pemuatan --}}
                 <div
                     wire:loading
                     wire:target="setPeriod"
@@ -54,7 +54,7 @@
         </div>
 
         {{-- ══════════════════════════════════════════════════
-             BAR CHART — Top 5 Obat Terlaris (1/3 width)
+             GRAFIK BATANG — Top 5 Obat Terlaris (1/3 lebar)
         ═══════════════════════════════════════════════════ --}}
         <div class="card-brutal p-4">
             <h3 class="mb-4 text-sm font-bold text-[var(--color-ink)]">Top 5 Obat Terlaris</h3>

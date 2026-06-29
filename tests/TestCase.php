@@ -2,6 +2,12 @@
 
 namespace Tests;
 
+/**
+ * Base TestCase untuk aplikasi Apotek Digital.
+ * Menyediakan helper skipUnlessFortifyHas untuk men-skip test
+ * jika fitur Fortify tertentu tidak aktif.
+ */
+
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Laravel\Fortify\Features;
 

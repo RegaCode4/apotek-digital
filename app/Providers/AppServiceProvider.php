@@ -12,10 +12,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
+/** Penyedia layanan aplikasi. */
 class AppServiceProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
+     * Mendaftarkan layanan aplikasi apa pun.
      */
     public function register(): void
     {
@@ -25,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
     }
 
     /**
-     * Bootstrap any application services.
+     * Mem-bootstrap layanan aplikasi apa pun.
      */
     public function boot(): void
     {
@@ -33,7 +34,7 @@ class AppServiceProvider extends ServiceProvider
     }
 
     /**
-     * Configure default behaviors for production-ready applications.
+     * Mengonfigurasi perilaku bawaan untuk aplikasi siap-produksi.
      */
     protected function configureDefaults(): void
     {

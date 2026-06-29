@@ -1,10 +1,13 @@
 <?php
 
+/** Unit test untuk model StockMutation: fillable attributes dan casts. */
+
 use App\Models\StockMutation;
 use Tests\TestCase;
 
 uses(TestCase::class);
 
+// Test: fillable attributes stock mutation
 test('stock mutation has correct fillable attributes', function () {
     $stockMutation = new StockMutation;
 
@@ -18,6 +21,7 @@ test('stock mutation has correct fillable attributes', function () {
     ]);
 });
 
+// Test: casts stock mutation
 test('stock mutation has correct casts', function () {
     $stockMutation = new StockMutation;
 

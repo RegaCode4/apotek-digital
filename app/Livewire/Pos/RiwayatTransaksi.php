@@ -15,11 +15,12 @@ use Livewire\WithPagination;
 
 #[Layout('layouts.sistem')]
 #[Title('Riwayat Transaksi')]
+/** Riwayat Transaksi — daftar penjualan dengan filter dan pagination. */
 class RiwayatTransaksi extends Component
 {
     use WithPagination;
 
-    // ── Filters ──────────────────────────────────────────────
+    // ── Filter ────────────────────────────────────────────────
     public string $search = '';
 
     public string $paymentMethod = '';
@@ -28,44 +29,48 @@ class RiwayatTransaksi extends Component
 
     public string $dateTo = '';
 
-    // ── UI state ─────────────────────────────────────────────
-    /** @var int|null ID of the expanded sale row */
+    // ── State UI ─────────────────────────────────────────────
+    /** @var int|null ID baris penjualan yang diperluas */
     public ?int $expandedSaleId = null;
 
-    // ── Reset page on filter change ───────────────────────────
+    // ── Reset halaman saat filter berubah ─────────────────────
 
+    /** Reset halaman saat filter search berubah. */
     public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
+    /** Reset halaman saat filter payment method berubah. */
     public function updatingPaymentMethod(): void
     {
         $this->resetPage();
     }
 
+    /** Reset halaman saat filter tanggal awal berubah. */
     public function updatingDateFrom(): void
     {
         $this->resetPage();
     }
 
+    /** Reset halaman saat filter tanggal akhir berubah. */
     public function updatingDateTo(): void
     {
         $this->resetPage();
     }
 
-    // ── Actions ───────────────────────────────────────────────
+    // ── Aksi ─────────────────────────────────────────────────
 
     /**
-     * Toggle the detail accordion for a sale row.
-     * Clicking the same row again collapses it.
+     * Membuka/menutup accordion detail untuk baris penjualan.
+     * Mengklik baris yang sama akan menutupnya kembali.
      */
     public function toggleDetail(int $saleId): void
     {
         $this->expandedSaleId = $this->expandedSaleId === $saleId ? null : $saleId;
     }
 
-    // ── Computed properties ───────────────────────────────────
+    // ── Properti komputasi ────────────────────────────────────
 
     /**
      * @return LengthAwarePaginator<int, Sale>
@@ -79,8 +84,9 @@ class RiwayatTransaksi extends Component
             ->paginate(20);
     }
 
-    // ── Render ────────────────────────────────────────────────
+    // ── Tampilan ───────────────────────────────────────────────
 
+    /** Render halaman riwayat transaksi. */
     public function render(): View
     {
         return view('livewire.pos.riwayat-transaksi', [
@@ -88,7 +94,7 @@ class RiwayatTransaksi extends Component
         ]);
     }
 
-    // ── Helpers ───────────────────────────────────────────────
+    // ── Pembantu ──────────────────────────────────────────────
 
     /**
      * @return Builder<Sale>

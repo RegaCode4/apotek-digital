@@ -17,15 +17,16 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 
 #[Fillable(['name', 'email', 'password', 'role', 'is_active'])]
 #[Hidden(['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'])]
+/**
+ * Model pengguna sistem dengan role admin, apoteker, atau kasir.
+ */
 class User extends Authenticatable implements PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Casting atribut ke tipe data tertentu.
      */
     protected function casts(): array
     {
@@ -37,7 +38,7 @@ class User extends Authenticatable implements PasskeyUser
     }
 
     /**
-     * Check if the user is an admin.
+     * Memeriksa apakah pengguna adalah admin.
      */
     public function isAdmin(): bool
     {
@@ -45,7 +46,7 @@ class User extends Authenticatable implements PasskeyUser
     }
 
     /**
-     * Check if the user is a pharmacist.
+     * Memeriksa apakah pengguna adalah apoteker.
      */
     public function isPharmacist(): bool
     {
@@ -53,7 +54,7 @@ class User extends Authenticatable implements PasskeyUser
     }
 
     /**
-     * Check if the user is a cashier.
+     * Memeriksa apakah pengguna adalah kasir.
      */
     public function isCashier(): bool
     {
@@ -61,7 +62,7 @@ class User extends Authenticatable implements PasskeyUser
     }
 
     /**
-     * Scope a query to only include active users.
+     * Scope query hanya untuk pengguna aktif.
      */
     public function scopeActive(Builder $query): void
     {
@@ -69,7 +70,7 @@ class User extends Authenticatable implements PasskeyUser
     }
 
     /**
-     * Get the user's initials
+     * Mendapatkan inisial pengguna
      */
     public function initials(): string
     {

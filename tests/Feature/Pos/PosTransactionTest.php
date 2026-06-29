@@ -1,5 +1,7 @@
 <?php
 
+/** Feature test untuk transaksi POS (PosService): stok, validasi, mutasi, invoice, dan BPJS. */
+
 use App\Models\Medicine;
 use App\Models\Sale;
 use App\Models\StockMutation;
@@ -64,6 +66,7 @@ function cashier(): User
 
 // ── Tests ──────────────────────────────────────────────────────────────────────
 
+// Test: transaksi sukses mengurangi stok obat
 test('test_successful_transaction_reduces_stock', function () {
     $medicine = Medicine::factory()->create(['stock' => 20, 'price' => 10000]);
     $cashier = cashier();
@@ -78,6 +81,7 @@ test('test_successful_transaction_reduces_stock', function () {
     expect($medicine->fresh()->stock)->toBe(15);
 });
 
+// Test: transaksi gagal jika stok tidak mencukupi
 test('test_transaction_fails_when_stock_insufficient', function () {
     $medicine = Medicine::factory()->create(['stock' => 3, 'price' => 10000]);
     $cashier = cashier();
@@ -93,6 +97,7 @@ test('test_transaction_fails_when_stock_insufficient', function () {
     expect($medicine->fresh()->stock)->toBe(3);
 });
 
+// Test: obat resep memerlukan nomor resep
 test('test_prescription_medicine_requires_prescription_no', function () {
     $medicine = Medicine::factory()->create([
         'stock' => 10,
@@ -118,6 +123,7 @@ test('test_prescription_medicine_requires_prescription_no', function () {
     expect($sale->saleItems->first()->prescription_no)->toBe('RES-001');
 });
 
+// Test: transaksi mencatat stock mutation
 test('test_transaction_creates_stock_mutation_record', function () {
     $medicine = Medicine::factory()->create(['stock' => 15, 'price' => 8000]);
     $cashier = cashier();
@@ -139,6 +145,7 @@ test('test_transaction_creates_stock_mutation_record', function () {
     expect($mutation->created_by)->toBe($cashier->id);
 });
 
+// Test: nomor invoice unik per hari dan berformat INV-YYYYMMDD-NNN
 test('test_invoice_number_is_unique_per_day', function () {
     $medicine = Medicine::factory()->create(['stock' => 50, 'price' => 5000]);
     $cashier = cashier();
@@ -169,6 +176,7 @@ test('test_invoice_number_is_unique_per_day', function () {
     expect($seq2)->toBe($seq1 + 1);
 });
 
+// Test: transaksi BPJS menyimpan nomor klaim
 test('test_bpjs_transaction_saves_claim_no', function () {
     $medicine = Medicine::factory()->create(['stock' => 10, 'price' => 20000]);
     $cashier = cashier();

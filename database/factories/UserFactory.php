@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
+ * Factory for generating User model instances.
+ *
  * @extends Factory<User>
  */
 class UserFactory extends Factory

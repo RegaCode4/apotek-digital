@@ -24,15 +24,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'requires_prescription',
     'description',
 ])]
+/**
+ * Representasi obat dalam sistem dengan informasi stok, harga, dan kategori.
+ */
 class Medicine extends Model
 {
     /** @use HasFactory<MedicineFactory> */
     use HasFactory;
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Casting atribut ke tipe data tertentu.
      */
     protected function casts(): array
     {
@@ -44,7 +45,7 @@ class Medicine extends Model
     }
 
     /**
-     * Get the category this medicine belongs to.
+     * Mendapatkan kategori dari obat ini.
      */
     public function category(): BelongsTo
     {
@@ -52,7 +53,7 @@ class Medicine extends Model
     }
 
     /**
-     * Get the stock mutations for the medicine.
+     * Mendapatkan mutasi stok untuk obat ini.
      */
     public function stockMutations(): HasMany
     {
@@ -60,7 +61,7 @@ class Medicine extends Model
     }
 
     /**
-     * Get the batches for the medicine.
+     * Mendapatkan batch untuk obat ini.
      */
     public function medicineBatches(): HasMany
     {
@@ -68,7 +69,7 @@ class Medicine extends Model
     }
 
     /**
-     * Get the sales that include this medicine.
+     * Mendapatkan penjualan yang mencakup obat ini.
      */
     public function sales(): BelongsToMany
     {
@@ -76,7 +77,7 @@ class Medicine extends Model
     }
 
     /**
-     * Scope a query to only include medicines at or below minimum stock.
+     * Filter obat yang stoknya sudah mencapai batas minimum.
      */
     public function scopeLowStock(Builder $query): void
     {
@@ -84,7 +85,7 @@ class Medicine extends Model
     }
 
     /**
-     * Scope a query to only include medicines expiring within the given months.
+     * Filter obat yang akan kadaluwarsa dalam jumlah bulan tertentu.
      */
     public function scopeExpiringSoon(Builder $query, int $months = 3): void
     {

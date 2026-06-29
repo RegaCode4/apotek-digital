@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * File: console.php
+ *
+ * Pendaftaran Artisan commands kustom untuk aplikasi apotek-digital.
+ */
+
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 

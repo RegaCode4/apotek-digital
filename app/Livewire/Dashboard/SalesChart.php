@@ -7,30 +7,25 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
+/** Widget grafik penjualan dengan pergantian periode */
 class SalesChart extends Component
 {
-    // ── State ─────────────────────────────────────────────────
     public string $period = 'weekly';
 
-    /** @var array{labels: list<string>, data: list<float>} */
+    /** Label grafik dan nilai data */
     public array $chartData = ['labels' => [], 'data' => []];
 
-    /** @var Collection<int, object> */
+    /** Daftar obat terlaris */
     public Collection $topMedicines;
 
-    // ── Lifecycle ─────────────────────────────────────────────
-
+    /** Memuat data grafik awal dan obat terlaris */
     public function mount(DashboardService $dashboard): void
     {
         $this->chartData = $dashboard->getSalesChartData($this->period);
         $this->topMedicines = $dashboard->getTopSellingMedicines(5);
     }
 
-    // ── Actions ───────────────────────────────────────────────
-
-    /**
-     * Switch chart period and push fresh data to the browser via a JS event.
-     */
+    /** Mengganti periode grafik dan mengirim data yang diperbarui ke browser */
     public function setPeriod(string $period, DashboardService $dashboard): void
     {
         $this->period = $period;
@@ -39,8 +34,7 @@ class SalesChart extends Component
         $this->dispatch('update-sales-chart', chartData: $this->chartData);
     }
 
-    // ── Render ────────────────────────────────────────────────
-
+    /** Menampilkan tampilan grafik penjualan */
     public function render(): View
     {
         return view('livewire.dashboard.sales-chart');

@@ -21,14 +21,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'notes',
     'sale_date',
 ])]
+/**
+ * Transaksi penjualan obat dengan informasi pembeli, kasir, dan metode pembayaran.
+ */
 class Sale extends Model
 {
     use HasFactory;
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Casting atribut ke tipe data tertentu.
      */
     protected function casts(): array
     {
@@ -42,7 +43,7 @@ class Sale extends Model
     }
 
     /**
-     * Get the cashier who processed this sale.
+     * Mendapatkan kasir yang memproses penjualan ini.
      */
     public function cashier(): BelongsTo
     {
@@ -50,7 +51,7 @@ class Sale extends Model
     }
 
     /**
-     * Get the line items for this sale.
+     * Mendapatkan item baris untuk penjualan ini.
      */
     public function saleItems(): HasMany
     {
@@ -58,9 +59,7 @@ class Sale extends Model
     }
 
     /**
-     * Generate the next invoice number for today.
-     *
-     * Format: INV-YYYYMMDD-XXX (sequential per day, zero-padded to 3 digits)
+     * Membuat nomor invoice berikutnya untuk hari ini dengan format INV-YYYYMMDD-XXX.
      */
     public static function generateInvoiceNo(): string
     {

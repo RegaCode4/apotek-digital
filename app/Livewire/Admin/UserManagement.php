@@ -15,20 +15,18 @@ use Livewire\WithPagination;
 
 #[Layout('layouts.sistem')]
 #[Title('Manajemen User')]
+/** Halaman manajemen user dengan CRUD dan pencarian */
 class UserManagement extends Component
 {
     use WithPagination;
 
-    // ── Filter ───────────────────────────────────────────────
     public string $search = '';
 
-    // ── Modal state ───────────────────────────────────────────
     public bool $showModal = false;
 
     /** null = create mode, int = edit mode */
     public ?int $editingUserId = null;
 
-    // ── Form fields ───────────────────────────────────────────
     public string $formName = '';
 
     public string $formEmail = '';
@@ -39,15 +37,13 @@ class UserManagement extends Component
 
     public bool $formIsActive = true;
 
-    // ── Watchers ─────────────────────────────────────────────
-
+    /** Mereset paginasi saat pencarian berubah */
     public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    // ── Actions — table ───────────────────────────────────────
-
+    /** Mengganti status aktif user, mencegah nonaktif diri sendiri */
     public function toggleActive(int $userId): void
     {
         if ($userId === Auth::id()) {
@@ -63,6 +59,7 @@ class UserManagement extends Component
         $this->dispatch('notify', type: 'success', message: "User {$user->name} berhasil {$status}.");
     }
 
+    /** Mereset password user ke default */
     public function resetPassword(int $userId): void
     {
         $user = User::findOrFail($userId);
@@ -71,8 +68,7 @@ class UserManagement extends Component
         $this->dispatch('notify', type: 'warning', message: "Password {$user->name} direset ke 'password123'. Minta user segera ganti password.");
     }
 
-    // ── Actions — modal ───────────────────────────────────────
-
+    /** Membuka modal untuk membuat user baru */
     public function openCreateModal(): void
     {
         $this->resetForm();
@@ -80,6 +76,7 @@ class UserManagement extends Component
         $this->showModal = true;
     }
 
+    /** Membuka modal untuk mengedit user yang sudah ada */
     public function openEditModal(int $userId): void
     {
         $user = User::findOrFail($userId);
@@ -94,6 +91,7 @@ class UserManagement extends Component
         $this->showModal = true;
     }
 
+    /** Membuat atau memperbarui user dari form modal */
     public function save(): void
     {
         $rules = $this->editingUserId
@@ -105,7 +103,6 @@ class UserManagement extends Component
         if ($this->editingUserId) {
             $user = User::findOrFail($this->editingUserId);
 
-            // Prevent admin from deactivating themselves via form
             if ($this->editingUserId === Auth::id() && ! $validated['formIsActive']) {
                 $this->addError('formIsActive', 'Anda tidak bisa menonaktifkan akun Anda sendiri.');
 
@@ -137,6 +134,7 @@ class UserManagement extends Component
         $this->resetPage();
     }
 
+    /** Menutup modal tanpa menyimpan */
     public function closeModal(): void
     {
         $this->showModal = false;
@@ -144,11 +142,7 @@ class UserManagement extends Component
         $this->resetValidation();
     }
 
-    // ── Computed ─────────────────────────────────────────────
-
-    /**
-     * @return LengthAwarePaginator<int, User>
-     */
+    /** Daftar user dengan paginasi dan filter pencarian */
     public function getUsersProperty(): LengthAwarePaginator
     {
         return User::query()
@@ -162,8 +156,7 @@ class UserManagement extends Component
             ->paginate(15);
     }
 
-    // ── Render ────────────────────────────────────────────────
-
+    /** Menampilkan tampilan manajemen user */
     public function render(): View
     {
         return view('livewire.admin.user-management', [
@@ -171,8 +164,7 @@ class UserManagement extends Component
         ]);
     }
 
-    // ── Private helpers ───────────────────────────────────────
-
+    /** Mereset semua field form ke nilai default */
     private function resetForm(): void
     {
         $this->editingUserId = null;
@@ -183,9 +175,7 @@ class UserManagement extends Component
         $this->formIsActive = true;
     }
 
-    /**
-     * @return array<string, mixed>
-     */
+    /** Aturan validasi untuk membuat user baru */
     private function createRules(): array
     {
         return [
@@ -196,9 +186,7 @@ class UserManagement extends Component
         ];
     }
 
-    /**
-     * @return array<string, mixed>
-     */
+    /** Aturan validasi untuk mengedit user yang sudah ada */
     private function editRules(): array
     {
         return [

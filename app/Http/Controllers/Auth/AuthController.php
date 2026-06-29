@@ -9,10 +9,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
+/**
+ * Menangani autentikasi: form login, percobaan login, dan logout.
+ */
 class AuthController extends Controller
 {
     /**
-     * Show the login form.
+     * Menampilkan form login.
      */
     public function showLogin(): View
     {
@@ -20,7 +23,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Handle an authentication attempt.
+     * Menangani percobaan autentikasi.
      */
     public function login(Request $request): RedirectResponse
     {
@@ -49,7 +52,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Log the user out of the application.
+     * Melakukan logout pengguna dari aplikasi.
      */
     public function logout(Request $request): RedirectResponse
     {

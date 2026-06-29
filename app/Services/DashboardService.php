@@ -8,10 +8,13 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Metrik dashboard agregat: pendapatan, peringatan stok, grafik penjualan, dan produk terlaris.
+ */
 class DashboardService
 {
     /**
-     * Total revenue (grand_total) from sales today.
+     * Total pendapatan (grand_total) dari penjualan hari ini.
      */
     public function getTodayRevenue(): float
     {
@@ -21,7 +24,7 @@ class DashboardService
     }
 
     /**
-     * Number of transactions completed today.
+     * Jumlah transaksi yang selesai hari ini.
      */
     public function getTodayTransactionCount(): int
     {
@@ -31,7 +34,7 @@ class DashboardService
     }
 
     /**
-     * Medicines whose current stock is at or below their minimum stock threshold.
+     * Obat yang stok saat ini sama dengan atau di bawah ambang batas stok minimum.
      *
      * @return Collection<int, Medicine>
      */
@@ -44,7 +47,7 @@ class DashboardService
     }
 
     /**
-     * Medicines expiring within the given number of months.
+     * Obat yang kedaluwarsa dalam jumlah bulan yang ditentukan.
      *
      * @return Collection<int, Medicine>
      */
@@ -59,9 +62,9 @@ class DashboardService
     }
 
     /**
-     * Aggregated sales data for the chart.
+     * Data penjualan agregat untuk grafik.
      *
-     * Supported periods:
+     * Periode yang didukung:
      *   'daily'   — last 7 days,  label: "Sen 9 Jun"
      *   'weekly'  — last 8 weeks, label: "Minggu ke-N"
      *   'monthly' — last 12 months, label: "Jan 2025"
@@ -78,7 +81,7 @@ class DashboardService
     }
 
     /**
-     * Top N best-selling medicines by total quantity sold across all time.
+     * N obat terlaris berdasarkan total kuantitas yang terjual sepanjang waktu.
      *
      * @return Collection<int, object{medicine_id: int, name: string, total_qty: int}>
      */
@@ -97,7 +100,7 @@ class DashboardService
             ->get();
     }
 
-    // ── Private chart helpers ─────────────────────────────────────────────────
+    // ── Helper grafik privat ──────────────────────────────────────────────────
 
     /**
      * @return array{labels: list<string>, data: list<float>}
@@ -107,7 +110,7 @@ class DashboardService
         $labels = [];
         $data = [];
 
-        // Indonesianised short day names
+        // Nama hari dalam bahasa Indonesia
         $dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
 
         $rows = Sale::query()
@@ -151,7 +154,7 @@ class DashboardService
 
         for ($i = 7; $i >= 0; $i--) {
             $weekStart = now()->subWeeks($i)->startOfWeek();
-            // DATE_FORMAT('%Y-%u') produces e.g. "2025-03" — match Carbon's format
+            // DATE_FORMAT('%Y-%u') menghasilkan mis. "2025-03" — sesuai dengan format Carbon
             $yw = $weekStart->format('Y').'-'.str_pad($weekStart->format('W'), 2, '0', STR_PAD_LEFT);
 
             $labels[] = $weekStart->format('j M');

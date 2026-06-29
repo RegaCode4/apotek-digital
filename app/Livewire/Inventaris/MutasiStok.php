@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 #[Layout('layouts.sistem')]
 #[Title('Riwayat Mutasi Stok')]
+/** Riwayat Mutasi Stok — filter, search, pagination, dan export CSV. */
 class MutasiStok extends Component
 {
     use WithPagination;
@@ -26,26 +27,31 @@ class MutasiStok extends Component
 
     public string $dateTo = '';
 
+    /** Mereset halaman saat filter tipe berubah. */
     public function updatingType(): void
     {
         $this->resetPage();
     }
 
+    /** Mereset halaman saat filter pencarian berubah. */
     public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
+    /** Mereset halaman saat filter tanggal awal berubah. */
     public function updatingDateFrom(): void
     {
         $this->resetPage();
     }
 
+    /** Mereset halaman saat filter tanggal akhir berubah. */
     public function updatingDateTo(): void
     {
         $this->resetPage();
     }
 
+    /** Ekspor data mutasi ke file CSV. */
     public function exportCsv(): StreamedResponse
     {
         $filename = 'mutasi-stok-'.now()->format('Y-m-d-His').'.csv';
@@ -99,6 +105,7 @@ class MutasiStok extends Component
             ->paginate(20);
     }
 
+    /** Ubah kode tipe ke label bahasa Indonesia. */
     public function typeLabel(string $type): string
     {
         return match ($type) {
@@ -110,6 +117,7 @@ class MutasiStok extends Component
         };
     }
 
+    /** Menampilkan halaman riwayat mutasi stok. */
     public function render(): View
     {
         return view('livewire.inventaris.mutasi-stok', [

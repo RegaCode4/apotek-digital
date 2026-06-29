@@ -11,38 +11,41 @@ use Livewire\WithPagination;
 
 #[Layout('layouts.sistem')]
 #[Title('Manajemen Kategori Obat')]
+/** Manajemen Kategori Obat — CRUD kategori dengan konfirmasi hapus. */
 class CategoryManagement extends Component
 {
     use WithPagination;
 
-    // ── Filter ─────────────────────────────────────────────────
+    // ── Filter ────────────────────────────────────────────────
     public string $search = '';
 
-    // ── Modal state ────────────────────────────────────────────
+    // ── State modal ────────────────────────────────────────────
     public bool $showModal = false;
 
     public bool $showDeleteConfirm = false;
 
-    /** null = create mode, int = edit mode */
+    /** null = mode tambah, int = mode edit */
     public ?int $editingId = null;
 
-    /** ID category yang akan dihapus */
+    /** ID kategori yang akan dihapus */
     public ?int $deletingId = null;
 
-    // ── Form fields ────────────────────────────────────────────
+    // ── Field form ─────────────────────────────────────────────
     public string $formName = '';
 
     public string $formDescription = '';
 
-    // ── Watchers ──────────────────────────────────────────────
+    // ── Pemantau ──────────────────────────────────────────────
 
+    /** Reset halaman saat search berubah. */
     public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    // ── Actions — modal ───────────────────────────────────────
+    // ── Aksi — modal ───────────────────────────────────────────
 
+    /** Buka modal tambah kategori baru. */
     public function openCreateModal(): void
     {
         $this->resetForm();
@@ -51,6 +54,7 @@ class CategoryManagement extends Component
         $this->showModal = true;
     }
 
+    /** Buka modal edit kategori. */
     public function openEditModal(int $categoryId): void
     {
         $category = Category::findOrFail($categoryId);
@@ -62,6 +66,7 @@ class CategoryManagement extends Component
         $this->showModal = true;
     }
 
+    /** Tutup modal dan mereset form. */
     public function closeModal(): void
     {
         $this->showModal = false;
@@ -69,6 +74,7 @@ class CategoryManagement extends Component
         $this->resetValidation();
     }
 
+    /** Simpan kategori (buat/perbarui). */
     public function save(): void
     {
         $rules = [
@@ -111,20 +117,23 @@ class CategoryManagement extends Component
         $this->resetPage();
     }
 
-    // ── Actions — delete ──────────────────────────────────────
+    // ── Aksi — hapus ──────────────────────────────────────────
 
+    /** Tampilkan konfirmasi hapus kategori. */
     public function confirmDelete(int $categoryId): void
     {
         $this->deletingId = $categoryId;
         $this->showDeleteConfirm = true;
     }
 
+    /** Batal hapus kategori. */
     public function cancelDelete(): void
     {
         $this->deletingId = null;
         $this->showDeleteConfirm = false;
     }
 
+    /** Hapus kategori dari database (jika tidak dipakai obat). */
     public function delete(): void
     {
         if (! $this->deletingId) {
@@ -150,8 +159,9 @@ class CategoryManagement extends Component
         $this->resetPage();
     }
 
-    // ── Render ────────────────────────────────────────────────
+    // ── Tampilan ────────────────────────────────────────────────
 
+    /** Menampilkan halaman manajemen kategori. */
     public function render(): View
     {
         $categories = Category::query()
@@ -168,8 +178,9 @@ class CategoryManagement extends Component
         ]);
     }
 
-    // ── Private helpers ───────────────────────────────────────
+    // ── Pembantu privat ───────────────────────────────────────
 
+    /** Mereset field form ke nilai default. */
     private function resetForm(): void
     {
         $this->editingId = null;

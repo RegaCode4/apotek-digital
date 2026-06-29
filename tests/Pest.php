@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Konfigurasi global Pest untuk aplikasi Apotek Digital.
+ * Mengikat test case, expectations, dan helpers global.
+ */
+
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

@@ -7,17 +7,17 @@ use App\Models\Medicine;
 use Illuminate\Support\Str;
 
 /**
- * Simulated BPJS service for v1.0.
+ * Layanan BPJS simulasi untuk v1.0.
  *
- * Replace this binding in AppServiceProvider with a LiveBpjsService
- * implementation once the official BPJS API MoU is in place (see PRD §4.4).
+ * Ganti binding ini di AppServiceProvider dengan implementasi LiveBpjsService
+ * setelah MoU API BPJS resmi tersedia (lihat PRD §4.4).
  */
 class MockBpjsService implements BpjsServiceInterface
 {
     /**
-     * Simulated member verification rules:
-     *  - Exactly 13 digits  → aktif (kelas 2)
-     *  - Anything else      → nonaktif
+     * Aturan verifikasi anggota simulasi:
+     *  - Tepat 13 digit  → aktif (kelas 2)
+     *  - Selain itu      → nonaktif
      *
      * @return array{status: string, name: string|null, kelas: string|null}
      */
@@ -41,12 +41,12 @@ class MockBpjsService implements BpjsServiceInterface
     }
 
     /**
-     * Check whether a medicine is on the National Formulary (Fornas).
+     * Memeriksa apakah obat ada dalam Formularium Nasional (Fornas).
      *
-     * Matches by looking up the medicine name and checking if any of the
-     * hardcoded Fornas generic names appear as a substring (case-insensitive).
-     * This is intentionally simple for v1.0 — a real implementation would
-     * query a dedicated fornas_medicines table or BPJS API.
+     * Mencocokkan dengan mencari nama obat dan memeriksa apakah
+     * nama generik Fornas yang sudah di-hardcode muncul sebagai substring (case-insensitive).
+     * Ini sengaja dibuat sederhana untuk v1.0 — implementasi asli akan
+     * melakukan query ke tabel fornas_medicines khusus atau API BPJS.
      */
     public function isFornas(int $medicineId): bool
     {
@@ -56,7 +56,7 @@ class MockBpjsService implements BpjsServiceInterface
             return false;
         }
 
-        // Check both brand name and generic name
+        // Memeriksa nama merek dan nama generik
         $namesToCheck = array_filter([
             Str::lower($medicine->name),
             Str::lower((string) $medicine->generic_name),
@@ -73,11 +73,11 @@ class MockBpjsService implements BpjsServiceInterface
         return false;
     }
 
-    // ── Private helpers ───────────────────────────────────────
+    // ── Helper privat ────────────────────────────────────────
 
     /**
-     * Hardcoded Fornas generic name keywords (lowercase).
-     * Source: Fornas Indonesia (simplified subset for simulation).
+     * Kata kunci nama generik Fornas yang di-hardcode (huruf kecil).
+     * Sumber: Fornas Indonesia (subset sederhana untuk simulasi).
      *
      * @return list<string>
      */

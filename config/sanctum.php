@@ -1,3 +1,4 @@
+/**Konfigurasi Laravel Sanctum: stateful domains, expiration, dan middleware API.*/
 <?php
 
 use Illuminate\Cookie\Middleware\EncryptCookies;

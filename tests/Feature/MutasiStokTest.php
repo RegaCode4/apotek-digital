@@ -1,5 +1,7 @@
 <?php
 
+/** Feature test untuk halaman Mutasi Stok: akses, filter, pagination, dan export CSV. */
+
 use App\Livewire\Inventaris\MutasiStok;
 use App\Models\Medicine;
 use App\Models\StockMutation;
@@ -24,11 +26,13 @@ function createStockMutation(array $attributes = []): StockMutation
     ], $attributes));
 }
 
+// Test: guest diarahkan ke login
 test('guests are redirected from mutasi stok page', function () {
     $this->get(route('inventaris.mutasi'))
         ->assertRedirect(route('sistem.login'));
 });
 
+// Test: cashier tidak bisa akses mutasi stok
 test('cashier cannot access mutasi stok page', function () {
     $cashier = User::factory()->create(['role' => 'cashier']);
 
@@ -37,6 +41,7 @@ test('cashier cannot access mutasi stok page', function () {
         ->assertForbidden();
 });
 
+// Test: pharmacist bisa melihat tabel mutasi stok
 test('pharmacist can view mutasi stok table', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
     $mutation = createStockMutation([
@@ -54,6 +59,7 @@ test('pharmacist can view mutasi stok table', function () {
         ->assertSee($pharmacist->name);
 });
 
+// Test: filter mutasi stok berdasarkan tipe, search, dan range tanggal
 test('mutasi stok filters by type search and date range', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
 
@@ -96,6 +102,7 @@ test('mutasi stok filters by type search and date range', function () {
         ->assertDontSee('Paracetamol Mutasi');
 });
 
+// Test: pagination 20 item per halaman, diurutkan terbaru
 test('mutasi stok paginates twenty items ordered by latest', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
     $medicine = Medicine::factory()->create();
@@ -119,6 +126,7 @@ test('mutasi stok paginates twenty items ordered by latest', function () {
             && $mutations->last()->notes === 'Mutasi 2');
 });
 
+// Test: export CSV mutasi stok
 test('mutasi stok can export csv', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
 

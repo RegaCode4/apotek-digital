@@ -1,5 +1,7 @@
 <?php
 
+/** Feature test untuk manajemen user (UserManagement Livewire): akses, CRUD, toggle aktif, reset password. */
+
 use App\Livewire\Admin\UserManagement;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -10,11 +12,13 @@ uses(RefreshDatabase::class);
 
 // ── Access control ─────────────────────────────────────────────────────────
 
+// Test: guest diarahkan ke halaman login
 test('guests are redirected from admin users page', function () {
     $this->get(route('admin.users'))
         ->assertRedirect(route('sistem.login'));
 });
 
+// Test: cashier tidak bisa akses halaman admin users
 test('cashier cannot access admin users page', function () {
     $cashier = User::factory()->create(['role' => 'cashier']);
 
@@ -23,6 +27,7 @@ test('cashier cannot access admin users page', function () {
         ->assertForbidden();
 });
 
+// Test: pharmacist tidak bisa akses halaman admin users
 test('pharmacist cannot access admin users page', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
 
@@ -31,6 +36,7 @@ test('pharmacist cannot access admin users page', function () {
         ->assertForbidden();
 });
 
+// Test: admin bisa akses halaman user management
 test('admin can access user management page', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -42,6 +48,7 @@ test('admin can access user management page', function () {
 
 // ── Table listing ──────────────────────────────────────────────────────────
 
+// Test: daftar user menampilkan semua user
 test('user management lists all users', function () {
     $admin = User::factory()->create(['role' => 'admin', 'name' => 'Admin Utama']);
     User::factory()->create(['name' => 'Kasir Satu', 'role' => 'cashier']);
@@ -54,6 +61,7 @@ test('user management lists all users', function () {
         ->assertSee('Apoteker Dua');
 });
 
+// Test: badge role dan status aktif/nonaktif ditampilkan
 test('user management shows role badge and status badge', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     User::factory()->create(['role' => 'cashier', 'is_active' => false]);
@@ -65,6 +73,7 @@ test('user management shows role badge and status badge', function () {
         ->assertSee('Nonaktif');
 });
 
+// Test: pencarian user berdasarkan nama
 test('user management search filters by name', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     User::factory()->create(['name' => 'Budi Santoso']);
@@ -77,6 +86,7 @@ test('user management search filters by name', function () {
         ->assertDontSee('Siti Rahayu');
 });
 
+// Test: pencarian user berdasarkan email
 test('user management search filters by email', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     User::factory()->create(['name' => 'User Alpha', 'email' => 'alpha@apotek.com']);
@@ -89,6 +99,7 @@ test('user management search filters by email', function () {
         ->assertDontSee('User Alpha');
 });
 
+// Test: pagination 15 user per halaman
 test('user management paginates fifteen users per page', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     User::factory()->count(16)->create();
@@ -100,6 +111,7 @@ test('user management paginates fifteen users per page', function () {
 
 // ── Create user ────────────────────────────────────────────────────────────
 
+// Test: admin membuka modal create user
 test('admin can open create modal', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -110,6 +122,7 @@ test('admin can open create modal', function () {
         ->assertSet('editingUserId', null);
 });
 
+// Test: admin berhasil membuat user baru
 test('admin can create a new user', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -126,6 +139,7 @@ test('admin can create a new user', function () {
     expect(User::query()->where('email', 'userbaru@apotek.com')->exists())->toBeTrue();
 });
 
+// Test: validasi required field saat create user
 test('create user validates required fields', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -139,6 +153,7 @@ test('create user validates required fields', function () {
         ->assertHasErrors(['formName', 'formEmail', 'formPassword']);
 });
 
+// Test: validasi email unik saat create user
 test('create user validates unique email', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     User::factory()->create(['email' => 'existing@apotek.com']);
@@ -154,6 +169,7 @@ test('create user validates unique email', function () {
         ->assertHasErrors(['formEmail']);
 });
 
+// Test: validasi panjang minimal password
 test('create user validates password minimum length', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -168,6 +184,7 @@ test('create user validates password minimum length', function () {
         ->assertHasErrors(['formPassword']);
 });
 
+// Test: validasi nilai role yang diizinkan
 test('create user validates role value', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -184,6 +201,7 @@ test('create user validates role value', function () {
 
 // ── Edit user ──────────────────────────────────────────────────────────────
 
+// Test: admin membuka modal edit dengan data user terisi
 test('admin can open edit modal with user data pre-filled', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $target = User::factory()->create(['name' => 'Target User', 'role' => 'pharmacist']);
@@ -197,6 +215,7 @@ test('admin can open edit modal with user data pre-filled', function () {
         ->assertSet('formRole', 'pharmacist');
 });
 
+// Test: admin mengubah nama dan role user
 test('admin can edit user name and role', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $target = User::factory()->create(['role' => 'cashier']);
@@ -213,6 +232,7 @@ test('admin can edit user name and role', function () {
     expect($target->fresh()->role)->toBe('pharmacist');
 });
 
+// Test: form edit tidak menampilkan field password
 test('edit form does not show password field', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $target = User::factory()->create();
@@ -230,6 +250,7 @@ test('edit form does not show password field', function () {
         ->assertSet('editingUserId', $target->id);
 });
 
+// Test: validasi email unik saat edit (tidak boleh duplikat)
 test('edit does not allow duplicate email for other user', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     User::factory()->create(['email' => 'taken@apotek.com']);
@@ -245,6 +266,7 @@ test('edit does not allow duplicate email for other user', function () {
 
 // ── Toggle active ──────────────────────────────────────────────────────────
 
+// Test: admin menonaktifkan user lain
 test('admin can deactivate another user', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $target = User::factory()->create(['is_active' => true]);
@@ -256,6 +278,7 @@ test('admin can deactivate another user', function () {
     expect($target->fresh()->is_active)->toBeFalse();
 });
 
+// Test: admin mengaktifkan kembali user yang dinonaktifkan
 test('admin can reactivate a deactivated user', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $target = User::factory()->create(['is_active' => false]);
@@ -267,6 +290,7 @@ test('admin can reactivate a deactivated user', function () {
     expect($target->fresh()->is_active)->toBeTrue();
 });
 
+// Test: admin tidak bisa menonaktifkan diri sendiri via toggle
 test('admin cannot deactivate themselves via toggle', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -278,6 +302,7 @@ test('admin cannot deactivate themselves via toggle', function () {
     expect($admin->fresh()->is_active)->toBeTrue();
 });
 
+// Test: admin tidak bisa menonaktifkan diri sendiri via form edit
 test('admin cannot deactivate themselves via edit form', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -293,6 +318,7 @@ test('admin cannot deactivate themselves via edit form', function () {
 
 // ── Reset password ─────────────────────────────────────────────────────────
 
+// Test: admin mereset password user lain ke 'password123'
 test('admin can reset another users password to password123', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $target = User::factory()->create();
@@ -304,6 +330,7 @@ test('admin can reset another users password to password123', function () {
     expect(Hash::check('password123', $target->fresh()->password))->toBeTrue();
 });
 
+// Test: reset password memicu notifikasi warning
 test('reset password dispatches warning notification', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $target = User::factory()->create(['name' => 'Kasir Uji']);
@@ -316,6 +343,7 @@ test('reset password dispatches warning notification', function () {
 
 // ── Close modal ────────────────────────────────────────────────────────────
 
+// Test: menutup modal mereset field form
 test('closing modal resets form fields', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 

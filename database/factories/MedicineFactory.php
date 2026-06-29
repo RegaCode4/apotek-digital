@@ -7,6 +7,8 @@ use App\Models\Medicine;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
+ * Factory for generating Medicine model instances.
+ *
  * @extends Factory<Medicine>
  */
 class MedicineFactory extends Factory

@@ -6,24 +6,15 @@ use Illuminate\Contracts\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
+/** Komponen notifikasi toast berbasis stack */
 class ToastNotification extends Component
 {
-    /**
-     * Stack of active toasts.
-     *
-     * @var array<int, array{id: int, type: string, message: string}>
-     */
+    /** Stack toast aktif */
     public array $toasts = [];
 
     private int $nextId = 0;
 
-    /**
-     * Add a toast to the stack.
-     *
-     * Dispatched via: $this->dispatch('notify', type: 'success', message: '...')
-     *
-     * @param  'success'|'error'|'warning'|'info'  $type
-     */
+    /** Menambahkan toast ke dalam stack */
     #[On('notify')]
     public function addToast(string $type, string $message): void
     {
@@ -34,9 +25,7 @@ class ToastNotification extends Component
         ];
     }
 
-    /**
-     * Remove a toast by its ID (called by Alpine after auto-dismiss).
-     */
+    /** Menghapus toast berdasarkan ID */
     public function dismiss(int $id): void
     {
         $this->toasts = array_values(
@@ -44,6 +33,7 @@ class ToastNotification extends Component
         );
     }
 
+    /** Menampilkan tampilan notifikasi toast */
     public function render(): View
     {
         return view('livewire.components.toast-notification');

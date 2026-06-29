@@ -1,3 +1,4 @@
+/**Konfigurasi logging: channel, driver, level, dan handler log.*/
 <?php
 
 use Monolog\Handler\NullHandler;

@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
+ * Factory for generating Sale model instances.
+ *
  * @extends Factory<Sale>
  */
 class SaleFactory extends Factory

@@ -102,7 +102,7 @@
     @if ($alertPanelOpen)
         <div class="mt-4 card-brutal">
 
-            {{-- Tab header --}}
+            {{-- Header tab --}}
             <div class="flex items-center justify-between border-b-2 border-[var(--color-brutal)] bg-[var(--color-surface-muted)] rounded-t-[var(--radius-brutal)] px-4">
                 <div class="flex gap-1" role="tablist">
                     <button
@@ -154,7 +154,7 @@
                 </button>
             </div>
 
-            {{-- Tab content --}}
+            {{-- Konten tab --}}
             <div role="tabpanel" class="overflow-x-auto">
 
                 {{-- TAB: Stok Menipis --}}

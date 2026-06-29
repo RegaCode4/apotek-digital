@@ -8,9 +8,9 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
+/** Widget panel KPI untuk tampilan dashboard */
 class KpiPanel extends Component
 {
-    // ── KPI values ────────────────────────────────────────────
     public float $todayRevenue = 0;
 
     public int $todayTransactionCount = 0;
@@ -19,41 +19,33 @@ class KpiPanel extends Component
 
     public int $expiringSoonCount = 0;
 
-    // ── Alert panel state ─────────────────────────────────────
     public bool $alertPanelOpen = false;
 
     public string $activeTab = 'low_stock';
 
-    // ── Alert data (loaded lazily when panel opens) ───────────
-
-    /** @var Collection<int, Medicine>|null */
+    /** Daftar obat stok rendah */
     public ?Collection $lowStockMedicines = null;
 
-    /** @var Collection<int, Medicine>|null */
+    /** Daftar obat yang akan segera kedaluwarsa */
     public ?Collection $expiringSoonMedicines = null;
 
-    // ── Lifecycle ─────────────────────────────────────────────
-
+    /** Memuat data KPI saat komponen dimuat */
     public function mount(DashboardService $dashboard): void
     {
         $this->loadKpis($dashboard);
     }
 
-    /**
-     * Called by wire:poll.60000ms — refreshes all KPI counts.
-     */
+    /** Menyegarkan semua hitungan KPI melalui polling */
     public function refreshData(DashboardService $dashboard): void
     {
         $this->loadKpis($dashboard);
 
-        // Also refresh alert data if the panel is currently open
         if ($this->alertPanelOpen) {
             $this->loadAlertData($dashboard);
         }
     }
 
-    // ── Actions ───────────────────────────────────────────────
-
+    /** Membuka/menutup panel notifikasi dan memuat data secara lazy */
     public function toggleAlertPanel(DashboardService $dashboard): void
     {
         $this->alertPanelOpen = ! $this->alertPanelOpen;
@@ -63,20 +55,19 @@ class KpiPanel extends Component
         }
     }
 
+    /** Mengganti tab notifikasi aktif */
     public function setActiveTab(string $tab): void
     {
         $this->activeTab = $tab;
     }
 
-    // ── Render ────────────────────────────────────────────────
-
+    /** Menampilkan tampilan panel KPI */
     public function render(): View
     {
         return view('livewire.dashboard.kpi-panel');
     }
 
-    // ── Private helpers ───────────────────────────────────────
-
+    /** Mengisi nilai KPI dari layanan dashboard */
     private function loadKpis(DashboardService $dashboard): void
     {
         $this->todayRevenue = $dashboard->getTodayRevenue();
@@ -85,6 +76,7 @@ class KpiPanel extends Component
         $this->expiringSoonCount = $dashboard->getExpiringSoonMedicines(3)->count();
     }
 
+    /** Memuat data notifikasi detail untuk panel notifikasi */
     private function loadAlertData(DashboardService $dashboard): void
     {
         $this->lowStockMedicines = $dashboard->getLowStockMedicines();

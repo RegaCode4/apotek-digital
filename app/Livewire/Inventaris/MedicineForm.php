@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
+/** Form tambah/edit obat dalam modal. */
 class MedicineForm extends Component
 {
     public bool $show = false;
@@ -41,6 +42,7 @@ class MedicineForm extends Component
 
     public ?int $originalStock = null;
 
+    /** Buka modal — isi data jika edit, kosong jika tambah. */
     #[On('open-medicine-form')]
     public function open(?int $medicineId = null): void
     {
@@ -69,6 +71,7 @@ class MedicineForm extends Component
         $this->show = true;
     }
 
+    /** Tutup modal dan mereset form. */
     public function close(): void
     {
         $this->show = false;
@@ -76,6 +79,7 @@ class MedicineForm extends Component
         $this->resetValidation();
     }
 
+    /** Simpan obat baru atau perbarui yang sudah ada. */
     public function save(): void
     {
         $validated = $this->validate($this->rules());
@@ -125,6 +129,7 @@ class MedicineForm extends Component
         $this->dispatch('notify', type: 'success', message: $message);
     }
 
+    /** Menampilkan modal form obat. */
     public function render(): View
     {
         return view('livewire.inventaris.medicine-form', [
@@ -152,6 +157,7 @@ class MedicineForm extends Component
         ];
     }
 
+    /** Mereset seluruh field form ke nilai default. */
     protected function resetForm(): void
     {
         $this->medicineId = null;
@@ -169,6 +175,7 @@ class MedicineForm extends Component
         $this->description = '';
     }
 
+    /** Catat mutasi stok di tabel stock_mutations. */
     protected function recordStockMutation(Medicine $medicine, int $quantity, string $notes): void
     {
         StockMutation::query()->create([

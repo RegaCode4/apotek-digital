@@ -28,4 +28,10 @@ yarn-error.log
 boost.json
 PRD.MD
 .agents/
-docs/design.mdbash.exe.stackdump
+docs/design.md
+bash.exe.stackdump
+.claude
+opencode.json
+.opencode
+context.md
+context.txt

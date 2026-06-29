@@ -6,10 +6,13 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Membatasi akses route untuk pengguna dengan salah satu peran yang diberikan.
+ */
 class RoleMiddleware
 {
     /**
-     * Handle an incoming request.
+     * Menangani permintaan masuk.
      *
      * @param  Closure(Request): (Response)  $next
      */

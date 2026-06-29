@@ -1,3 +1,4 @@
+/**Konfigurasi session: driver, lifetime, table, cookie, dan enkripsi.*/
 <?php
 
 use Illuminate\Support\Str;

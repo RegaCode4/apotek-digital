@@ -6,6 +6,8 @@ use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
+ * Factory for generating Category model instances.
+ *
  * @extends Factory<Category>
  */
 class CategoryFactory extends Factory

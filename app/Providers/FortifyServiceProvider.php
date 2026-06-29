@@ -11,10 +11,11 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
 
+/** Penyedia layanan Fortify. */
 class FortifyServiceProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
+     * Mendaftarkan layanan aplikasi apa pun.
      */
     public function register(): void
     {
@@ -22,7 +23,7 @@ class FortifyServiceProvider extends ServiceProvider
     }
 
     /**
-     * Bootstrap any application services.
+     * Mem-bootstrap layanan aplikasi apa pun.
      */
     public function boot(): void
     {
@@ -32,7 +33,7 @@ class FortifyServiceProvider extends ServiceProvider
     }
 
     /**
-     * Configure Fortify actions.
+     * Mengonfigurasi aksi Fortify.
      */
     private function configureActions(): void
     {
@@ -41,7 +42,7 @@ class FortifyServiceProvider extends ServiceProvider
     }
 
     /**
-     * Configure Fortify views.
+     * Mengonfigurasi tampilan Fortify.
      */
     private function configureViews(): void
     {
@@ -55,7 +56,7 @@ class FortifyServiceProvider extends ServiceProvider
     }
 
     /**
-     * Configure rate limiting.
+     * Mengonfigurasi pembatasan laju.
      */
     private function configureRateLimiting(): void
     {

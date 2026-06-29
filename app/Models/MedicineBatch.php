@@ -9,17 +9,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
     'medicine_id',
-    'purchase_order_id',
     'batch_number',
     'quantity',
     'expiry_date',
 ])]
+/**
+ * Batch obat dari suatu purchase order, melacak nomor batch dan tanggal kadaluwarsa.
+ */
 class MedicineBatch extends Model
 {
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Casting atribut ke tipe data tertentu.
      */
     protected function casts(): array
     {
@@ -29,23 +29,17 @@ class MedicineBatch extends Model
     }
 
     /**
-     * Get the medicine that owns the batch.
+     * Mendapatkan obat yang memiliki batch ini.
      */
     public function medicine(): BelongsTo
     {
         return $this->belongsTo(Medicine::class);
     }
 
-    /**
-     * Get the purchase order that owns the batch.
-     */
-    public function purchaseOrder(): BelongsTo
-    {
-        return $this->belongsTo(PurchaseOrder::class);
-    }
+
 
     /**
-     * Scope a query for First Expired, First Out ordering.
+     * Scope query untuk pengurutan First Expired, First Out.
      */
     public function scopeFefo(Builder $query): void
     {

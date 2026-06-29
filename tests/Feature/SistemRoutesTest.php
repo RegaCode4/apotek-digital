@@ -1,5 +1,7 @@
 <?php
 
+/** Feature test untuk route sistem: akses berdasarkan role (guest, cashier, pharmacist, admin). */
+
 use App\Models\User;
 use App\Services\DashboardService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,6 +23,7 @@ function mockDashboardService(): void
     app()->instance(DashboardService::class, $mock);
 }
 
+// Test: guest diarahkan ke login untuk semua route sistem
 test('guests are redirected from protected sistem routes to login', function (string $routeName) {
     $response = $this->get(route($routeName));
 
@@ -36,6 +39,7 @@ test('guests are redirected from protected sistem routes to login', function (st
     'mutasi stok' => ['inventaris.mutasi'],
 ]);
 
+// Test: dashboard menampilkan nama dan role user yang login
 test('dashboard shows authenticated user name and role', function () {
     mockDashboardService();
 
@@ -52,6 +56,7 @@ test('dashboard shows authenticated user name and role', function () {
     $response->assertSee('Selamat datang');
 });
 
+// Test: admin bisa akses semua modul sistem
 test('admin can access all sistem modules', function (string $routeName) {
     mockDashboardService();
 
@@ -69,6 +74,7 @@ test('admin can access all sistem modules', function (string $routeName) {
     'mutasi stok' => ['inventaris.mutasi'],
 ]);
 
+// Test: pharmacist bisa akses dashboard, inventaris, laporan, dan pos
 test('pharmacist can access dashboard inventaris laporan and pos', function (string $routeName) {
     mockDashboardService();
 
@@ -85,12 +91,14 @@ test('pharmacist can access dashboard inventaris laporan and pos', function (str
     'mutasi stok' => ['inventaris.mutasi'],
 ]);
 
+// Test: pharmacist tidak bisa akses user management
 test('pharmacist cannot access user management', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
 
     $this->actingAs($pharmacist)->get(route('sistem.users'))->assertForbidden();
 });
 
+// Test: cashier hanya bisa akses dashboard dan pos
 test('cashier can access dashboard and pos only', function () {
     mockDashboardService();
 
@@ -100,6 +108,7 @@ test('cashier can access dashboard and pos only', function () {
     $this->actingAs($cashier)->get(route('pos.kasir'))->assertOk();
 });
 
+// Test: cashier tidak bisa akses inventaris, laporan, atau user management
 test('cashier cannot access inventaris laporan or user management', function (string $routeName) {
     $cashier = User::factory()->create(['role' => 'cashier']);
 

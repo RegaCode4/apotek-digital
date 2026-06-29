@@ -1,5 +1,7 @@
 <?php
 
+/** Feature test untuk daftar obat (MedicineIndex): akses, search, filter, pagination, badge, dan delete. */
+
 use App\Livewire\Inventaris\MedicineIndex;
 use App\Models\Category;
 use App\Models\Medicine;
@@ -11,11 +13,13 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
+// Test: guest diarahkan ke login
 test('guests are redirected from medicine index', function () {
     $this->get(route('inventaris.medicines.index'))
         ->assertRedirect(route('sistem.login'));
 });
 
+// Test: cashier tidak bisa akses daftar obat
 test('cashier cannot access medicine index', function () {
     $cashier = User::factory()->create(['role' => 'cashier']);
 
@@ -24,6 +28,7 @@ test('cashier cannot access medicine index', function () {
         ->assertForbidden();
 });
 
+// Test: pharmacist bisa akses halaman daftar obat
 test('pharmacist can access medicine index page', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
 
@@ -34,6 +39,7 @@ test('pharmacist can access medicine index page', function () {
         ->assertSee('Tambah Obat');
 });
 
+// Test: daftar obat menampilkan nama kategori dari relasi
 test('medicine index lists medicines with category name from relation', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
     $category = Category::create(['name' => 'Analgesik', 'description' => null]);
@@ -50,6 +56,7 @@ test('medicine index lists medicines with category name from relation', function
         ->assertSee('Analgesik');
 });
 
+// Test: pencarian obat berdasarkan nama dan generic_name
 test('medicine index search filters by name and generic name', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
 
@@ -63,6 +70,7 @@ test('medicine index search filters by name and generic name', function () {
         ->assertDontSee('Paracetamol 500mg');
 });
 
+// Test: filter obat berdasarkan kategori dan resep
 test('medicine index filters by category_id', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
 
@@ -92,6 +100,7 @@ test('medicine index filters by category_id', function () {
         ->assertDontSee('Obat B');
 });
 
+// Test: pagination 15 obat per halaman
 test('medicine index paginates fifteen medicines per page', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
 
@@ -102,6 +111,7 @@ test('medicine index paginates fifteen medicines per page', function () {
         ->assertViewHas('medicines', fn ($medicines) => $medicines->count() === 15);
 });
 
+// Test: badge stok rendah dan segara kedaluwarsa ditampilkan
 test('medicine index shows low stock and expiring soon badges', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
 
@@ -126,6 +136,7 @@ test('medicine index shows low stock and expiring soon badges', function () {
         ->assertSee('bg-amber-100', false);
 });
 
+// Test: modal konfirmasi hapus menampilkan nama obat
 test('medicine index shows delete confirmation modal with medicine name', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
     $medicine = Medicine::factory()->create(['name' => 'Obat Untuk Dihapus']);
@@ -138,6 +149,7 @@ test('medicine index shows delete confirmation modal with medicine name', functi
         ->assertSee('Obat Untuk Dihapus');
 });
 
+// Test: menghapus obat beserta stock mutation terkait
 test('medicine index deletes medicine and stock mutations when confirmed', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
     $medicine = Medicine::factory()->create(['name' => 'Obat Hapus']);
@@ -161,6 +173,7 @@ test('medicine index deletes medicine and stock mutations when confirmed', funct
     expect(StockMutation::query()->count())->toBe(0);
 });
 
+// Test: cegah hapus obat jika sudah pernah dijual
 test('medicine index prevents delete when medicine has sale items', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
     $medicine = Medicine::factory()->create(['name' => 'Obat Terjual']);

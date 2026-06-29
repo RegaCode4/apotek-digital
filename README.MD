@@ -64,8 +64,6 @@
 | `categories` | Kategori obat berbasis ATC WHO |
 | `medicines` | Master data obat |
 | `medicine_batches` | Tracking batch per restock (FEFO) |
-| `suppliers` | Data pemasok |
-| `purchase_orders` | Pembelian / restock dari supplier |
 | `stock_mutations` | Riwayat keluar-masuk stok |
 | `sales` | Header transaksi penjualan |
 | `sale_items` | Detail item per transaksi |
@@ -84,7 +82,7 @@ apotek-digital/
 │   │   ├── Dashboard/      # KpiPanel, SalesChart
 │   │   ├── Inventaris/     # MedicineIndex, MedicineForm, StokOpname, dll.
 │   │   └── Pos/            # KasirPage, RiwayatTransaksi
-│   ├── Models/             # Medicine, Sale, SaleItem, Category, dll.
+│   ├── Models/             # User, Medicine, MedicineBatch, Sale, SaleItem, Category, StockMutation
 │   └── Services/           # PosService, DashboardService, MockBpjsService
 ├── database/
 │   ├── factories/

@@ -9,20 +9,23 @@ use App\Models\StockMutation;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
+/**
+ * Layanan pemrosesan transaksi POS dengan validasi stok dan manajemen inventaris.
+ */
 class PosService
 {
     /**
-     * Process a full POS transaction within a single database transaction.
+     * Memproses transaksi POS penuh dalam satu transaksi database.
      *
      * @param  array<int, array{medicine_id: int, quantity: int, unit_price: float, discount: float, prescription_no: ?string}>  $cartItems
      * @param  array{buyer_name: string, payment_method: string, subtotal: float, discount_amount: float, tax_amount: float, grand_total: float, bpjs_claim_no: ?string, notes: ?string}  $saleData
      *
-     * @throws RuntimeException when any cart item has insufficient stock
+     * @throws RuntimeException ketika stok item keranjang tidak mencukupi
      */
     public function processTransaction(array $cartItems, array $saleData, int $cashierId): Sale
     {
         return DB::transaction(function () use ($cartItems, $saleData, $cashierId): Sale {
-            // Lock all affected medicine rows to prevent race conditions (§7 Risk #1)
+            // Mengunci semua baris obat yang terpengaruh untuk mencegah kondisi balapan (§7 Risk #1)
             $medicineIds = array_column($cartItems, 'medicine_id');
 
             /** @var \Illuminate\Database\Eloquent\Collection<int, Medicine> $medicines */
@@ -31,7 +34,7 @@ class PosService
                 ->get()
                 ->keyBy('id');
 
-            // Validate stock availability for every item before writing anything
+            // Memvalidasi ketersediaan stok untuk setiap item sebelum menulis apa pun
             foreach ($cartItems as $item) {
                 $medicine = $medicines->get($item['medicine_id']);
 
@@ -46,14 +49,14 @@ class PosService
                 }
             }
 
-            // Create the sale header
+            // Membuat header penjualan
             $sale = Sale::create([
                 ...$saleData,
                 'cashier_id' => $cashierId,
                 'invoice_no' => Sale::generateInvoiceNo(),
             ]);
 
-            // Create line items, deduct stock, and record mutations
+            // Membuat item baris, mengurangi stok, dan mencatat mutasi
             foreach ($cartItems as $item) {
                 $medicine = $medicines->get($item['medicine_id']);
 
@@ -86,10 +89,10 @@ class PosService
     }
 
     /**
-     * Validate that a prescription number is provided when required.
+     * Memvalidasi bahwa nomor resep diberikan saat diperlukan.
      *
-     * Returns true  — medicine does not require a prescription, or one was supplied.
-     * Returns false — medicine requires a prescription but none was provided.
+     * Mengembalikan true  — obat tidak memerlukan resep, atau resep telah diberikan.
+     * Mengembalikan false — obat memerlukan resep tetapi tidak ada yang diberikan.
      */
     public function validatePrescription(int $medicineId, ?string $prescriptionNo): bool
     {

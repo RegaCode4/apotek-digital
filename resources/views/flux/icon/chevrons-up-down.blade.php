@@ -1,4 +1,4 @@
-{{-- Credit: Lucide (https://lucide.dev) --}}
+{{-- Kredit: Lucide (https://lucide.dev) --}}
 
 @props([
     'variant' => 'outline',

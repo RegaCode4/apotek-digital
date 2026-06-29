@@ -7,12 +7,13 @@ use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\ResetsUserPasswords;
 
+/** Mereset kata sandi pengguna. */
 class ResetUserPassword implements ResetsUserPasswords
 {
     use PasswordValidationRules;
 
     /**
-     * Validate and reset the user's forgotten password.
+     * Memvalidasi dan mereset kata sandi pengguna yang terlupa.
      *
      * @param  array<string, string>  $input
      */

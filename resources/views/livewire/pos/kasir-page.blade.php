@@ -140,14 +140,14 @@
             @endif
         </div>
 
-        {{-- Error message --}}
+        {{-- Pesan error --}}
         @if ($errorMessage)
             <div class="card-brutal bg-[var(--color-danger-soft)] text-[var(--color-danger)] px-4 py-3 text-sm font-bold">
                 {{ $errorMessage }}
             </div>
         @endif
 
-        {{-- List item keranjang --}}
+        {{-- Daftar item keranjang --}}
         <div class="space-y-2.5">
             @if (empty($cart))
                 <div class="flex h-32 items-center justify-center card-brutal border-dashed p-6 bg-[var(--color-surface)]">
@@ -244,10 +244,10 @@
             @endif
         </div>
 
-        {{-- Summary & Checkout --}}
+        {{-- Ringkasan & Pembayaran --}}
         @if (! empty($cart))
             <div class="space-y-4">
-                {{-- Summary kalkulasi --}}
+                {{-- Ringkasan kalkulasi --}}
                 <div class="card-brutal p-4">
                     <div class="space-y-2 text-sm font-semibold">
                         <div class="flex justify-between text-[var(--color-muted)]">
@@ -340,7 +340,7 @@
                         </div>
                     </div>
 
-                    {{-- Panel BPJS — muncul hanya saat payment method = bpjs --}}
+                    {{-- Panel BPJS — muncul hanya saat metode pembayaran = bpjs --}}
                     @if ($paymentMethod === 'bpjs')
                         <div class="mb-4 card-brutal bg-[var(--color-success-soft)] text-[var(--color-ink)] p-3">
                             <p class="mb-2 text-xs font-bold text-[var(--color-brutal)]">Verifikasi Peserta BPJS</p>

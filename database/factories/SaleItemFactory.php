@@ -8,6 +8,8 @@ use App\Models\SaleItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
+ * Factory for generating SaleItem model instances.
+ *
  * @extends Factory<SaleItem>
  */
 class SaleItemFactory extends Factory

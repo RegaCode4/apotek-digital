@@ -59,7 +59,7 @@
     </div>
 
     @if ($activeTab === 'penjualan')
-        {{-- ── Export button ── --}}
+        {{-- ── Tombol ekspor ── --}}
         <div class="mb-4 flex justify-end">
             <button
                 type="button"
@@ -73,7 +73,7 @@
             </button>
         </div>
 
-        {{-- ── Filter panel ── --}}
+        {{-- ── Panel filter ── --}}
         <div class="mb-6 card-brutal p-4 bg-[var(--color-surface)]">
             <div class="grid gap-4 md:grid-cols-3">
                 <div>
@@ -113,7 +113,7 @@
             </div>
         </div>
 
-        {{-- ── Summary cards ── --}}
+        {{-- ── Kartu ringkasan ── --}}
         <div class="mb-6 card-brutal p-4 bg-[var(--color-surface)]">
             <div class="flex items-center divide-x-2 divide-[var(--color-brutal)]">
                 <div class="flex-1 px-4 first:pl-0">
@@ -197,7 +197,7 @@
             @endif
         </div>
     @elseif ($activeTab === 'stok')
-        {{-- ── Export button ── --}}
+        {{-- ── Tombol ekspor ── --}}
         <div class="mb-4 flex justify-end">
             <button
                 type="button"
@@ -211,7 +211,7 @@
             </button>
         </div>
 
-        {{-- ── Filter panel ── --}}
+        {{-- ── Panel filter ── --}}
         <div class="mb-6 card-brutal p-4 bg-[var(--color-surface)]">
             <div class="grid gap-4 md:grid-cols-3">
                 <div>
@@ -251,7 +251,7 @@
             </div>
         </div>
 
-        {{-- ── Summary cards ── --}}
+        {{-- ── Kartu ringkasan ── --}}
         <div class="mb-6 card-brutal p-4 bg-[var(--color-surface)]">
             <div class="flex items-center divide-x-2 divide-[var(--color-brutal)]">
                 <div class="flex-1 px-4 first:pl-0">
@@ -335,7 +335,7 @@
             @endif
         </div>
     @elseif ($activeTab === 'pendapatan')
-        {{-- ── Filter panel ── --}}
+        {{-- ── Panel filter ── --}}
         <div class="mb-6 card-brutal p-4 bg-[var(--color-surface)]">
             <div class="flex items-end gap-4 flex-wrap sm:flex-nowrap">
                 <div class="flex-1 min-w-[200px]">
@@ -369,7 +369,7 @@
             </div>
         </div>
 
-        {{-- ── Payment method summary cards ── --}}
+        {{-- ── Kartu ringkasan metode pembayaran ── --}}
         <div class="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
             @php
                 $methods = [
@@ -391,7 +391,7 @@
             @endforeach
         </div>
 
-        {{-- ── Daily breakdown table ── --}}
+        {{-- ── Tabel rincian harian ── --}}
         <div class="overflow-hidden card-brutal bg-[var(--color-surface)]">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y-2 divide-[var(--color-brutal)] text-sm">
@@ -445,7 +445,7 @@
             </div>
         </div>
     @elseif ($activeTab === 'kedaluwarsa')
-        {{-- ── Section A: Obat Hampir Kedaluwarsa ── --}}
+        {{-- ── Bagian A: Obat Hampir Kedaluwarsa ── --}}
         <div class="mb-4 flex items-center justify-between flex-wrap gap-4">
             <h3 class="text-base font-bold text-[var(--color-ink)]">Obat Hampir Kedaluwarsa</h3>
             <button type="button" wire:click="exportExpiringCsv" wire:loading.attr="disabled" wire:target="exportExpiringCsv"
@@ -505,7 +505,7 @@
 
         <div class="my-6 border-t-2 border-[var(--color-brutal)]"></div>
 
-        {{-- ── Section B: Obat Stok Menipis ── --}}
+        {{-- ── Bagian B: Obat Stok Menipis ── --}}
         <div class="mb-4 flex items-center justify-between flex-wrap gap-4">
             <h3 class="text-base font-bold text-[var(--color-ink)]">Obat Stok Menipis</h3>
             <button type="button" wire:click="exportLowStockCsv" wire:loading.attr="disabled" wire:target="exportLowStockCsv"

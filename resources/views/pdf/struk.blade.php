@@ -148,14 +148,14 @@
 </head>
 <body>
 
-    {{-- ═══════════════════════════ HEADER ═══════════════════════════ --}}
+    {{-- ═══════════════════════════ KEPALA ═══════════════════════════ --}}
     <div class="header">
         <h1>Apotek Digital</h1>
         <p>Jl. Benteng No.1, Cupak Tangah, Kec. Pauh, Kota Padang, Sumatera Barat 25176</p>
         <p>Telp: +6282278954406</p>
     </div>
 
-    {{-- ═══════════════════════════ META INFO ═══════════════════════════ --}}
+    {{-- ═══════════════════════════ INFO META ═══════════════════════════ --}}
     <div class="meta">
         <table>
             <tr>
@@ -188,7 +188,7 @@
 
     <div class="divider"></div>
 
-    {{-- ═══════════════════════════ ITEM TABLE ═══════════════════════════ --}}
+    {{-- ═══════════════════════════ TABEL ITEM ═══════════════════════════ --}}
     <table class="items">
         <thead>
             <tr>
@@ -220,7 +220,7 @@
 
     <div class="divider"></div>
 
-    {{-- ═══════════════════════════ SUMMARY ═══════════════════════════ --}}
+    {{-- ═══════════════════════════ RINGKASAN ═══════════════════════════ --}}
     <table class="summary">
         <tr>
             <td class="label">Subtotal</td>
@@ -244,7 +244,7 @@
         </tr>
     </table>
 
-    {{-- ═══════════════════════════ FOOTER ═══════════════════════════ --}}
+    {{-- ═══════════════════════════ KAKI ═══════════════════════════ --}}
     <div class="footer">
         <p>Terima kasih atas kepercayaan Anda</p>
         <p style="margin-top:4px;">Barang yang sudah dibeli tidak dapat dikembalikan</p>

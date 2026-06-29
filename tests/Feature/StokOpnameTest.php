@@ -1,5 +1,7 @@
 <?php
 
+/** Feature test untuk Stok Opname: akses, adjustment stok, reason, dan timestamp. */
+
 use App\Livewire\Inventaris\StokOpname;
 use App\Models\Medicine;
 use App\Models\StockMutation;
@@ -9,11 +11,13 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
+// Test: guest diarahkan ke login
 test('guests are redirected from stok opname page', function () {
     $this->get(route('inventaris.stok-opname'))
         ->assertRedirect(route('sistem.login'));
 });
 
+// Test: cashier tidak bisa akses stok opname
 test('cashier cannot access stok opname page', function () {
     $cashier = User::factory()->create(['role' => 'cashier']);
 
@@ -22,6 +26,7 @@ test('cashier cannot access stok opname page', function () {
         ->assertForbidden();
 });
 
+// Test: pharmacist bisa akses halaman stok opname
 test('pharmacist can access stok opname page', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
     Medicine::factory()->create();
@@ -33,6 +38,7 @@ test('pharmacist can access stok opname page', function () {
         ->assertSee('Simpan Semua Adjustment');
 });
 
+// Test: menampilkan stok sistem dan selisih
 test('stok opname shows medicines with system stock and difference', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
     $medicine = Medicine::factory()->create([
@@ -48,6 +54,7 @@ test('stok opname shows medicines with system stock and difference', function ()
         ->assertSee('-5', false);
 });
 
+// Test: reason wajib diisi sebelum menyimpan adjustment
 test('stok opname requires reason before saving', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
     $medicine = Medicine::factory()->create(['stock' => 10]);
@@ -59,6 +66,7 @@ test('stok opname requires reason before saving', function () {
         ->assertHasErrors(['reason']);
 });
 
+// Test: menyimpan adjustment dan mencatat stock mutation
 test('stok opname saves adjustments and records stock mutations', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
 
@@ -89,6 +97,7 @@ test('stok opname saves adjustments and records stock mutations', function () {
     expect(StockMutation::query()->count())->toBe(1);
 });
 
+// Test: timestamp stok opname terakhir ditampilkan setelah simpan
 test('stok opname shows last opname timestamp after saving', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
     $medicine = Medicine::factory()->create(['stock' => 8]);

@@ -16,6 +16,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
+/** Halaman laporan dengan beberapa tab laporan */
 #[Layout('layouts.sistem')]
 #[Title('Laporan')]
 class LaporanPage extends Component
@@ -32,12 +33,14 @@ class LaporanPage extends Component
 
     public string $mutationType = '';
 
+    /** Mengatur rentang tanggal default ke bulan saat ini */
     public function mount(): void
     {
         $this->dateFrom = now()->startOfMonth()->format('Y-m-d');
         $this->dateTo = now()->endOfMonth()->format('Y-m-d');
     }
 
+    /** Mengganti tab aktif dan mereset filter */
     public function setTab(string $tab): void
     {
         $this->activeTab = $tab;
@@ -48,29 +51,31 @@ class LaporanPage extends Component
         $this->resetPage();
     }
 
+    /** Mereset paginasi saat tanggal awal berubah */
     public function updatingDateFrom(): void
     {
         $this->resetPage();
     }
 
+    /** Mereset paginasi saat tanggal akhir berubah */
     public function updatingDateTo(): void
     {
         $this->resetPage();
     }
 
+    /** Mereset paginasi saat metode pembayaran berubah */
     public function updatingPaymentMethod(): void
     {
         $this->resetPage();
     }
 
+    /** Mereset paginasi saat tipe mutasi berubah */
     public function updatingMutationType(): void
     {
         $this->resetPage();
     }
 
-    /**
-     * @return LengthAwarePaginator<int, Sale>
-     */
+    /** Hasil query penjualan dengan paginasi */
     public function getSalesProperty(): LengthAwarePaginator
     {
         return $this->salesFilteredQuery()
@@ -80,9 +85,7 @@ class LaporanPage extends Component
             ->paginate(20);
     }
 
-    /**
-     * @return array{total_transaksi: int, total_pendapatan: float|int}
-     */
+    /** Ringkasan jumlah transaksi dan total pendapatan untuk penjualan */
     public function getSalesSummaryProperty(): array
     {
         $result = $this->salesFilteredQuery()
@@ -95,6 +98,7 @@ class LaporanPage extends Component
         ];
     }
 
+    /** Ekspor penjualan terfilter ke CSV */
     public function exportSalesCsv(): StreamedResponse
     {
         $filename = 'laporan-penjualan-'.now()->format('Y-m-d-His').'.csv';
@@ -140,9 +144,7 @@ class LaporanPage extends Component
         ]);
     }
 
-    /**
-     * @return Builder<Sale>
-     */
+    /** Query dasar untuk penjualan dengan filter yang diterapkan */
     protected function salesFilteredQuery(): Builder
     {
         return Sale::query()
@@ -151,9 +153,7 @@ class LaporanPage extends Component
             ->when($this->paymentMethod !== '', fn (Builder $q): Builder => $q->where('payment_method', $this->paymentMethod));
     }
 
-    /**
-     * @return LengthAwarePaginator<int, StockMutation>
-     */
+    /** Hasil query mutasi stok dengan paginasi */
     public function getMutationsProperty(): LengthAwarePaginator
     {
         return $this->mutationsFilteredQuery()
@@ -162,9 +162,7 @@ class LaporanPage extends Component
             ->paginate(20);
     }
 
-    /**
-     * @return array{total_masuk: int|float, total_keluar: int|float}
-     */
+    /** Ringkasan total stok masuk dan keluar */
     public function getMutationsSummaryProperty(): array
     {
         $result = $this->mutationsFilteredQuery()
@@ -180,6 +178,7 @@ class LaporanPage extends Component
         ];
     }
 
+    /** Label yang mudah dibaca untuk tipe mutasi */
     public function typeLabel(string $type): string
     {
         return match ($type) {
@@ -191,6 +190,7 @@ class LaporanPage extends Component
         };
     }
 
+    /** Ekspor mutasi stok terfilter ke CSV */
     public function exportMutationsCsv(): StreamedResponse
     {
         $filename = 'laporan-stok-mutasi-'.now()->format('Y-m-d-His').'.csv';
@@ -233,9 +233,7 @@ class LaporanPage extends Component
         ]);
     }
 
-    /**
-     * @return Builder<StockMutation>
-     */
+    /** Query dasar untuk mutasi stok dengan filter yang diterapkan */
     protected function mutationsFilteredQuery(): Builder
     {
         return StockMutation::query()
@@ -244,6 +242,7 @@ class LaporanPage extends Component
             ->when($this->dateTo !== '', fn (Builder $q): Builder => $q->whereDate('created_at', '<=', $this->dateTo));
     }
 
+    /** Ringkasan breakdown metode pembayaran */
     public function getPaymentSummaryProperty(): Collection
     {
         return Sale::query()
@@ -255,6 +254,7 @@ class LaporanPage extends Component
             ->keyBy('payment_method');
     }
 
+    /** Breakdown pendapatan harian yang dikelompokkan berdasarkan metode pembayaran */
     public function getDailyBreakdownProperty(): Collection
     {
         return Sale::query()
@@ -267,6 +267,7 @@ class LaporanPage extends Component
             ->groupBy('tanggal');
     }
 
+    /** Ekspor breakdown pendapatan harian ke CSV */
     public function exportPaymentCsv(): StreamedResponse
     {
         $filename = 'laporan-pendapatan-metode-'.now()->format('Y-m-d-His').'.csv';
@@ -297,6 +298,7 @@ class LaporanPage extends Component
         ]);
     }
 
+    /** Obat yang akan kedaluwarsa dalam 3 bulan ke depan */
     public function getExpiringMedicinesProperty(): Collection
     {
         return Medicine::expiringSoon(3)
@@ -306,6 +308,7 @@ class LaporanPage extends Component
             ->get();
     }
 
+    /** Obat dengan stok di bawah batas minimum */
     public function getLowStockMedicinesProperty(): Collection
     {
         return Medicine::lowStock()
@@ -314,6 +317,7 @@ class LaporanPage extends Component
             ->get();
     }
 
+    /** Kelas badge CSS berdasarkan seberapa cepat obat akan kedaluwarsa */
     public function expiryBadgeClass(string $expiryDate): string
     {
         $date = Carbon::parse($expiryDate);
@@ -324,6 +328,7 @@ class LaporanPage extends Component
         return 'bg-amber-100 text-amber-800';
     }
 
+    /** Ekspor obat kedaluwarsa ke CSV */
     public function exportExpiringCsv(): StreamedResponse
     {
         $filename = 'laporan-obat-kedaluwarsa-'.now()->format('Y-m-d-His').'.csv';
@@ -352,6 +357,7 @@ class LaporanPage extends Component
         }, $filename, ['Content-Type' => 'text/csv']);
     }
 
+    /** Ekspor obat stok rendah ke CSV */
     public function exportLowStockCsv(): StreamedResponse
     {
         $filename = 'laporan-low-stock-'.now()->format('Y-m-d-His').'.csv';
@@ -379,6 +385,7 @@ class LaporanPage extends Component
         }, $filename, ['Content-Type' => 'text/csv']);
     }
 
+    /** Menampilkan tampilan tab yang sesuai dengan datanya */
     public function render(): View
     {
         $data = [];

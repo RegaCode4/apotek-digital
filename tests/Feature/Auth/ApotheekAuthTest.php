@@ -1,5 +1,7 @@
 <?php
 
+/** Feature test untuk autentikasi dan role-based access control aplikasi apotek. */
+
 use App\Models\User;
 use App\Services\DashboardService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -24,6 +26,7 @@ function createUser(string $role, bool $isActive = true): User
 
 // ── Authentication tests ──────────────────────────────────────────────────────
 
+// Test: user bisa login dengan kredensial valid
 test('test_user_can_login_with_valid_credentials', function () {
     $user = createUser('cashier');
 
@@ -37,6 +40,7 @@ test('test_user_can_login_with_valid_credentials', function () {
     $this->assertAuthenticatedAs($user);
 });
 
+// Test: user gagal login dengan password salah
 test('test_user_cannot_login_with_wrong_password', function () {
     $user = createUser('cashier');
 
@@ -49,6 +53,7 @@ test('test_user_cannot_login_with_wrong_password', function () {
     $this->assertGuest();
 });
 
+// Test: user nonaktif tidak bisa login
 test('test_inactive_user_cannot_login', function () {
     $user = createUser('cashier', isActive: false);
 
@@ -63,6 +68,7 @@ test('test_inactive_user_cannot_login', function () {
 
 // ── Role-based access control tests ──────────────────────────────────────────
 
+// Test: cashier tidak bisa akses route inventaris
 test('test_cashier_cannot_access_inventaris_route', function () {
     $cashier = createUser('cashier');
 
@@ -71,6 +77,7 @@ test('test_cashier_cannot_access_inventaris_route', function () {
     $response->assertForbidden();
 });
 
+// Test: pharmacist bisa akses route inventaris
 test('test_pharmacist_can_access_inventaris_route', function () {
     $pharmacist = createUser('pharmacist');
 
@@ -80,6 +87,7 @@ test('test_pharmacist_can_access_inventaris_route', function () {
     $response->assertStatus(200);
 });
 
+// Test: admin bisa akses semua route
 test('test_admin_can_access_all_routes', function () {
     $admin = createUser('admin');
 
@@ -110,6 +118,7 @@ test('test_admin_can_access_all_routes', function () {
         ->assertOk();
 });
 
+// Test: user tidak terautentikasi diarahkan ke login
 test('test_unauthenticated_user_redirected_to_login', function () {
     $response = $this->get(route('sistem.dashboard'));
 

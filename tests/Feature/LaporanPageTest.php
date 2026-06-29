@@ -1,5 +1,7 @@
 <?php
 
+/** Feature test untuk halaman Laporan (LaporanPage): akses, tab navigasi, filter, dan export CSV. */
+
 use App\Livewire\Laporan\LaporanPage;
 use App\Models\Medicine;
 use App\Models\Sale;
@@ -14,11 +16,13 @@ uses(RefreshDatabase::class);
 // Access Control
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Test: guest diarahkan ke login
 test('guests are redirected from laporan page', function () {
     $this->get(route('laporan.index'))
         ->assertRedirect(route('sistem.login'));
 });
 
+// Test: cashier tidak bisa akses halaman laporan
 test('cashier cannot access laporan page', function () {
     $cashier = User::factory()->create(['role' => 'cashier']);
 
@@ -27,6 +31,7 @@ test('cashier cannot access laporan page', function () {
         ->assertForbidden();
 });
 
+// Test: admin bisa akses halaman laporan
 test('admin can access laporan page', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -35,6 +40,7 @@ test('admin can access laporan page', function () {
         ->assertOk();
 });
 
+// Test: pharmacist bisa akses halaman laporan
 test('pharmacist can access laporan page', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
 
@@ -47,6 +53,7 @@ test('pharmacist can access laporan page', function () {
 // Tab Navigation
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Test: tab default adalah penjualan saat mount
 test('default active tab is penjualan on mount', function () {
     $user = User::factory()->create(['role' => 'admin']);
 
@@ -55,6 +62,7 @@ test('default active tab is penjualan on mount', function () {
         ->assertSet('activeTab', 'penjualan');
 });
 
+// Test: setTab mengganti tab aktif dan mereset filter
 test('setTab changes active tab and resets filters', function () {
     $user = User::factory()->create(['role' => 'admin']);
 
@@ -68,6 +76,7 @@ test('setTab changes active tab and resets filters', function () {
         ->assertSet('mutationType', '');
 });
 
+// Test: setTab mereset dateFrom dan dateTo
 test('setTab resets dateFrom and dateTo', function () {
     $user = User::factory()->create(['role' => 'admin']);
 
@@ -81,6 +90,7 @@ test('setTab resets dateFrom and dateTo', function () {
         ->assertSet('dateTo', '');
 });
 
+// Test: mount mengisi dateFrom dengan awal bulan berjalan
 test('mount sets dateFrom to start of current month', function () {
     $user = User::factory()->create(['role' => 'admin']);
 
@@ -94,6 +104,7 @@ test('mount sets dateFrom to start of current month', function () {
 // Tab 1 — Laporan Penjualan
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Test: tab penjualan menampilkan data sales
 test('tab penjualan shows sales data', function () {
     $cashier = User::factory()->create(['role' => 'cashier']);
     $admin = User::factory()->create(['role' => 'admin']);
@@ -114,6 +125,7 @@ test('tab penjualan shows sales data', function () {
         ->assertSee($cashier->name);
 });
 
+// Test: filter penjualan berdasarkan metode pembayaran
 test('tab penjualan filters by payment method', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -127,6 +139,7 @@ test('tab penjualan filters by payment method', function () {
         ->assertDontSee($bpjsSale->invoice_no);
 });
 
+// Test: filter penjualan berdasarkan range tanggal
 test('tab penjualan filters by date range', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -147,6 +160,7 @@ test('tab penjualan filters by date range', function () {
         ->assertDontSee('Pembeli Lama');
 });
 
+// Test: summary penjualan menghitung dan menjumlah dengan benar
 test('sales summary counts and sums correctly', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -163,6 +177,7 @@ test('sales summary counts and sums correctly', function () {
         );
 });
 
+// Test: export CSV laporan penjualan
 test('penjualan csv export downloads a csv file', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     Sale::factory()->create(['sale_date' => now()]);
@@ -180,6 +195,7 @@ test('penjualan csv export downloads a csv file', function () {
 // Tab 2 — Laporan Stok & Mutasi
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Test: tab stok menampilkan data mutasi
 test('tab stok shows mutation data', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $medicine = Medicine::factory()->create(['name' => 'Obat Uji Mutasi']);
@@ -200,6 +216,7 @@ test('tab stok shows mutation data', function () {
         ->assertSee('Restock bulanan');
 });
 
+// Test: filter stok berdasarkan tipe mutasi
 test('tab stok filters by mutation type', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $medicine = Medicine::factory()->create();
@@ -227,6 +244,7 @@ test('tab stok filters by mutation type', function () {
         ->assertDontSee('Keluar saja');
 });
 
+// Test: summary mutasi mengagregasi masuk/keluar dengan benar
 test('mutations summary aggregates in and out correctly', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $medicine = Medicine::factory()->create();
@@ -252,6 +270,7 @@ test('mutations summary aggregates in and out correctly', function () {
         );
 });
 
+// Test: export CSV laporan mutasi stok
 test('mutations csv export downloads a csv file', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $medicine = Medicine::factory()->create();
@@ -275,6 +294,7 @@ test('mutations csv export downloads a csv file', function () {
 // Tab 3 — Laporan Pendapatan per Metode
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Test: tab pendapatan menampilkan kartu metode pembayaran
 test('tab pendapatan shows payment method cards', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -296,6 +316,7 @@ test('tab pendapatan shows payment method cards', function () {
         ->assertSee('BPJS');
 });
 
+// Test: summary pembayaran mengelompokkan total per metode
 test('payment summary groups totals correctly by method', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -316,6 +337,7 @@ test('payment summary groups totals correctly by method', function () {
         );
 });
 
+// Test: export CSV laporan pendapatan per metode
 test('payment csv export downloads a csv file', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -332,6 +354,7 @@ test('payment csv export downloads a csv file', function () {
 // Tab 4 — Laporan Kedaluwarsa & Low Stock
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Test: tab kedaluwarsa menampilkan obat yang akan kedaluwarsa
 test('tab kedaluwarsa shows expiring medicines', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -351,6 +374,7 @@ test('tab kedaluwarsa shows expiring medicines', function () {
         ->assertDontSee('Obat Masih Aman');
 });
 
+// Test: tab kedaluwarsa menampilkan obat dengan stok rendah
 test('tab kedaluwarsa shows low stock medicines', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -374,6 +398,7 @@ test('tab kedaluwarsa shows low stock medicines', function () {
         ->assertDontSee('Obat Stok Lebih Dari Cukup');
 });
 
+// Test: badge merah untuk obat yang akan kedaluwarsa <= 30 hari
 test('expiryBadgeClass returns red for medicines expiring within 30 days', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -383,6 +408,7 @@ test('expiryBadgeClass returns red for medicines expiring within 30 days', funct
         ->toBe('bg-red-100 text-red-700');
 });
 
+// Test: badge amber untuk obat yang akan kedaluwarsa 30-90 hari
 test('expiryBadgeClass returns amber for medicines expiring in 30 to 90 days', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -392,6 +418,7 @@ test('expiryBadgeClass returns amber for medicines expiring in 30 to 90 days', f
         ->toBe('bg-amber-100 text-amber-800');
 });
 
+// Test: export CSV laporan obat kedaluwarsa
 test('expiring csv export downloads a csv file', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -404,6 +431,7 @@ test('expiring csv export downloads a csv file', function () {
     expect($response->effects['download']['name'] ?? '')->toStartWith('laporan-obat-kedaluwarsa-');
 });
 
+// Test: export CSV laporan low stock
 test('low stock csv export downloads a csv file', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
@@ -420,6 +448,7 @@ test('low stock csv export downloads a csv file', function () {
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Test: typeLabel mengembalikan label Bahasa Indonesia yang benar
 test('typeLabel returns correct Indonesian labels', function (string $type, string $expected) {
     $admin = User::factory()->create(['role' => 'admin']);
 

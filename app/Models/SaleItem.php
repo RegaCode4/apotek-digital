@@ -16,14 +16,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'discount',
     'subtotal',
 ])]
+/**
+ * Item baris dari suatu transaksi penjualan (obat, jumlah, harga).
+ */
 class SaleItem extends Model
 {
     use HasFactory;
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Casting atribut ke tipe data tertentu.
      */
     protected function casts(): array
     {
@@ -35,7 +36,7 @@ class SaleItem extends Model
     }
 
     /**
-     * Get the parent sale for this item.
+     * Mendapatkan penjualan induk dari item ini.
      */
     public function sale(): BelongsTo
     {
@@ -43,7 +44,7 @@ class SaleItem extends Model
     }
 
     /**
-     * Get the medicine for this item.
+     * Mendapatkan obat dari item ini.
      */
     public function medicine(): BelongsTo
     {

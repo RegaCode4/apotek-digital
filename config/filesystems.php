@@ -1,3 +1,4 @@
+/**Konfigurasi filesystem: disk lokal, public, cloud, dan s3.*/
 <?php
 
 return [

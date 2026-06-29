@@ -19,6 +19,7 @@ use RuntimeException;
 
 #[Layout('layouts.sistem')]
 #[Title('POS / Kasir')]
+/** POS / Kasir — halaman utama transaksi penjualan obat. */
 class KasirPage extends Component
 {
     // ── Panel kiri — pencarian obat ───────────────────────────
@@ -67,7 +68,7 @@ class KasirPage extends Component
 
     public ?string $errorMessage = null;
 
-    // ── Constructor injection ─────────────────────────────────
+    // ── Injeksi konstruktor ─────────────────────────────────
     private BpjsServiceInterface $bpjs;
 
     public function boot(BpjsServiceInterface $bpjs): void
@@ -75,10 +76,10 @@ class KasirPage extends Component
         $this->bpjs = $bpjs;
     }
 
-    // ── Watchers ──────────────────────────────────────────────
+    // ── Pemantau ──────────────────────────────────────────────
 
     /**
-     * Reset BPJS state when payment method changes away from bpjs.
+     * Mereset state BPJS saat metode pembayaran berubah dari bpjs.
      */
     public function updatedPaymentMethod(): void
     {
@@ -134,6 +135,7 @@ class KasirPage extends Component
 
     // ── Aksi — filter kategori ────────────────────────────────
 
+    /** Set filter kategori aktif. */
     public function selectCategory(?int $categoryId): void
     {
         $this->categoryId = $this->categoryId === $categoryId ? null : $categoryId;
@@ -166,6 +168,7 @@ class KasirPage extends Component
 
     // ── Computed — kalkulasi keranjang ────────────────────────
 
+    /** Subtotal harga seluruh item di keranjang. */
     public function getCartSubtotalProperty(): float
     {
         return collect($this->cart)->sum(
@@ -173,6 +176,7 @@ class KasirPage extends Component
         );
     }
 
+    /** PPN 11% dari subtotal setelah diskon. */
     public function getTaxAmountProperty(): float
     {
         if (! $this->taxEnabled) {
@@ -182,6 +186,7 @@ class KasirPage extends Component
         return round(($this->cartSubtotal - $this->discountAmount) * 0.11, 2);
     }
 
+    /** Total akhir = subtotal - diskon + pajak. */
     public function getGrandTotalProperty(): float
     {
         return max(0, $this->cartSubtotal - $this->discountAmount + $this->taxAmount);
@@ -189,6 +194,7 @@ class KasirPage extends Component
 
     // ── Aksi — keranjang ──────────────────────────────────────
 
+    /** Tambah item ke keranjang belanja. */
     public function addToCart(int $medicineId): void
     {
         $medicine = Medicine::find($medicineId);
@@ -225,6 +231,7 @@ class KasirPage extends Component
         $this->search = '';
     }
 
+    /** Ubah jumlah item di keranjang berdasarkan index. */
     public function updateQuantity(int $index, int $quantity): void
     {
         if ($quantity <= 0) {
@@ -238,6 +245,7 @@ class KasirPage extends Component
         }
     }
 
+    /** Hapus item dari keranjang. */
     public function removeFromCart(int $index): void
     {
         unset($this->cart[$index]);
@@ -246,6 +254,7 @@ class KasirPage extends Component
 
     // ── Aksi — BPJS ───────────────────────────────────────────
 
+    /** Verifikasi nomor BPJS ke layanan eksternal. */
     public function verifyBpjs(): void
     {
         $this->bpjsVerification = null;
@@ -262,7 +271,7 @@ class KasirPage extends Component
         $this->bpjsVerification = $result;
         $this->bpjsVerified = $result['status'] === 'aktif';
 
-        // Re-evaluate is_fornas for all existing cart items
+        // Evaluasi ulang is_fornas untuk seluruh item di keranjang
         if ($this->bpjsVerified) {
             foreach ($this->cart as $index => $item) {
                 $this->cart[$index]['is_fornas'] = $this->bpjs->isFornas($item['medicine_id']);
@@ -272,6 +281,7 @@ class KasirPage extends Component
 
     // ── Aksi — proses transaksi ───────────────────────────────
 
+    /** Proses checkout — validasi, simpan transaksi via PosService. */
     public function processTransaction(PosService $posService): void
     {
         $this->errorMessage = null;
@@ -327,6 +337,7 @@ class KasirPage extends Component
         }
     }
 
+    /** Tutup modal sukses transaksi. */
     public function closeSuccessModal(): void
     {
         $this->showSuccessModal = false;
@@ -381,18 +392,20 @@ class KasirPage extends Component
         ];
     }
 
+    /** Reset state BPJS. */
     private function resetBpjs(): void
     {
         $this->bpjsNumber = '';
         $this->bpjsVerification = null;
         $this->bpjsVerified = false;
 
-        // Reset is_fornas flags — no longer relevant
+        // Reset flag is_fornas — sudah tidak relevan
         foreach ($this->cart as $index => $item) {
             $this->cart[$index]['is_fornas'] = true;
         }
     }
 
+    /** Kosongkan seluruh keranjang dan reset form checkout. */
     private function resetCart(): void
     {
         $this->cart = [];

@@ -1,3 +1,4 @@
+/**Konfigurasi queue: koneksi, driver, tabel jobs, dan failed jobs.*/
 <?php
 
 return [

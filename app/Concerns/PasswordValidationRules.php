@@ -5,10 +5,11 @@ namespace App\Concerns;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rules\Password;
 
+/** Aturan validasi kata sandi. */
 trait PasswordValidationRules
 {
     /**
-     * Get the validation rules used to validate passwords.
+     * Mendapatkan aturan validasi yang digunakan untuk memvalidasi kata sandi.
      *
      * @return array<int, ValidationRule|array<mixed>|string>
      */
@@ -18,7 +19,7 @@ trait PasswordValidationRules
     }
 
     /**
-     * Get the validation rules used to validate the current password.
+     * Mendapatkan aturan validasi yang digunakan untuk memvalidasi kata sandi saat ini.
      *
      * @return array<int, ValidationRule|array<mixed>|string>
      */

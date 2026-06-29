@@ -18,13 +18,14 @@ use Livewire\WithPagination;
 
 #[Layout('layouts.sistem')]
 #[Title('Daftar Obat')]
+/** Daftar Obat — manajemen master obat dengan filter, pagination, dan hapus. */
 class MedicineIndex extends Component
 {
     use WithPagination;
 
     public string $search = '';
 
-    /** Filter by category_id (FK ke tabel categories) */
+    /** Filter berdasarkan category_id (FK ke tabel categories). */
     public string $categoryId = '';
 
     public string $requiresPrescription = '';
@@ -39,21 +40,25 @@ class MedicineIndex extends Component
 
     public string $deleteMedicineName = '';
 
+    /** Mereset halaman saat filter pencarian berubah. */
     public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
+    /** Reset halaman saat filter kategori berubah. */
     public function updatingCategoryId(): void
     {
         $this->resetPage();
     }
 
+    /** Reset halaman saat filter resep berubah. */
     public function updatingRequiresPrescription(): void
     {
         $this->resetPage();
     }
 
+    /** Memuat ulang data setelah form obat ditutup. */
     #[On('medicine-saved')]
     public function refreshMedicines(?string $message = null): void
     {
@@ -65,6 +70,7 @@ class MedicineIndex extends Component
         $this->resetPage();
     }
 
+    /** Tampilkan konfirmasi hapus obat. */
     public function confirmDelete(int $id): void
     {
         $medicine = Medicine::query()->findOrFail($id);
@@ -75,6 +81,7 @@ class MedicineIndex extends Component
         $this->showDeleteModal = true;
     }
 
+    /** Hapus obat dari database. */
     public function deleteConfirmed(): void
     {
         if ($this->deleteMedicineId === null) {
@@ -121,7 +128,7 @@ class MedicineIndex extends Component
     }
 
     /**
-     * Load semua kategori dari tabel categories untuk dropdown filter.
+     * Memuat semua kategori dari tabel categories untuk filter dropdown.
      *
      * @return Collection<int, Category>
      */
@@ -132,6 +139,7 @@ class MedicineIndex extends Component
             ->get(['id', 'name']);
     }
 
+    /** Menampilkan halaman daftar obat. */
     public function render(): View
     {
         return view('livewire.inventaris.medicine-index', [
@@ -140,6 +148,7 @@ class MedicineIndex extends Component
         ]);
     }
 
+    /** Cek apakah obat sudah pernah dijual. */
     protected function hasSaleItems(Medicine $medicine): bool
     {
         if (! Schema::hasTable('sale_items')) {
@@ -149,6 +158,7 @@ class MedicineIndex extends Component
         return DB::table('sale_items')->where('medicine_id', $medicine->id)->exists();
     }
 
+    /** Mereset state modal hapus. */
     protected function resetDeleteState(): void
     {
         $this->showDeleteModal = false;
