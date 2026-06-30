@@ -1,5 +1,6 @@
-/**Konfigurasi Laravel Fortify: fitur autentikasi, views, dan actions.*/
 <?php
+
+/**Konfigurasi Laravel Fortify: fitur autentikasi, views, dan actions.*/
 
 use Laravel\Fortify\Features;
 

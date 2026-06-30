@@ -15,6 +15,7 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 /** Halaman laporan dengan beberapa tab laporan */
 #[Layout('layouts.sistem')]
@@ -140,8 +141,38 @@ class LaporanPage extends Component
 
             fclose($handle);
         }, $filename, [
-            'Content-Type' => 'text/csv',
         ]);
+    }
+
+    /** Ekspor penjualan terfilter ke PDF */
+    public function exportSalesPdf()
+    {
+        $sales = $this->salesFilteredQuery()
+            ->with('cashier')
+            ->withCount('saleItems')
+            ->orderByDesc('sale_date')
+            ->get();
+
+        $rows = $sales->map(function ($sale) {
+            return [
+                $sale->invoice_no,
+                $sale->sale_date->format('Y-m-d H:i:s'),
+                $sale->buyer_name,
+                $sale->cashier?->name,
+                $sale->sale_items_count,
+                'Rp ' . number_format($sale->grand_total, 0, ',', '.'),
+                strtoupper($sale->payment_method),
+            ];
+        })->toArray();
+
+        $pdf = Pdf::loadView('pdf.brutalist-table', [
+            'title' => 'Laporan Penjualan',
+            'subtitle' => 'Periode: ' . ($this->dateFrom ?: 'Awal') . ' s/d ' . ($this->dateTo ?: 'Akhir'),
+            'headers' => ['No. Invoice', 'Tanggal', 'Pembeli', 'Kasir', 'Total Item', 'Grand Total', 'Metode Bayar'],
+            'rows' => $rows,
+        ]);
+
+        return response()->streamDownload(fn () => print($pdf->output()), 'laporan-penjualan-' . now()->format('Y-m-d-His') . '.pdf');
     }
 
     /** Query dasar untuk penjualan dengan filter yang diterapkan */
@@ -229,8 +260,36 @@ class LaporanPage extends Component
 
             fclose($handle);
         }, $filename, [
-            'Content-Type' => 'text/csv',
         ]);
+    }
+
+    /** Ekspor mutasi stok terfilter ke PDF */
+    public function exportMutationsPdf()
+    {
+        $mutations = $this->mutationsFilteredQuery()
+            ->with(['medicine', 'createdBy'])
+            ->orderByDesc('created_at')
+            ->get();
+
+        $rows = $mutations->map(function ($mutation) {
+            return [
+                $mutation->created_at?->format('Y-m-d H:i:s'),
+                $mutation->medicine?->name,
+                $this->typeLabel($mutation->type),
+                $mutation->quantity,
+                $mutation->notes,
+                $mutation->createdBy?->name,
+            ];
+        })->toArray();
+
+        $pdf = Pdf::loadView('pdf.brutalist-table', [
+            'title' => 'Laporan Mutasi Stok',
+            'subtitle' => 'Periode: ' . ($this->dateFrom ?: 'Awal') . ' s/d ' . ($this->dateTo ?: 'Akhir'),
+            'headers' => ['Tanggal', 'Nama Obat', 'Tipe', 'Jumlah', 'Keterangan', 'Dicatat Oleh'],
+            'rows' => $rows,
+        ]);
+
+        return response()->streamDownload(fn () => print($pdf->output()), 'laporan-stok-mutasi-' . now()->format('Y-m-d-His') . '.pdf');
     }
 
     /** Query dasar untuk mutasi stok dengan filter yang diterapkan */
@@ -294,8 +353,39 @@ class LaporanPage extends Component
 
             fclose($handle);
         }, $filename, [
-            'Content-Type' => 'text/csv',
         ]);
+    }
+
+    /** Ekspor breakdown pendapatan harian ke PDF */
+    public function exportPaymentPdf()
+    {
+        $rows = [];
+        foreach ($this->dailyBreakdown as $tanggal => $items) {
+            $byMethod = $items->keyBy('payment_method');
+            $cash = $byMethod->get('cash')?->total ?? 0;
+            $transfer = $byMethod->get('transfer')?->total ?? 0;
+            $bpjs = $byMethod->get('bpjs')?->total ?? 0;
+            $insurance = $byMethod->get('insurance')?->total ?? 0;
+            $dayTotal = $cash + $transfer + $bpjs + $insurance;
+
+            $rows[] = [
+                $tanggal,
+                'Rp ' . number_format($cash, 0, ',', '.'),
+                'Rp ' . number_format($transfer, 0, ',', '.'),
+                'Rp ' . number_format($bpjs, 0, ',', '.'),
+                'Rp ' . number_format($insurance, 0, ',', '.'),
+                'Rp ' . number_format($dayTotal, 0, ',', '.'),
+            ];
+        }
+
+        $pdf = Pdf::loadView('pdf.brutalist-table', [
+            'title' => 'Laporan Pendapatan Berdasarkan Metode',
+            'subtitle' => 'Periode: ' . ($this->dateFrom ?: 'Awal') . ' s/d ' . ($this->dateTo ?: 'Akhir'),
+            'headers' => ['Tanggal', 'Cash', 'Transfer', 'BPJS', 'Asuransi', 'Total'],
+            'rows' => $rows,
+        ]);
+
+        return response()->streamDownload(fn () => print($pdf->output()), 'laporan-pendapatan-metode-' . now()->format('Y-m-d-His') . '.pdf');
     }
 
     /** Obat yang akan kedaluwarsa dalam 3 bulan ke depan */
@@ -357,6 +447,30 @@ class LaporanPage extends Component
         }, $filename, ['Content-Type' => 'text/csv']);
     }
 
+    /** Ekspor obat kedaluwarsa ke PDF */
+    public function exportExpiringPdf()
+    {
+        $rows = $this->expiringMedicines->map(function ($medicine) {
+            return [
+                $medicine->name,
+                $medicine->generic_name,
+                $medicine->category?->name,
+                $medicine->stock,
+                $medicine->expiry_date?->format('Y-m-d'),
+                (int) now()->diffInDays($medicine->expiry_date, false),
+            ];
+        })->toArray();
+
+        $pdf = Pdf::loadView('pdf.brutalist-table', [
+            'title' => 'Laporan Obat Hampir Kedaluwarsa',
+            'subtitle' => 'Dalam 3 bulan ke depan',
+            'headers' => ['Nama Obat', 'Nama Generik', 'Kategori', 'Stok', 'Tanggal Kedaluwarsa', 'Sisa Hari'],
+            'rows' => $rows,
+        ]);
+
+        return response()->streamDownload(fn () => print($pdf->output()), 'laporan-obat-kedaluwarsa-' . now()->format('Y-m-d-His') . '.pdf');
+    }
+
     /** Ekspor obat stok rendah ke CSV */
     public function exportLowStockCsv(): StreamedResponse
     {
@@ -383,6 +497,29 @@ class LaporanPage extends Component
 
             fclose($handle);
         }, $filename, ['Content-Type' => 'text/csv']);
+    }
+
+    /** Ekspor obat stok rendah ke PDF */
+    public function exportLowStockPdf()
+    {
+        $rows = $this->lowStockMedicines->map(function ($medicine) {
+            return [
+                $medicine->name,
+                $medicine->generic_name,
+                $medicine->category?->name,
+                $medicine->stock,
+                $medicine->min_stock,
+            ];
+        })->toArray();
+
+        $pdf = Pdf::loadView('pdf.brutalist-table', [
+            'title' => 'Laporan Stok Menipis',
+            'subtitle' => 'Obat dengan stok di bawah batas minimum',
+            'headers' => ['Nama Obat', 'Nama Generik', 'Kategori', 'Stok Saat Ini', 'Min. Stok'],
+            'rows' => $rows,
+        ]);
+
+        return response()->streamDownload(fn () => print($pdf->output()), 'laporan-low-stock-' . now()->format('Y-m-d-His') . '.pdf');
     }
 
     /** Menampilkan tampilan tab yang sesuai dengan datanya */

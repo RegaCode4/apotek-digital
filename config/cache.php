@@ -1,5 +1,6 @@
-/**Konfigurasi cache: driver default, prefix, dan koneksi per storage.*/
 <?php
+
+/**Konfigurasi cache: driver default, prefix, dan koneksi per storage.*/
 
 use Illuminate\Support\Str;
 

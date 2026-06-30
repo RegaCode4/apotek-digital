@@ -5,16 +5,7 @@
             <p class="mt-1 text-sm font-semibold text-[var(--color-muted)]">Audit trail keluar-masuk stok obat</p>
         </div>
 
-        <button
-            type="button"
-            wire:click="exportCsv"
-            class="btn-brutal btn-secondary px-4 py-2.5 text-sm font-bold cursor-pointer shadow-[2px_2px_0_var(--color-brutal)]"
-            wire:loading.attr="disabled"
-            wire:target="exportCsv"
-        >
-            <span wire:loading.remove wire:target="exportCsv">Export CSV</span>
-            <span wire:loading wire:target="exportCsv">Mengekspor...</span>
-        </button>
+        <x-export-dropdown actionCsv="exportCsv" actionPdf="exportPdf" />
     </div>
 
     <div class="mb-6 card-brutal p-4 bg-[var(--color-surface)]">

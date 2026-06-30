@@ -1,5 +1,6 @@
-/**Konfigurasi database: koneksi, driver, host, port, dan pengaturan migration.*/
 <?php
+
+/**Konfigurasi database: koneksi, driver, host, port, dan pengaturan migration.*/
 
 use Illuminate\Support\Str;
 use Pdo\Mysql;

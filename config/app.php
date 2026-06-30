@@ -1,5 +1,6 @@
-/**Konfigurasi aplikasi utama: timezone, locale, providers, aliases, dan pengaturan dasar lainnya.*/
 <?php
+
+/**Konfigurasi aplikasi utama: timezone, locale, providers, aliases, dan pengaturan dasar lainnya.*/
 
 return [
 

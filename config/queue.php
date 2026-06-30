@@ -1,5 +1,6 @@
-/**Konfigurasi queue: koneksi, driver, tabel jobs, dan failed jobs.*/
 <?php
+
+/**Konfigurasi queue: koneksi, driver, tabel jobs, dan failed jobs.*/
 
 return [
 

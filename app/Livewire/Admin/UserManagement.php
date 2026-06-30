@@ -24,6 +24,17 @@ class UserManagement extends Component
 
     public bool $showModal = false;
 
+    public bool $showConfirmModal = false;
+
+    /** Aksi yang akan dikonfirmasi: 'toggleActive' atau 'resetPassword' */
+    public string $confirmAction = '';
+
+    public ?int $confirmUserId = null;
+
+    public string $confirmTitle = '';
+
+    public string $confirmMessage = '';
+
     /** null = create mode, int = edit mode */
     public ?int $editingUserId = null;
 
@@ -41,6 +52,48 @@ class UserManagement extends Component
     public function updatingSearch(): void
     {
         $this->resetPage();
+    }
+
+    /** Membuka modal konfirmasi untuk aksi tertentu */
+    public function openConfirmModal(string $action, int $userId): void
+    {
+        $user = User::findOrFail($userId);
+        $this->confirmAction = $action;
+        $this->confirmUserId = $userId;
+
+        if ($action === 'toggleActive') {
+            $this->confirmTitle = $user->is_active ? 'Nonaktifkan User' : 'Aktifkan User';
+            $this->confirmMessage = $user->is_active
+                ? "Apakah Anda yakin ingin menonaktifkan user {$user->name}? User tidak akan bisa login setelah dinonaktifkan."
+                : "Apakah Anda yakin ingin mengaktifkan kembali user {$user->name}?";
+        } elseif ($action === 'resetPassword') {
+            $this->confirmTitle = 'Reset Password';
+            $this->confirmMessage = "Password {$user->name} akan direset ke 'password123'. Minta user segera ganti password setelahnya.";
+        }
+
+        $this->showConfirmModal = true;
+    }
+
+    /** Menjalankan aksi yang telah dikonfirmasi */
+    public function executeConfirm(): void
+    {
+        if ($this->confirmAction === 'toggleActive') {
+            $this->toggleActive($this->confirmUserId);
+        } elseif ($this->confirmAction === 'resetPassword') {
+            $this->resetPassword($this->confirmUserId);
+        }
+
+        $this->closeConfirmModal();
+    }
+
+    /** Menutup modal konfirmasi */
+    public function closeConfirmModal(): void
+    {
+        $this->showConfirmModal = false;
+        $this->confirmAction = '';
+        $this->confirmUserId = null;
+        $this->confirmTitle = '';
+        $this->confirmMessage = '';
     }
 
     /** Mengganti status aktif user, mencegah nonaktif diri sendiri */

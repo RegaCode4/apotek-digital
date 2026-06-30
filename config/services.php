@@ -1,5 +1,6 @@
-/**Konfigurasi layanan pihak ketiga: Mailgun, Postmark, AWS, Stripe, dll.*/
 <?php
+
+/**Konfigurasi layanan pihak ketiga: Mailgun, Postmark, AWS, Stripe, dll.*/
 
 return [
 

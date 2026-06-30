@@ -35,3 +35,6 @@ opencode.json
 .opencode
 context.md
 context.txt
+check_db.php
+*.sqlite
+/database/*.sqlite

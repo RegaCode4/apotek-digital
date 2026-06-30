@@ -1,5 +1,6 @@
-/**Konfigurasi logging: channel, driver, level, dan handler log.*/
 <?php
+
+/**Konfigurasi logging: channel, driver, level, dan handler log.*/
 
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;

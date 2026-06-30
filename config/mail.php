@@ -1,5 +1,6 @@
-/**Konfigurasi mail: driver, host, port, credentials, dan alamat pengirim.*/
 <?php
+
+/**Konfigurasi mail: driver, host, port, credentials, dan alamat pengirim.*/
 
 return [
 

@@ -11,6 +11,7 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 #[Layout('layouts.sistem')]
 #[Title('Riwayat Mutasi Stok')]
@@ -93,6 +94,35 @@ class MutasiStok extends Component
         }, $filename, [
             'Content-Type' => 'text/csv',
         ]);
+    }
+
+    /** Ekspor data mutasi ke file PDF. */
+    public function exportPdf()
+    {
+        $mutations = $this->filteredQuery()
+            ->orderByDesc('created_at')
+            ->get();
+
+        $rows = $mutations->map(function ($mutation) {
+            return [
+                $mutation->created_at?->format('Y-m-d H:i:s'),
+                $mutation->medicine?->name,
+                $this->typeLabel($mutation->type),
+                $mutation->quantity,
+                $mutation->reference_id,
+                $mutation->notes,
+                $mutation->createdBy?->name,
+            ];
+        })->toArray();
+
+        $pdf = Pdf::loadView('pdf.brutalist-table', [
+            'title' => 'Laporan Mutasi Stok',
+            'subtitle' => 'Pencarian: ' . ($this->search ?: 'Semua') . ' | Tipe: ' . ($this->type ?: 'Semua'),
+            'headers' => ['Tanggal', 'Nama Obat', 'Tipe', 'Jumlah', 'Referensi', 'Catatan', 'Dicatat Oleh'],
+            'rows' => $rows,
+        ]);
+
+        return response()->streamDownload(fn () => print($pdf->output()), 'mutasi-stok-' . now()->format('Y-m-d-His') . '.pdf');
     }
 
     /**

@@ -100,8 +100,7 @@
                                     @if (! $isSelf)
                                         <button
                                             type="button"
-                                            wire:click="toggleActive({{ $user->id }})"
-                                            wire:confirm="{{ $user->is_active ? 'Nonaktifkan user ini?' : 'Aktifkan user ini?' }}"
+                                            wire:click="openConfirmModal('toggleActive', {{ $user->id }})"
                                             class="btn-brutal px-2.5 py-1.5 text-xs font-bold cursor-pointer shadow-[2px_2px_0_var(--color-brutal)] {{ $user->is_active ? 'bg-[var(--color-warning-soft)] text-[var(--color-warning)]' : 'bg-[var(--color-success-soft)] text-[var(--color-success)]' }}"
                                         >
                                             {{ $user->is_active ? 'Nonaktifkan' : 'Aktifkan' }}
@@ -111,8 +110,7 @@
                                     {{-- Atur ulang kata sandi --}}
                                     <button
                                         type="button"
-                                        wire:click="resetPassword({{ $user->id }})"
-                                        wire:confirm="Reset password {{ $user->name }} ke 'password123'?"
+                                        wire:click="openConfirmModal('resetPassword', {{ $user->id }})"
                                         class="btn-brutal btn-secondary px-2.5 py-1.5 text-xs font-bold cursor-pointer shadow-[2px_2px_0_var(--color-brutal)]"
                                         title="Reset password ke password123"
                                     >
@@ -292,4 +290,80 @@
             </div>
         </div>
     </div>
+
+    {{-- ══════════════════════════════════════════════
+         MODAL — Konfirmasi Aksi
+    ══════════════════════════════════════════════ --}}
+    <div
+        x-data="{ show: @entangle('showConfirmModal') }"
+        x-show="show"
+        x-cloak
+        class="relative z-50"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirm-modal-title"
+    >
+        <div
+            x-show="show"
+            x-transition.opacity
+            class="fixed inset-0 bg-[var(--color-brutal)]/40 backdrop-blur-xs"
+            wire:click="closeConfirmModal"
+        ></div>
+
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div
+                x-show="show"
+                x-transition
+                @click.stop
+                class="w-full max-w-sm card-brutal card-brutal-lg p-6 bg-[var(--color-surface)]"
+            >
+                {{-- Icon --}}
+                <div class="mb-4 flex items-center justify-center">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--color-brutal)] {{ $confirmAction === 'resetPassword' ? 'bg-[var(--color-warning-soft)]' : ($confirmAction === 'toggleActive' ? 'bg-[var(--color-danger-soft)]' : 'bg-[var(--color-info-soft)]') }}">
+                        @if ($confirmAction === 'resetPassword')
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[var(--color-warning)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                            </svg>
+                        @else
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[var(--color-danger)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                            </svg>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Title --}}
+                <h3 id="confirm-modal-title" class="text-center text-lg font-bold text-[var(--color-ink)]">
+                    {{ $confirmTitle }}
+                </h3>
+
+                {{-- Message --}}
+                <p class="mt-2 text-center text-sm font-semibold text-[var(--color-muted)]">
+                    {{ $confirmMessage }}
+                </p>
+
+                {{-- Actions --}}
+                <div class="mt-6 flex justify-center gap-2.5">
+                    <button
+                        type="button"
+                        wire:click="closeConfirmModal"
+                        class="btn-brutal btn-secondary px-4 py-2 text-sm font-bold cursor-pointer shadow-[2px_2px_0_var(--color-brutal)]"
+                    >
+                        Batal
+                    </button>
+                    <button
+                        type="button"
+                        wire:click="executeConfirm"
+                        wire:loading.attr="disabled"
+                        wire:target="executeConfirm"
+                        class="btn-brutal px-4 py-2 text-sm font-bold cursor-pointer shadow-[2px_2px_0_var(--color-brutal)] disabled:opacity-60 {{ $confirmAction === 'resetPassword' ? 'bg-[var(--color-warning-soft)] text-[var(--color-warning)] hover:bg-[var(--color-warning)] hover:text-white' : 'bg-[var(--color-danger-soft)] text-[var(--color-danger)] hover:bg-[var(--color-danger)] hover:text-white' }} transition-colors duration-150"
+                    >
+                        <span wire:loading.remove wire:target="executeConfirm">Ya, Lanjutkan</span>
+                        <span wire:loading wire:target="executeConfirm">Memproses...</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>

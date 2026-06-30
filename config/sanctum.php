@@ -1,5 +1,6 @@
-/**Konfigurasi Laravel Sanctum: stateful domains, expiration, dan middleware API.*/
 <?php
+
+/**Konfigurasi Laravel Sanctum: stateful domains, expiration, dan middleware API.*/
 
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;

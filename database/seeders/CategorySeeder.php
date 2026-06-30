@@ -21,31 +21,63 @@ class CategorySeeder extends Seeder
         $categories = [
             [
                 'name' => 'Sistem Pencernaan & Metabolisme',
-                'description' => 'Obat untuk saluran pencernaan, metabolisme, dan gangguan terkait (ATC: A)',
+                'description' => 'Obat saluran cerna, asam lambung, dan metabolisme.',
             ],
             [
                 'name' => 'Sistem Kardiovaskular',
-                'description' => 'Obat untuk jantung dan pembuluh darah (ATC: C)',
+                'description' => 'Obat jantung, hipertensi, dan pembuluh darah.',
             ],
             [
                 'name' => 'Sistem Saraf Pusat',
-                'description' => 'Obat untuk gangguan sistem saraf pusat termasuk analgesik dan anestesi (ATC: N)',
+                'description' => 'Analgesik, antikonvulsan, antidepresan, dan psikotropika.',
             ],
             [
                 'name' => 'Anti-Infeksi Sistemik',
-                'description' => 'Antibiotik, antivirus, antifungal, dan antiparasit sistemik (ATC: J)',
+                'description' => 'Antibiotik dan antimikroba sistemik.',
             ],
             [
                 'name' => 'Sistem Pernapasan',
-                'description' => 'Obat untuk saluran pernapasan termasuk bronkodilator dan antitusif (ATC: R)',
+                'description' => 'Bronkodilator, mukolitik, antihistamin, dan dekongestan.',
             ],
             [
                 'name' => 'Sistem Endokrin',
-                'description' => 'Hormon dan obat untuk gangguan endokrin termasuk diabetes (ATC: H)',
+                'description' => 'Antidiabetik, hormon, dan kortikosteroid.',
             ],
             [
                 'name' => 'Antineoplastik',
-                'description' => 'Obat kemoterapi dan imunomodulator untuk pengobatan kanker (ATC: L)',
+                'description' => 'Obat kemoterapi dan terapi kanker.',
+            ],
+            [
+                'name' => 'Dermatologikal',
+                'description' => 'Obat topikal untuk kulit (krim, salep, losion).',
+            ],
+            [
+                'name' => 'Sistem Muskuloskeletal',
+                'description' => 'NSAID, antirematik, dan obat asam urat.',
+            ],
+            [
+                'name' => 'Organ Sensorik',
+                'description' => 'Obat mata, telinga, dan hidung.',
+            ],
+            [
+                'name' => 'Sistem Genitourinari & Hormon Seks',
+                'description' => 'Obat saluran kemih, prostat, dan kontrasepsi/hormon seks.',
+            ],
+            [
+                'name' => 'Darah & Organ Pembentuk Darah',
+                'description' => 'Suplemen darah, antikoagulan, dan antifibrinolitik.',
+            ],
+            [
+                'name' => 'Antiparasit, Insektisida & Repelen',
+                'description' => 'Obat cacing, skabisida, dan antiparasit.',
+            ],
+            [
+                'name' => 'Berbagai Macam (Various)',
+                'description' => 'Antiseptik, rehidrasi, dan produk lain-lain.',
+            ],
+            [
+                'name' => 'Vitamin dan Suplemen',
+                'description' => 'Vitamin, mineral, dan suplemen kesehatan.',
             ],
         ];
 

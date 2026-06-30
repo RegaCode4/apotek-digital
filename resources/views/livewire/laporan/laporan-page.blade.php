@@ -61,16 +61,7 @@
     @if ($activeTab === 'penjualan')
         {{-- ── Tombol ekspor ── --}}
         <div class="mb-4 flex justify-end">
-            <button
-                type="button"
-                wire:click="exportSalesCsv"
-                wire:loading.attr="disabled"
-                wire:target="exportSalesCsv"
-                class="btn-brutal btn-secondary px-4 py-2.5 text-sm font-bold cursor-pointer shadow-[2px_2px_0_var(--color-brutal)]"
-            >
-                <span wire:loading.remove wire:target="exportSalesCsv">Export CSV</span>
-                <span wire:loading wire:target="exportSalesCsv">Mengekspor...</span>
-            </button>
+            <x-export-dropdown actionCsv="exportSalesCsv" actionPdf="exportSalesPdf" />
         </div>
 
         {{-- ── Panel filter ── --}}
@@ -199,16 +190,7 @@
     @elseif ($activeTab === 'stok')
         {{-- ── Tombol ekspor ── --}}
         <div class="mb-4 flex justify-end">
-            <button
-                type="button"
-                wire:click="exportMutationsCsv"
-                wire:loading.attr="disabled"
-                wire:target="exportMutationsCsv"
-                class="btn-brutal btn-secondary px-4 py-2.5 text-sm font-bold cursor-pointer shadow-[2px_2px_0_var(--color-brutal)]"
-            >
-                <span wire:loading.remove wire:target="exportMutationsCsv">Export CSV</span>
-                <span wire:loading wire:target="exportMutationsCsv">Mengekspor...</span>
-            </button>
+            <x-export-dropdown actionCsv="exportMutationsCsv" actionPdf="exportMutationsPdf" />
         </div>
 
         {{-- ── Panel filter ── --}}
@@ -356,16 +338,7 @@
                         class="block w-full input-brutal focus:ring-1 focus:ring-[var(--color-primary)]"
                     />
                 </div>
-                <button
-                    type="button"
-                    wire:click="exportPaymentCsv"
-                    wire:loading.attr="disabled"
-                    wire:target="exportPaymentCsv"
-                    class="btn-brutal btn-secondary px-4 py-2 text-sm font-bold cursor-pointer shadow-[2px_2px_0_var(--color-brutal)]"
-                >
-                    <span wire:loading.remove wire:target="exportPaymentCsv">Export CSV</span>
-                    <span wire:loading wire:target="exportPaymentCsv">Mengekspor...</span>
-                </button>
+                <x-export-dropdown actionCsv="exportPaymentCsv" actionPdf="exportPaymentPdf" />
             </div>
         </div>
 
@@ -448,11 +421,7 @@
         {{-- ── Bagian A: Obat Hampir Kedaluwarsa ── --}}
         <div class="mb-4 flex items-center justify-between flex-wrap gap-4">
             <h3 class="text-base font-bold text-[var(--color-ink)]">Obat Hampir Kedaluwarsa</h3>
-            <button type="button" wire:click="exportExpiringCsv" wire:loading.attr="disabled" wire:target="exportExpiringCsv"
-                class="btn-brutal btn-secondary px-4 py-2 text-sm font-bold cursor-pointer shadow-[2px_2px_0_var(--color-brutal)]">
-                <span wire:loading.remove wire:target="exportExpiringCsv">Export CSV — Kedaluwarsa</span>
-                <span wire:loading wire:target="exportExpiringCsv">Mengekspor...</span>
-            </button>
+            <x-export-dropdown actionCsv="exportExpiringCsv" actionPdf="exportExpiringPdf" />
         </div>
 
         <div class="overflow-hidden card-brutal bg-[var(--color-surface)]">
@@ -508,11 +477,7 @@
         {{-- ── Bagian B: Obat Stok Menipis ── --}}
         <div class="mb-4 flex items-center justify-between flex-wrap gap-4">
             <h3 class="text-base font-bold text-[var(--color-ink)]">Obat Stok Menipis</h3>
-            <button type="button" wire:click="exportLowStockCsv" wire:loading.attr="disabled" wire:target="exportLowStockCsv"
-                class="btn-brutal btn-secondary px-4 py-2 text-sm font-bold cursor-pointer shadow-[2px_2px_0_var(--color-brutal)]">
-                <span wire:loading.remove wire:target="exportLowStockCsv">Export CSV — Low Stock</span>
-                <span wire:loading wire:target="exportLowStockCsv">Mengekspor...</span>
-            </button>
+            <x-export-dropdown actionCsv="exportLowStockCsv" actionPdf="exportLowStockPdf" />
         </div>
 
         <div class="overflow-hidden card-brutal bg-[var(--color-surface)]">
