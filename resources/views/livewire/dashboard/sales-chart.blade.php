@@ -174,7 +174,7 @@
     // ── 2. Bar chart — top medicines ──────────────────────────
     const barCanvas = document.getElementById('topMedicinesBarChart');
     const topData   = @json($topMedicines);
-    const barColors = ['#14B8A6', '#0D9488', '#2DD4BF', '#99F6E4', '#CCFBF1']; // Soft Neubrutal Mint palette
+    const barColors = ['#0D9488', '#14B8A6', '#2DD4BF', '#99F6E4', '#CCFBF1']; // Soft Neubrutal Mint palette
 
     const existingBar = Chart.getChart(barCanvas);
     if (existingBar) {
