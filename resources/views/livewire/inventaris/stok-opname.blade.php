@@ -133,12 +133,13 @@
                 <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari nama obat..." class="input-brutal border-2 border-[var(--color-neo-black)] text-sm py-1 font-bold shadow-[2px_2px_0_var(--color-neo-black)] focus:ring-1 focus:ring-[var(--color-neo-black)] w-full sm:w-48">
                 <div class="flex items-center gap-2">
                     <label class="text-sm font-bold text-[var(--color-ink)] whitespace-nowrap">Kategori:</label>
-                    <select wire:model.live="filterCategoryId" class="input-brutal border-2 border-[var(--color-neo-black)] text-sm py-1 font-bold shadow-[2px_2px_0_var(--color-neo-black)] focus:ring-1 focus:ring-[var(--color-neo-black)]">
-                        <option value="">Semua Kategori</option>
-                        @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                        @endforeach
-                    </select>
+                    <div class="w-48">
+                        <x-brutal-select 
+                            wire:model.live="filterCategoryId"
+                            placeholder="Semua Kategori"
+                            :options="$categories->pluck('name', 'id')->toArray()"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
@@ -212,14 +213,16 @@
                             <!-- Alasan (Hanya muncul jika selisih != 0) -->
                             <td class="px-4 py-3">
                                 <div x-show="state === 'diff'" style="display: none;" :style="{ display: state === 'diff' ? 'block' : 'none' }">
-                                    <select wire:model="itemReasons.{{ $medicine->id }}" 
-                                            class="input-brutal w-full text-xs font-bold border-2 border-[var(--color-neo-black)] shadow-[2px_2px_0_var(--color-neo-black)] py-1 focus:ring-1 focus:ring-[var(--color-neo-black)]">
-                                        <option value="">Pilih Alasan...</option>
-                                        <option value="Rusak">Rusak</option>
-                                        <option value="Hilang">Hilang</option>
-                                        <option value="Salah Hitung">Salah Hitung Sebelumnya</option>
-                                        <option value="Kadaluarsa">Kadaluarsa</option>
-                                    </select>
+                                    <x-brutal-select 
+                                        wire:model="itemReasons.{{ $medicine->id }}"
+                                        placeholder="Pilih Alasan..."
+                                        :options="[
+                                            'Rusak' => 'Rusak',
+                                            'Hilang' => 'Hilang',
+                                            'Salah Hitung' => 'Salah Hitung Sebelumnya',
+                                            'Kadaluarsa' => 'Kadaluarsa'
+                                        ]"
+                                    />
                                 </div>
                             </td>
                         </tr>

@@ -7,7 +7,7 @@
     </div>
 
     <div class="mb-6 overflow-x-auto">
-        <div class="flex flex-wrap gap-2.5 pb-2">
+        <div class="flex flex-wrap gap-2.5 pb-2 pt-1 px-1">
             <button
                 type="button"
                 wire:click="setTab('penjualan')"
@@ -89,17 +89,17 @@
 
                 <div>
                     <label for="paymentMethod" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Metode Pembayaran</label>
-                    <select
+                    <x-brutal-select 
                         id="paymentMethod"
                         wire:model.live="paymentMethod"
-                        class="block w-full input-brutal focus:ring-1 focus:ring-[var(--color-primary)]"
-                    >
-                        <option value="">Semua metode</option>
-                        <option value="cash">Cash</option>
-                        <option value="transfer">Transfer</option>
-                        <option value="bpjs">BPJS</option>
-                        <option value="insurance">Asuransi</option>
-                    </select>
+                        placeholder="Semua metode"
+                        :options="[
+                            'cash' => 'Cash',
+                            'transfer' => 'Transfer',
+                            'bpjs' => 'BPJS',
+                            'insurance' => 'Asuransi'
+                        ]"
+                    />
                 </div>
             </div>
         </div>
@@ -198,17 +198,17 @@
             <div class="grid gap-4 md:grid-cols-3">
                 <div>
                     <label for="stok-mutationType" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Tipe Mutasi</label>
-                    <select
+                    <x-brutal-select 
                         id="stok-mutationType"
                         wire:model.live="mutationType"
-                        class="block w-full input-brutal focus:ring-1 focus:ring-[var(--color-primary)]"
-                    >
-                        <option value="">Semua tipe</option>
-                        <option value="in">Masuk</option>
-                        <option value="out">Keluar</option>
-                        <option value="adjustment">Penyesuaian</option>
-                        <option value="expired_return">Retur Kedaluwarsa</option>
-                    </select>
+                        placeholder="Semua tipe"
+                        :options="[
+                            'in' => 'Masuk',
+                            'out' => 'Keluar',
+                            'adjustment' => 'Penyesuaian',
+                            'expired_return' => 'Retur Kedaluwarsa'
+                        ]"
+                    />
                 </div>
 
                 <div>

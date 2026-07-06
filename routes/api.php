@@ -10,10 +10,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Medicine;
 
-// Mendapatkan data user yang sedang login (via Sanctum)
+/**
+ * Mendapatkan data pengguna yang sedang login saat ini (via Sanctum).
+ * Membutuhkan autentikasi token Sanctum.
+ */
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-// Mendapatkan daftar obat beserta kategori (publik — via API)
+/**
+ * Mendapatkan daftar seluruh obat beserta kategorinya.
+ * Rute publik yang dapat diakses melalui API.
+ */
 Route::get('/medicines', fn () => Medicine::with('category')->orderBy('name')->get());

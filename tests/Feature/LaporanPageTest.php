@@ -405,7 +405,7 @@ test('expiryBadgeClass returns red for medicines expiring within 30 days', funct
     $component = Livewire::actingAs($admin)->test(LaporanPage::class);
 
     expect($component->instance()->expiryBadgeClass(now()->addDays(15)->toDateString()))
-        ->toBe('bg-red-100 text-red-700');
+        ->toBe('bg-[var(--color-danger-soft)] text-[var(--color-danger)]');
 });
 
 // Test: badge amber untuk obat yang akan kedaluwarsa 30-90 hari
@@ -415,7 +415,7 @@ test('expiryBadgeClass returns amber for medicines expiring in 30 to 90 days', f
     $component = Livewire::actingAs($admin)->test(LaporanPage::class);
 
     expect($component->instance()->expiryBadgeClass(now()->addDays(60)->toDateString()))
-        ->toBe('bg-amber-100 text-amber-800');
+        ->toBe('bg-[var(--color-warning-soft)] text-[var(--color-warning)]');
 });
 
 // Test: export CSV laporan obat kedaluwarsa

@@ -31,28 +31,45 @@ class StokOpname extends Component
 
     public ?string $successMessage = null;
 
-    // Filter states
-    public string $filterStatus = 'all'; // all, pending, match, diff
+    /** @var string Filter status: all, pending, match, diff */
+    public string $filterStatus = 'all';
+    
+    /** @var string ID Kategori untuk filter */
     public string $filterCategoryId = '';
+    
+    /** @var string Kata kunci pencarian nama obat */
     public string $search = '';
     
     public bool $hasDraft = false;
 
+    /**
+     * Mereset paginasi saat kata kunci pencarian diperbarui.
+     */
     public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
+    /**
+     * Mereset paginasi saat filter status diperbarui.
+     */
     public function updatingFilterStatus(): void
     {
         $this->resetPage();
     }
 
+    /**
+     * Mereset paginasi saat filter kategori diperbarui.
+     */
     public function updatingFilterCategoryId(): void
     {
         $this->resetPage();
     }
 
+    /**
+     * Dipanggil saat komponen pertama kali diinisialisasi.
+     * Memuat draf stok opname (jika ada) dari cache.
+     */
     public function mount(): void
     {
         $draft = \Illuminate\Support\Facades\Cache::get('stock_opname_draft_' . Auth::id());
@@ -64,6 +81,10 @@ class StokOpname extends Component
         }
     }
 
+    /**
+     * Menyimpan inputan stok saat ini sebagai draf sementara di cache.
+     * Draf berlaku selama 7 hari.
+     */
     public function saveDraft(): void
     {
         \Illuminate\Support\Facades\Cache::put('stock_opname_draft_' . Auth::id(), [
@@ -78,6 +99,10 @@ class StokOpname extends Component
         session()->flash('success', $this->successMessage);
     }
 
+    /**
+     * Membuang (menghapus) draf stok opname dari cache
+     * dan mereset sesi SO ke awal.
+     */
     public function discardDraft(): void
     {
         \Illuminate\Support\Facades\Cache::forget('stock_opname_draft_' . Auth::id());
@@ -120,7 +145,7 @@ class StokOpname extends Component
                     continue; // Stok sesuai, tidak perlu record penyesuaian
                 }
 
-                $itemReason = $this->itemReasons[$medicine->id] ?? 'Penyesuaian SO';
+                $itemReason = !empty($this->itemReasons[$medicine->id]) ? $this->itemReasons[$medicine->id] : 'Penyesuaian SO';
 
                 // Tulis ke Ledger Mutasi Stok dengan timestamp absolut
                 $mutation = new StockMutation([
@@ -227,6 +252,9 @@ class StokOpname extends Component
         return $lastOpname ? Carbon::parse($lastOpname) : null;
     }
 
+    /**
+     * Merender tampilan komponen stok opname.
+     */
     public function render(): View
     {
         return view('livewire.inventaris.stok-opname', [

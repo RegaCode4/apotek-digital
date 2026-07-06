@@ -226,15 +226,17 @@
                         <label for="formRole" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">
                             Role <span class="text-[var(--color-danger)]" aria-hidden="true">*</span>
                         </label>
-                        <select
+                        <x-brutal-select 
                             id="formRole"
                             wire:model.live="formRole"
-                            class="block w-full input-brutal text-sm text-[var(--color-ink)] focus:outline-none @error('formRole') border-[var(--color-danger)] @enderror"
-                        >
-                            <option value="cashier">Cashier</option>
-                            <option value="pharmacist">Pharmacist</option>
-                            <option value="admin">Admin</option>
-                        </select>
+                            placeholder="Pilih Role"
+                            :options="[
+                                'cashier' => 'Cashier',
+                                'pharmacist' => 'Pharmacist',
+                                'admin' => 'Admin'
+                            ]"
+                            class="{{ $errors->has('formRole') ? 'border-[var(--color-danger)]' : '' }}"
+                        />
                         @error('formRole')
                             <p class="mt-1 text-xs font-bold text-[var(--color-danger)]">{{ $message }}</p>
                         @enderror

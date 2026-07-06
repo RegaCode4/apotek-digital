@@ -64,16 +64,13 @@
 
                         <div>
                             <label for="category_id" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Kategori</label>
-                            <select
+                            <x-brutal-select 
                                 id="category_id"
                                 wire:model="category_id"
-                                class="block w-full input-brutal text-sm text-[var(--color-ink)] focus:outline-none @error('category_id') border-[var(--color-danger)] @enderror"
-                            >
-                                <option value="">— Pilih Kategori —</option>
-                                @foreach ($categoryOptions as $option)
-                                    <option value="{{ $option->id }}">{{ $option->name }}</option>
-                                @endforeach
-                            </select>
+                                placeholder="— Pilih Kategori —"
+                                :options="$categoryOptions->pluck('name', 'id')->toArray()"
+                                class="{{ $errors->has('category_id') ? 'border-[var(--color-danger)]' : '' }}"
+                            />
                             @error('category_id') <p class="mt-1 text-xs font-bold text-[var(--color-danger)]">{{ $message }}</p> @enderror
                         </div>
 

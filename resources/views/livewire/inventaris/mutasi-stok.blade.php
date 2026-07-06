@@ -12,17 +12,17 @@
         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <div>
                 <label for="type" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Tipe Mutasi</label>
-                <select
+                <x-brutal-select 
                     id="type"
                     wire:model.live="type"
-                    class="block w-full input-brutal focus:ring-1 focus:ring-[var(--color-primary)]"
-                >
-                    <option value="">Semua tipe</option>
-                    <option value="in">Masuk</option>
-                    <option value="out">Keluar</option>
-                    <option value="adjustment">Penyesuaian</option>
-                    <option value="expired_return">Retur Kedaluwarsa</option>
-                </select>
+                    placeholder="Semua tipe"
+                    :options="[
+                        'in' => 'Masuk',
+                        'out' => 'Keluar',
+                        'adjustment' => 'Penyesuaian',
+                        'expired_return' => 'Retur Kedaluwarsa'
+                    ]"
+                />
             </div>
 
             <div>

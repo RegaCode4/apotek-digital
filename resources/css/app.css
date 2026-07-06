@@ -86,14 +86,22 @@
         display: inline-flex; align-items: center; gap: .5rem;
         border: 2px solid var(--color-brutal);
         border-radius: var(--radius-brutal);
-        box-shadow: 4px 4px 0 var(--color-brutal);
+        box-shadow: 2px 2px 0 var(--color-brutal);
         font-weight: 600;
-        transition: transform .05s ease, box-shadow .05s ease;
+        transition: all .2s ease;
+    }
+    .btn-brutal:hover {
+        transform: translateY(-2px);
+        box-shadow: 4px 4px 0 var(--color-brutal);
     }
     .btn-brutal:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--color-brutal); }
+    
     .btn-primary   { background: var(--color-primary); color: #fff; }
     .btn-primary:hover { background: var(--color-primary-hover); }
+    
     .btn-secondary { background: var(--color-surface); color: var(--color-ink); }
+    .btn-secondary:hover { background: var(--color-primary); color: #fff; }
+    
     .btn-danger    { background: var(--color-danger); color: #fff; }
 
     .badge-brutal {
@@ -108,8 +116,19 @@
         border: 2px solid var(--color-brutal);
         border-radius: var(--radius-brutal);
         padding: .5rem .75rem;
+        box-shadow: 2px 2px 0 var(--color-brutal);
+        transition: all .2s ease;
     }
-    .input-brutal:focus { outline: 2px solid var(--color-primary); outline-offset: 1px; }
+    .input-brutal:hover {
+        transform: translateY(-2px);
+        box-shadow: 4px 4px 0 var(--color-brutal);
+    }
+    .input-brutal:focus { 
+        transform: translateY(-2px);
+        box-shadow: 4px 4px 0 var(--color-brutal);
+        outline: 2px solid var(--color-primary); 
+        outline-offset: 1px; 
+    }
 }
 
 /* === Timpa Flux bawaan (JANGAN dihapus) === */

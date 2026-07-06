@@ -412,10 +412,10 @@ class LaporanPage extends Component
     {
         $date = Carbon::parse($expiryDate);
         if ($date->lt(now()->addDays(30))) {
-            return 'bg-red-100 text-red-700';
+            return 'bg-[var(--color-danger-soft)] text-[var(--color-danger)]';
         }
 
-        return 'bg-amber-100 text-amber-800';
+        return 'bg-[var(--color-warning-soft)] text-[var(--color-warning)]';
     }
 
     /** Ekspor obat kedaluwarsa ke CSV */

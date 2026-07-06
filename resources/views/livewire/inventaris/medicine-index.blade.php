@@ -41,29 +41,25 @@
 
             <div>
                 <label for="categoryId" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Kategori</label>
-                <select
+                <x-brutal-select 
                     id="categoryId"
                     wire:model.live="categoryId"
-                    class="block w-full input-brutal text-sm text-[var(--color-ink)] focus:outline-none"
-                >
-                    <option value="">Semua kategori</option>
-                    @foreach ($categories as $cat)
-                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                    @endforeach
-                </select>
+                    placeholder="Semua kategori"
+                    :options="$categories->pluck('name', 'id')->toArray()"
+                />
             </div>
 
             <div>
                 <label for="requiresPrescription" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Resep</label>
-                <select
+                <x-brutal-select 
                     id="requiresPrescription"
                     wire:model.live="requiresPrescription"
-                    class="block w-full input-brutal text-sm text-[var(--color-ink)] focus:outline-none"
-                >
-                    <option value="">Semua</option>
-                    <option value="1">Wajib resep</option>
-                    <option value="0">Tanpa resep</option>
-                </select>
+                    placeholder="Semua"
+                    :options="[
+                        '1' => 'Wajib resep',
+                        '0' => 'Tanpa resep'
+                    ]"
+                />
             </div>
         </div>
     </div>

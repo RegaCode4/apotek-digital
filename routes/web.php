@@ -23,18 +23,40 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 // Redirect root ke halaman login
+/**
+ * Redirect halaman utama root ke halaman login sistem.
+ */
 Route::redirect('/', '/sistem/login')->name('home');
 
-// Route group: seluruh sistem aplikasi (login, dashboard, dll)
+/**
+ * Grup rute untuk seluruh sistem aplikasi (login, dashboard, dan lainnya).
+ */
 Route::prefix('sistem')->name('sistem.')->group(function () {
-    // Autentikasi — halaman login & logout
+    
+    /**
+     * Menampilkan halaman login.
+     */
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    
+    /**
+     * Memproses permintaan login pengguna.
+     */
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+    
+    /**
+     * Memproses proses logout pengguna.
+     */
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Route yang membutuhkan login (auth.apotek)
+    /**
+     * Grup rute yang membutuhkan autentikasi (harus login).
+     */
     Route::middleware(['auth.apotek'])->group(function () {
-        // Dashboard utama — menampilkan penjualan terbaru & ringkasan pembayaran hari ini
+        
+        /**
+         * Menampilkan dashboard utama.
+         * Menyiapkan data 5 penjualan terakhir dan ringkasan pembayaran hari ini.
+         */
         Route::get('/dashboard', function () {
             $recentSales = Sale::query()
                 ->with('cashier')
@@ -53,73 +75,114 @@ Route::prefix('sistem')->name('sistem.')->group(function () {
         })->name('dashboard');
     });
 
-    // Inventaris — hanya admin & pharmacist
+    /**
+     * Grup rute untuk modul Inventaris.
+     * Hanya dapat diakses oleh role: admin, pharmacist.
+     */
     Route::middleware(['auth.apotek', 'role:admin,pharmacist'])->group(function () {
         Route::get('/inventaris', fn () => view('sistem.inventaris'))->name('inventaris');
     });
 
-    // POS — cashier, admin, pharmacist
+    /**
+     * Grup rute untuk modul Point of Sale (POS).
+     * Dapat diakses oleh role: cashier, admin, pharmacist.
+     */
     Route::middleware(['auth.apotek', 'role:cashier,admin,pharmacist'])->group(function () {
         Route::get('/pos', fn () => view('sistem.pos'))->name('pos');
     });
 
-    // Manajemen pengguna — khusus admin
+    /**
+     * Grup rute untuk modul Manajemen Pengguna.
+     * Hanya dapat diakses oleh role: admin.
+     */
     Route::middleware(['auth.apotek', 'role:admin'])->group(function () {
         Route::get('/users', fn () => view('sistem.users'))->name('users');
     });
 });
 
-// Daftar obat — admin & pharmacist
+/**
+ * Rute untuk menampilkan daftar obat.
+ * Dapat diakses oleh role: admin, pharmacist.
+ */
 Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
     ->get('/sistem/inventaris/obat', MedicineIndex::class)
     ->name('inventaris.medicines.index');
 
-// Stok opname — admin & pharmacist
+/**
+ * Rute untuk melakukan stok opname.
+ * Dapat diakses oleh role: admin, pharmacist.
+ */
 Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
     ->get('/sistem/inventaris/stok-opname', StokOpname::class)
     ->name('inventaris.stok-opname');
 
-// Cetak Laporan SO - admin & pharmacist
+/**
+ * Rute untuk mencetak laporan stok opname berdasarkan timestamp.
+ * Dapat diakses oleh role: admin, pharmacist.
+ */
 Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
     ->get('/sistem/inventaris/stok-opname/cetak/{timestamp}', CetakStokOpnameController::class)
     ->name('inventaris.stok-opname.cetak');
 
-// Mutasi stok — admin & pharmacist
+/**
+ * Rute untuk melakukan mutasi stok obat.
+ * Dapat diakses oleh role: admin, pharmacist.
+ */
 Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
     ->get('/sistem/inventaris/mutasi', MutasiStok::class)
     ->name('inventaris.mutasi');
 
-// Manajemen kategori — admin & pharmacist
+/**
+ * Rute untuk mengelola kategori obat.
+ * Dapat diakses oleh role: admin, pharmacist.
+ */
 Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
     ->get('/sistem/inventaris/kategori', CategoryManagement::class)
     ->name('inventaris.kategori');
 
-// Halaman kasir POS — cashier, admin, pharmacist
+/**
+ * Rute halaman kasir (POS).
+ * Dapat diakses oleh role: admin, pharmacist, cashier.
+ */
 Route::middleware(['auth.apotek', 'role:admin,pharmacist,cashier'])
     ->get('/sistem/pos', KasirPage::class)
     ->name('pos.kasir');
 
-// Cetak struk — semua role yang sudah login
+/**
+ * Rute untuk mencetak struk transaksi.
+ * Dapat diakses oleh semua pengguna yang sudah login (auth.apotek).
+ */
 Route::middleware(['auth.apotek'])
     ->get('/sistem/pos/struk/{sale}', StrukController::class)
     ->name('pos.struk');
 
-// Riwayat transaksi POS — cashier, admin, pharmacist
+/**
+ * Rute untuk melihat riwayat transaksi POS.
+ * Dapat diakses oleh role: admin, pharmacist, cashier.
+ */
 Route::middleware(['auth.apotek', 'role:admin,pharmacist,cashier'])
     ->get('/sistem/pos/riwayat', RiwayatTransaksi::class)
     ->name('pos.riwayat');
 
-// Manajemen pengguna (admin) — khusus admin
+/**
+ * Rute untuk mengelola data pengguna (User Management).
+ * Hanya dapat diakses oleh role: admin.
+ */
 Route::middleware(['auth.apotek', 'role:admin'])
     ->get('/sistem/admin/users', UserManagement::class)
     ->name('admin.users');
 
-// Laporan — admin & pharmacist
+/**
+ * Rute untuk melihat laporan transaksi atau inventaris.
+ * Dapat diakses oleh role: admin, pharmacist.
+ */
 Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
     ->get('/sistem/laporan', LaporanPage::class)
     ->name('laporan.index');
 
-// Dashboard bawaan Laravel (auth + verified email)
+/**
+ * Rute bawaan Laravel untuk menampilkan dashboard (membutuhkan autentikasi & verifikasi email).
+ */
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 });

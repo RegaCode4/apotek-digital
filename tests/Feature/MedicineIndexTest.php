@@ -132,8 +132,8 @@ test('medicine index shows low stock and expiring soon badges', function () {
     $this->actingAs($pharmacist)
         ->get(route('inventaris.medicines.index'))
         ->assertOk()
-        ->assertSee('bg-red-100', false)
-        ->assertSee('bg-amber-100', false);
+        ->assertSee('bg-[var(--color-danger-soft)]', false)
+        ->assertSee('bg-[var(--color-warning-soft)]', false);
 });
 
 // Test: modal konfirmasi hapus menampilkan nama obat

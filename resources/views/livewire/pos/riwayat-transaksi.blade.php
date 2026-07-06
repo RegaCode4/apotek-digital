@@ -27,17 +27,17 @@
 
             <div>
                 <label for="paymentMethod" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Metode Pembayaran</label>
-                <select
+                <x-brutal-select 
                     id="paymentMethod"
                     wire:model.live="paymentMethod"
-                    class="block w-full input-brutal text-sm text-[var(--color-ink)] focus:outline-none"
-                >
-                    <option value="">Semua metode</option>
-                    <option value="cash">Cash</option>
-                    <option value="transfer">Transfer</option>
-                    <option value="bpjs">BPJS</option>
-                    <option value="insurance">Asuransi</option>
-                </select>
+                    placeholder="Semua metode"
+                    :options="[
+                        'cash' => 'Cash',
+                        'transfer' => 'Transfer',
+                        'bpjs' => 'BPJS',
+                        'insurance' => 'Asuransi'
+                    ]"
+                />
             </div>
 
             <div>

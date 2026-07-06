@@ -35,7 +35,7 @@ test('pharmacist can access stok opname page', function () {
         ->get(route('inventaris.stok-opname'))
         ->assertOk()
         ->assertSee('Stok Opname')
-        ->assertSee('Simpan Semua Adjustment');
+        ->assertSee('Simpan & Selesaikan SO', false);
 });
 
 // Test: menampilkan stok sistem dan selisih
@@ -48,7 +48,7 @@ test('stok opname shows medicines with system stock and difference', function ()
 
     Livewire::actingAs($pharmacist)
         ->test(StokOpname::class)
-        ->assertSet("physicalStocks.{$medicine->id}", 20)
+        ->assertSet("physicalStocks.{$medicine->id}", null)
         ->set("physicalStocks.{$medicine->id}", 15)
         ->assertSee('Paracetamol Opname')
         ->assertSee('-5', false);
@@ -80,7 +80,7 @@ test('stok opname saves adjustments and records stock mutations', function () {
         ->set('reason', 'Stok opname rutin bulan ini')
         ->call('saveAllAdjustments')
         ->assertHasNoErrors()
-        ->assertSet('successMessage', 'Berhasil menyimpan 1 penyesuaian stok.');
+        ->assertSet('successMessage', 'SO Selesai! 1 penyesuaian stok dicatat di ledger.');
 
     expect($medicineA->fresh()->stock)->toBe(15);
     expect($medicineB->fresh()->stock)->toBe(25);
@@ -91,7 +91,7 @@ test('stok opname saves adjustments and records stock mutations', function () {
         ->medicine_id->toBe($medicineA->id)
         ->type->toBe('adjustment')
         ->quantity->toBe(5)
-        ->notes->toBe('Stok opname rutin bulan ini')
+        ->notes->toBe('SO: Penyesuaian SO | Ref: Stok opname rutin bulan ini')
         ->created_by->toBe($pharmacist->id);
 
     expect(StockMutation::query()->count())->toBe(1);
