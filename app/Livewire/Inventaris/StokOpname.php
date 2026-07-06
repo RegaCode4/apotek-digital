@@ -3,6 +3,7 @@
 namespace App\Livewire\Inventaris;
 
 use App\Models\Medicine;
+use App\Models\Category;
 use App\Models\StockMutation;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Carbon;
@@ -12,80 +13,210 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.sistem')]
 #[Title('Stok Opname')]
 /** Stok Opname — penyesuaian stok fisik seluruh obat. */
 class StokOpname extends Component
 {
-    /** @var array<int, int> */
+    use WithPagination;
+    /** @var array<int, int|string> */
     public array $physicalStocks = [];
+
+    /** @var array<int, string> */
+    public array $itemReasons = [];
 
     public string $reason = '';
 
     public ?string $successMessage = null;
 
-    /** Inisialisasi stok fisik dari nilai stok database. */
-    public function mount(): void
+    // Filter states
+    public string $filterStatus = 'all'; // all, pending, match, diff
+    public string $filterCategoryId = '';
+    public string $search = '';
+    
+    public bool $hasDraft = false;
+
+    public function updatingSearch(): void
     {
-        $this->initializePhysicalStocks();
+        $this->resetPage();
     }
 
-    /** Simpan semua penyesuaian stok sekaligus. */
+    public function updatingFilterStatus(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterCategoryId(): void
+    {
+        $this->resetPage();
+    }
+
+    public function mount(): void
+    {
+        $draft = \Illuminate\Support\Facades\Cache::get('stock_opname_draft_' . Auth::id());
+        if ($draft) {
+            $this->physicalStocks = $draft['physicalStocks'] ?? [];
+            $this->itemReasons = $draft['itemReasons'] ?? [];
+            $this->reason = $draft['reason'] ?? '';
+            $this->hasDraft = true;
+        }
+    }
+
+    public function saveDraft(): void
+    {
+        \Illuminate\Support\Facades\Cache::put('stock_opname_draft_' . Auth::id(), [
+            'physicalStocks' => $this->physicalStocks,
+            'itemReasons' => $this->itemReasons,
+            'reason' => $this->reason,
+        ], now()->addDays(7));
+
+        $this->hasDraft = true;
+        
+        $this->successMessage = "Draf Stok Opname berhasil disimpan sementara (berlaku 7 hari).";
+        session()->flash('success', $this->successMessage);
+    }
+
+    public function discardDraft(): void
+    {
+        \Illuminate\Support\Facades\Cache::forget('stock_opname_draft_' . Auth::id());
+        $this->physicalStocks = [];
+        $this->itemReasons = [];
+        $this->reason = '';
+        $this->hasDraft = false;
+        
+        $this->successMessage = "Draf berhasil dibuang. Sesi SO di-reset.";
+        session()->flash('success', $this->successMessage);
+    }
+
+    /** Simpan semua penyesuaian stok sekaligus (Tulis ke Ledger Mutasi). */
     public function saveAllAdjustments(): void
     {
         $this->validate([
             'reason' => ['required', 'string', 'min:3'],
-            'physicalStocks.*' => ['required', 'integer', 'min:0'],
+            'physicalStocks.*' => ['nullable', 'numeric', 'min:0'],
         ]);
 
-        $medicines = $this->medicines();
-        $adjustedCount = 0;
+        $filledMedicineIds = collect($this->physicalStocks)
+            ->filter(fn($val) => $val !== '' && $val !== null)
+            ->keys();
 
-        DB::transaction(function () use ($medicines, &$adjustedCount): void {
+        if ($filledMedicineIds->isEmpty()) {
+            $this->addError('reason', 'Belum ada obat yang dihitung. Isi setidaknya satu obat.');
+            return;
+        }
+
+        $medicines = Medicine::whereIn('id', $filledMedicineIds)->get();
+        $adjustedCount = 0;
+        $timestamp = now(); // Exact timestamp for grouping
+
+        DB::transaction(function () use ($medicines, &$adjustedCount, $timestamp): void {
             foreach ($medicines as $medicine) {
-                $physicalStock = (int) ($this->physicalStocks[$medicine->id] ?? $medicine->stock);
+                $physicalStock = (int) $this->physicalStocks[$medicine->id];
                 $difference = $physicalStock - $medicine->stock;
 
                 if ($difference === 0) {
-                    continue;
+                    continue; // Stok sesuai, tidak perlu record penyesuaian
                 }
 
-                $medicine->update(['stock' => $physicalStock]);
+                $itemReason = $this->itemReasons[$medicine->id] ?? 'Penyesuaian SO';
 
-                StockMutation::query()->create([
+                // Tulis ke Ledger Mutasi Stok dengan timestamp absolut
+                $mutation = new StockMutation([
                     'medicine_id' => $medicine->id,
                     'type' => 'adjustment',
                     'quantity' => $difference,
-                    'notes' => $this->reason,
+                    'notes' => "SO: {$itemReason} | Ref: {$this->reason}",
                     'created_by' => Auth::id(),
                 ]);
+                $mutation->timestamps = false; // Disable auto timestamp
+                $mutation->created_at = $timestamp;
+                $mutation->updated_at = $timestamp;
+                $mutation->save();
+
+                // Update kolom stok cache di tabel medicines
+                $medicine->update(['stock' => $physicalStock]);
 
                 $adjustedCount++;
             }
         });
 
-        if ($adjustedCount === 0) {
-            $this->addError('reason', 'Tidak ada perubahan stok untuk disimpan.');
+        $this->successMessage = "SO Selesai! {$adjustedCount} penyesuaian stok dicatat di ledger.";
+        session()->flash('success', $this->successMessage);
+        session()->flash('last_so_timestamp', $timestamp->timestamp); // For PDF print
+        
+        // Reset state sesi
+        $this->reason = '';
+        $this->physicalStocks = [];
+        $this->itemReasons = [];
+        $this->filterStatus = 'all';
+        $this->hasDraft = false;
+        \Illuminate\Support\Facades\Cache::forget('stock_opname_draft_' . Auth::id());
+    }
 
-            return;
+    /** Mendapatkan list obat tersaring dengan paginasi manual di collection. */
+    public function getMedicinesProperty(): \Illuminate\Pagination\LengthAwarePaginator
+    {
+        $query = Medicine::query()
+            ->with('category')
+            ->when($this->filterCategoryId, fn($q) => $q->where('category_id', $this->filterCategoryId))
+            ->when($this->search, fn($q) => $q->where('name', 'like', '%' . $this->search . '%'));
+
+        $medicines = $query->get();
+
+        // Sort Default: Alfabetis Natural -> Kategori (stable sort: hasil akhir terurut Kategori, lalu Nama)
+        $medicines = $medicines
+            ->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE)
+            ->sortBy(fn($medicine) => $medicine->category?->name ?? 'Z');
+
+        if ($this->filterStatus !== 'all') {
+            $medicines = $medicines->filter(function ($medicine) {
+                $phys = $this->physicalStocks[$medicine->id] ?? null;
+                $hasInput = ($phys !== null && $phys !== '');
+                
+                if ($this->filterStatus === 'pending') return !$hasInput;
+                if ($this->filterStatus === 'match') return $hasInput && ((int)$phys === $medicine->stock);
+                if ($this->filterStatus === 'diff') return $hasInput && ((int)$phys !== $medicine->stock);
+                
+                return true;
+            });
         }
 
-        $this->successMessage = "Berhasil menyimpan {$adjustedCount} penyesuaian stok.";
-        $this->dispatch('notify', type: 'success', message: $this->successMessage);
-        $this->reason = '';
-        $this->initializePhysicalStocks();
+        // Re-index array setelah difilter
+        $medicines = $medicines->values();
+
+        // Pagination Manual Collection
+        $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage() ?: 1;
+        $perPage = 50; // Jumlah baris per halaman
+        $paginatedItems = $medicines->forPage($currentPage, $perPage);
+
+        // Inisialisasi key array untuk mencegah error Livewire @entangle di frontend
+        foreach ($paginatedItems as $medicine) {
+            if (!array_key_exists($medicine->id, $this->physicalStocks)) {
+                $this->physicalStocks[$medicine->id] = null;
+            }
+            if (!array_key_exists($medicine->id, $this->itemReasons)) {
+                $this->itemReasons[$medicine->id] = '';
+            }
+        }
+
+        return new \Illuminate\Pagination\LengthAwarePaginator(
+            $paginatedItems,
+            $medicines->count(),
+            $perPage,
+            $currentPage,
+            ['path' => \Illuminate\Pagination\Paginator::resolveCurrentPath(), 'pageName' => 'page']
+        );
     }
 
-    /**
-     * @return Collection<int, Medicine>
-     */
-    public function getMedicinesProperty(): Collection
+    /** Mendapatkan kategori untuk filter. */
+    public function getCategoriesProperty(): Collection
     {
-        return $this->medicines();
+        return Category::query()->orderBy('name')->get();
     }
 
-    /** Waktu opname terakhir dari mutasi tipe adjustment. */
+    /** Mendapatkan waktu SO terakhir. */
     public function getLastOpnameAtProperty(): ?Carbon
     {
         $lastOpname = StockMutation::query()
@@ -96,28 +227,12 @@ class StokOpname extends Component
         return $lastOpname ? Carbon::parse($lastOpname) : null;
     }
 
-    /** Menampilkan halaman stok opname. */
     public function render(): View
     {
         return view('livewire.inventaris.stok-opname', [
             'medicines' => $this->medicines,
+            'categories' => $this->categories,
             'lastOpnameAt' => $this->lastOpnameAt,
         ]);
-    }
-
-    /**
-     * @return Collection<int, Medicine>
-     */
-    protected function medicines(): Collection
-    {
-        return Medicine::query()->orderBy('name')->get();
-    }
-
-    /** Mengatur stok fisik awal sama dengan stok database. */
-    protected function initializePhysicalStocks(): void
-    {
-        $this->physicalStocks = $this->medicines()
-            ->mapWithKeys(fn (Medicine $medicine): array => [$medicine->id => $medicine->stock])
-            ->all();
     }
 }

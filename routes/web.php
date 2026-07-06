@@ -14,6 +14,7 @@ use App\Livewire\Inventaris\CategoryManagement;
 use App\Livewire\Inventaris\MedicineIndex;
 use App\Livewire\Inventaris\MutasiStok;
 use App\Livewire\Inventaris\StokOpname;
+use App\Http\Controllers\Inventaris\CetakStokOpnameController;
 use App\Livewire\Laporan\LaporanPage;
 use App\Livewire\Pos\KasirPage;
 use App\Livewire\Pos\RiwayatTransaksi;
@@ -77,6 +78,11 @@ Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
 Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
     ->get('/sistem/inventaris/stok-opname', StokOpname::class)
     ->name('inventaris.stok-opname');
+
+// Cetak Laporan SO - admin & pharmacist
+Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
+    ->get('/sistem/inventaris/stok-opname/cetak/{timestamp}', CetakStokOpnameController::class)
+    ->name('inventaris.stok-opname.cetak');
 
 // Mutasi stok — admin & pharmacist
 Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
