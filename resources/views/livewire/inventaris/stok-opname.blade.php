@@ -45,24 +45,60 @@
     @endif
 
     <!-- Modal Konfirmasi SO Belum Selesai -->
-    <div x-show="showConfirmModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" style="display: none;" x-transition>
-        <div class="bg-[var(--color-neo-yellow)] border-4 border-[var(--color-neo-black)] shadow-[8px_8px_0_var(--color-neo-black)] p-6 max-w-lg w-full" @click.away="showConfirmModal = false">
-            <div class="flex items-center gap-3 mb-4">
-                <span class="text-[var(--color-neo-black)]">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <div
+        x-show="showConfirmModal"
+        x-cloak
+        class="relative z-50"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirm-so-title"
+    >
+        <div
+            x-show="showConfirmModal"
+            x-transition.opacity
+            class="fixed inset-0 bg-[var(--color-brutal)]/40 backdrop-blur-xs"
+        ></div>
+
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div
+                x-show="showConfirmModal"
+                x-transition
+                @click.away="showConfirmModal = false"
+                class="w-full max-w-md card-brutal p-6 card-brutal-lg bg-[var(--color-surface)]"
+            >
+                {{-- Icon Peringatan --}}
+                <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-warning-soft)] border-2 border-[var(--color-brutal)] shadow-[2px_2px_0_var(--color-brutal)]">
+                    <svg class="h-6 w-6 text-[var(--color-warning)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
                         <path d="M12 9v4"></path>
                         <path d="M12 17h.01"></path>
                     </svg>
-                </span>
-                <h3 class="text-2xl font-black text-[var(--color-neo-black)]">SO Belum 100% Selesai</h3>
-            </div>
-            <p class="font-bold text-[var(--color-neo-black)] mb-6 text-lg">
-                Masih ada obat yang belum dihitung (<span x-text="{{ \App\Models\Medicine::count() }} - progress"></span> item). Apakah Anda yakin ingin menyelesaikan sesi ini? Obat yang tidak diisi akan diabaikan (dianggap tidak ada penyesuaian).
-            </p>
-            <div class="flex justify-end gap-4">
-                <button type="button" @click="showConfirmModal = false" class="px-6 py-2 bg-white font-black border-2 border-[var(--color-neo-black)] shadow-[4px_4px_0_var(--color-neo-black)] hover:bg-[var(--color-surface-muted)] transition-colors cursor-pointer active:translate-y-1 active:shadow-none">Batal</button>
-                <button type="button" @click="showConfirmModal = false; $wire.saveAllAdjustments()" class="px-6 py-2 bg-[var(--color-neo-pink)] text-white font-black border-2 border-[var(--color-neo-black)] shadow-[4px_4px_0_var(--color-neo-black)] hover:opacity-90 transition-opacity cursor-pointer active:translate-y-1 active:shadow-none">Ya, Tetap Selesaikan</button>
+                </div>
+
+                <h3 id="confirm-so-title" class="text-lg font-bold text-[var(--color-ink)]">
+                    SO Belum 100% Selesai
+                </h3>
+                
+                <p class="mt-2 text-sm font-semibold text-[var(--color-muted)] leading-relaxed">
+                    Masih ada obat yang belum dihitung (<span x-text="{{ \App\Models\Medicine::count() }} - progress" class="font-extrabold text-[var(--color-ink)]"></span> item). Apakah Anda yakin ingin menyelesaikan sesi ini? Obat yang tidak diisi akan diabaikan (dianggap tidak ada penyesuaian).
+                </p>
+
+                <div class="mt-6 flex flex-col sm:flex-row justify-end gap-2.5">
+                    <button
+                        type="button"
+                        @click="showConfirmModal = false"
+                        class="btn-brutal btn-secondary px-4 py-2.5 text-sm font-bold flex-1 text-center cursor-pointer shadow-[2px_2px_0_var(--color-brutal)]"
+                    >
+                        Batal
+                    </button>
+                    <button
+                        type="button"
+                        @click="showConfirmModal = false; $wire.saveAllAdjustments()"
+                        class="btn-brutal btn-danger px-4 py-2.5 text-sm font-bold flex-1 text-center cursor-pointer bg-[var(--color-warning)] text-white hover:opacity-90 shadow-[2px_2px_0_var(--color-brutal)]"
+                    >
+                        Ya, Selesaikan
+                    </button>
+                </div>
             </div>
         </div>
     </div>

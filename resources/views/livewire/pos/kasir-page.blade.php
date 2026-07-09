@@ -464,19 +464,18 @@
                 Nota penjualan telah disimpan.
             </p>
 
-            <div class="mt-4 card-brutal bg-[var(--color-surface-muted)] p-4 shadow-[2px_2px_0_var(--color-brutal)] border-2 border-[var(--color-brutal)]">
-                <p class="text-xs font-bold text-[var(--color-muted)]">Nomor Invoice</p>
-                <p class="mt-0.5 text-base font-extrabold tracking-wide text-[var(--color-ink)] font-mono">{{ $lastInvoiceNo }}</p>
-            </div>
-
-            <div class="mt-5 flex gap-2.5">
-                {{-- Cetak Struk --}}
+            <div class="mt-4 flex items-center justify-between gap-4 card-brutal bg-[var(--color-surface-muted)] p-4 shadow-[2px_2px_0_var(--color-brutal)] border-2 border-[var(--color-brutal)]">
+                <div>
+                    <p class="text-xs font-bold text-[var(--color-muted)]">Nomor Invoice</p>
+                    <p class="mt-0.5 text-base font-extrabold tracking-wide text-[var(--color-ink)] font-mono">{{ $lastInvoiceNo }}</p>
+                </div>
                 @if ($lastSaleId)
                     <a
                         href="{{ route('pos.struk', $lastSaleId) }}"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="btn-brutal btn-secondary flex-1 py-2.5 flex items-center justify-center gap-1.5 text-sm font-bold cursor-pointer"
+                        class="btn-brutal btn-secondary flex items-center justify-center gap-1.5 text-xs font-bold px-3 py-2 cursor-pointer shrink-0"
+                        title="Cetak Struk"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                             <path fill-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a1 1 0 001 1h8a1 1 0 001-1v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a1 1 0 00-1-1H6a1 1 0 00-1 1zm2 0h6v3H7V4zm-1 9h8v3H6v-3zm8-4a1 1 0 110 2 1 1 0 010-2z" clip-rule="evenodd"/>
@@ -484,12 +483,14 @@
                         Cetak Struk
                     </a>
                 @endif
+            </div>
 
+            <div class="mt-5 flex gap-2.5">
                 {{-- Transaksi Baru --}}
                 <button
                     type="button"
                     wire:click="closeSuccessModal"
-                    class="btn-brutal btn-primary flex-1 py-2.5 flex items-center justify-center text-sm font-bold cursor-pointer"
+                    class="btn-brutal btn-primary w-full py-2.5 flex items-center justify-center text-sm font-bold cursor-pointer"
                 >
                     Transaksi Baru
                 </button>

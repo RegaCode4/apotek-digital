@@ -58,6 +58,15 @@ class MedicineIndex extends Component
         $this->resetPage();
     }
 
+    /** Reset filter ke kondisi awal. */
+    public function resetFilter(): void
+    {
+        $this->search = '';
+        $this->categoryId = '';
+        $this->requiresPrescription = '';
+        $this->resetPage();
+    }
+
     /** Memuat ulang data setelah form obat ditutup. */
     #[On('medicine-saved')]
     public function refreshMedicines(?string $message = null): void

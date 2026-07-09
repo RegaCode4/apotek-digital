@@ -98,12 +98,15 @@
                 </div>
                 <a href="{{ route('pos.riwayat') }}"
                    x-show="sidebarOpen"
-                   class="flex items-center gap-2.5 rounded-lg border-2 px-2.5 py-1 text-xs font-medium transition-all pl-8
+                   class="flex items-center gap-2 rounded-lg border-2 px-2.5 py-1 text-xs font-medium transition-all pl-8
                        {{ request()->routeIs('pos.riwayat')
                            ? 'border-[var(--color-brutal)] bg-[var(--color-primary-soft)] text-[var(--color-primary-contrast)] shadow-[1px_1px_0_var(--color-brutal)]'
                            : 'border-transparent text-[var(--color-sidebar-muted)] hover:bg-white/5 hover:text-[var(--color-sidebar-text)]' }}"
                    aria-current="{{ request()->routeIs('pos.riwayat') ? 'page' : 'false' }}"
                 >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0 text-current" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                    </svg>
                     Riwayat Transaksi
                 </a>
             </div>

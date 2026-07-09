@@ -342,6 +342,7 @@ class KasirPage extends Component
     {
         $this->showSuccessModal = false;
         $this->lastInvoiceNo = '';
+        $this->lastSaleId = 0;
     }
 
     // ── Render ────────────────────────────────────────────────
@@ -414,7 +415,6 @@ class KasirPage extends Component
         $this->discountAmount = 0;
         $this->taxEnabled = false;
         $this->errorMessage = null;
-        $this->lastSaleId = 0;
         $this->resetBpjs();
     }
 }
