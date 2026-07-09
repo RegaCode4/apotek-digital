@@ -105,16 +105,18 @@ class MedicineForm extends Component
 
                 $medicine->update($attributes);
 
-                $stockIncrease = $validated['stock'] - $previousStock;
+                $stockDifference = $validated['stock'] - $previousStock;
 
-                if ($stockIncrease > 0) {
-                    $this->recordStockMutation($medicine, $stockIncrease, 'Penambahan stok via form edit obat');
+                if ($stockDifference > 0) {
+                    $this->recordStockMutation($medicine, $stockDifference, 'in', 'Penambahan stok via form edit obat');
+                } elseif ($stockDifference < 0) {
+                    $this->recordStockMutation($medicine, abs($stockDifference), 'out', 'Pengurangan stok via form edit obat');
                 }
             } else {
                 $medicine = Medicine::query()->create($attributes);
 
                 if ($validated['stock'] > 0) {
-                    $this->recordStockMutation($medicine, $validated['stock'], 'Stok awal dari form tambah obat');
+                    $this->recordStockMutation($medicine, $validated['stock'], 'in', 'Stok awal dari form tambah obat');
                 }
             }
         });
@@ -176,11 +178,11 @@ class MedicineForm extends Component
     }
 
     /** Catat mutasi stok di tabel stock_mutations. */
-    protected function recordStockMutation(Medicine $medicine, int $quantity, string $notes): void
+    protected function recordStockMutation(Medicine $medicine, int $quantity, string $type, string $notes): void
     {
         StockMutation::query()->create([
             'medicine_id' => $medicine->id,
-            'type' => 'in',
+            'type' => $type,
             'quantity' => $quantity,
             'notes' => $notes,
             'created_by' => Auth::id(),

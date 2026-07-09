@@ -5,6 +5,7 @@ namespace App\Livewire\Laporan;
 use App\Models\Medicine;
 use App\Models\Sale;
 use App\Models\StockMutation;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
@@ -15,7 +16,6 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 /** Halaman laporan dengan beberapa tab laporan */
 #[Layout('layouts.sistem')]
@@ -160,19 +160,19 @@ class LaporanPage extends Component
                 $sale->buyer_name,
                 $sale->cashier?->name,
                 $sale->sale_items_count,
-                'Rp ' . number_format($sale->grand_total, 0, ',', '.'),
+                'Rp '.number_format($sale->grand_total, 0, ',', '.'),
                 strtoupper($sale->payment_method),
             ];
         })->toArray();
 
         $pdf = Pdf::loadView('pdf.brutalist-table', [
             'title' => 'Laporan Penjualan',
-            'subtitle' => 'Periode: ' . ($this->dateFrom ?: 'Awal') . ' s/d ' . ($this->dateTo ?: 'Akhir'),
+            'subtitle' => 'Periode: '.($this->dateFrom ?: 'Awal').' s/d '.($this->dateTo ?: 'Akhir'),
             'headers' => ['No. Invoice', 'Tanggal', 'Pembeli', 'Kasir', 'Total Item', 'Grand Total', 'Metode Bayar'],
             'rows' => $rows,
         ]);
 
-        return response()->streamDownload(fn () => print($pdf->output()), 'laporan-penjualan-' . now()->format('Y-m-d-His') . '.pdf');
+        return response()->streamDownload(fn () => print ($pdf->output()), 'laporan-penjualan-'.now()->format('Y-m-d-His').'.pdf');
     }
 
     /** Query dasar untuk penjualan dengan filter yang diterapkan */
@@ -284,12 +284,12 @@ class LaporanPage extends Component
 
         $pdf = Pdf::loadView('pdf.brutalist-table', [
             'title' => 'Laporan Mutasi Stok',
-            'subtitle' => 'Periode: ' . ($this->dateFrom ?: 'Awal') . ' s/d ' . ($this->dateTo ?: 'Akhir'),
+            'subtitle' => 'Periode: '.($this->dateFrom ?: 'Awal').' s/d '.($this->dateTo ?: 'Akhir'),
             'headers' => ['Tanggal', 'Nama Obat', 'Tipe', 'Jumlah', 'Keterangan', 'Dicatat Oleh'],
             'rows' => $rows,
         ]);
 
-        return response()->streamDownload(fn () => print($pdf->output()), 'laporan-stok-mutasi-' . now()->format('Y-m-d-His') . '.pdf');
+        return response()->streamDownload(fn () => print ($pdf->output()), 'laporan-stok-mutasi-'.now()->format('Y-m-d-His').'.pdf');
     }
 
     /** Query dasar untuk mutasi stok dengan filter yang diterapkan */
@@ -370,22 +370,22 @@ class LaporanPage extends Component
 
             $rows[] = [
                 $tanggal,
-                'Rp ' . number_format($cash, 0, ',', '.'),
-                'Rp ' . number_format($transfer, 0, ',', '.'),
-                'Rp ' . number_format($bpjs, 0, ',', '.'),
-                'Rp ' . number_format($insurance, 0, ',', '.'),
-                'Rp ' . number_format($dayTotal, 0, ',', '.'),
+                'Rp '.number_format($cash, 0, ',', '.'),
+                'Rp '.number_format($transfer, 0, ',', '.'),
+                'Rp '.number_format($bpjs, 0, ',', '.'),
+                'Rp '.number_format($insurance, 0, ',', '.'),
+                'Rp '.number_format($dayTotal, 0, ',', '.'),
             ];
         }
 
         $pdf = Pdf::loadView('pdf.brutalist-table', [
             'title' => 'Laporan Pendapatan Berdasarkan Metode',
-            'subtitle' => 'Periode: ' . ($this->dateFrom ?: 'Awal') . ' s/d ' . ($this->dateTo ?: 'Akhir'),
+            'subtitle' => 'Periode: '.($this->dateFrom ?: 'Awal').' s/d '.($this->dateTo ?: 'Akhir'),
             'headers' => ['Tanggal', 'Cash', 'Transfer', 'BPJS', 'Asuransi', 'Total'],
             'rows' => $rows,
         ]);
 
-        return response()->streamDownload(fn () => print($pdf->output()), 'laporan-pendapatan-metode-' . now()->format('Y-m-d-His') . '.pdf');
+        return response()->streamDownload(fn () => print ($pdf->output()), 'laporan-pendapatan-metode-'.now()->format('Y-m-d-His').'.pdf');
     }
 
     /** Obat yang akan kedaluwarsa dalam 3 bulan ke depan */
@@ -468,7 +468,7 @@ class LaporanPage extends Component
             'rows' => $rows,
         ]);
 
-        return response()->streamDownload(fn () => print($pdf->output()), 'laporan-obat-kedaluwarsa-' . now()->format('Y-m-d-His') . '.pdf');
+        return response()->streamDownload(fn () => print ($pdf->output()), 'laporan-obat-kedaluwarsa-'.now()->format('Y-m-d-His').'.pdf');
     }
 
     /** Ekspor obat stok rendah ke CSV */
@@ -519,7 +519,7 @@ class LaporanPage extends Component
             'rows' => $rows,
         ]);
 
-        return response()->streamDownload(fn () => print($pdf->output()), 'laporan-low-stock-' . now()->format('Y-m-d-His') . '.pdf');
+        return response()->streamDownload(fn () => print ($pdf->output()), 'laporan-low-stock-'.now()->format('Y-m-d-His').'.pdf');
     }
 
     /** Menampilkan tampilan tab yang sesuai dengan datanya */

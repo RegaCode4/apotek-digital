@@ -144,7 +144,7 @@ class DashboardService
 
         $rows = Sale::query()
             ->select(
-                DB::raw("DATE_FORMAT(sale_date, '%Y-%u') as yw"),
+                DB::raw("DATE_FORMAT(sale_date, '%Y-%v') as yw"),
                 DB::raw('SUM(grand_total) as total')
             )
             ->where('sale_date', '>=', now()->subWeeks(7)->startOfWeek())

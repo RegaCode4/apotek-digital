@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +22,18 @@ class EnsureAuthenticated
     {
         if (! Auth::check()) {
             return redirect()->route('sistem.login');
+        }
+
+        /** @var User $user */
+        $user = Auth::user();
+
+        if (! $user->is_active) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('sistem.login')
+                ->withErrors(['email' => 'Akun Anda telah dinonaktifkan. Hubungi administrator.']);
         }
 
         return $next($request);

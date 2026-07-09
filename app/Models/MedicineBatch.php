@@ -36,8 +36,6 @@ class MedicineBatch extends Model
         return $this->belongsTo(Medicine::class);
     }
 
-
-
     /**
      * Scope query untuk pengurutan First Expired, First Out.
      */

@@ -8,13 +8,13 @@
  */
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Inventaris\CetakStokOpnameController;
 use App\Http\Controllers\Pos\StrukController;
 use App\Livewire\Admin\UserManagement;
 use App\Livewire\Inventaris\CategoryManagement;
 use App\Livewire\Inventaris\MedicineIndex;
 use App\Livewire\Inventaris\MutasiStok;
 use App\Livewire\Inventaris\StokOpname;
-use App\Http\Controllers\Inventaris\CetakStokOpnameController;
 use App\Livewire\Laporan\LaporanPage;
 use App\Livewire\Pos\KasirPage;
 use App\Livewire\Pos\RiwayatTransaksi;
@@ -32,17 +32,17 @@ Route::redirect('/', '/sistem/login')->name('home');
  * Grup rute untuk seluruh sistem aplikasi (login, dashboard, dan lainnya).
  */
 Route::prefix('sistem')->name('sistem.')->group(function () {
-    
+
     /**
      * Menampilkan halaman login.
      */
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    
+
     /**
      * Memproses permintaan login pengguna.
      */
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-    
+
     /**
      * Memproses proses logout pengguna.
      */
@@ -52,7 +52,7 @@ Route::prefix('sistem')->name('sistem.')->group(function () {
      * Grup rute yang membutuhkan autentikasi (harus login).
      */
     Route::middleware(['auth.apotek'])->group(function () {
-        
+
         /**
          * Menampilkan dashboard utama.
          * Menyiapkan data 5 penjualan terakhir dan ringkasan pembayaran hari ini.
@@ -179,12 +179,5 @@ Route::middleware(['auth.apotek', 'role:admin'])
 Route::middleware(['auth.apotek', 'role:admin,pharmacist'])
     ->get('/sistem/laporan', LaporanPage::class)
     ->name('laporan.index');
-
-/**
- * Rute bawaan Laravel untuk menampilkan dashboard (membutuhkan autentikasi & verifikasi email).
- */
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('dashboard', 'dashboard')->name('dashboard');
-});
 
 require __DIR__.'/settings.php';

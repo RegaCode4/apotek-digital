@@ -3,6 +3,7 @@
 namespace App\Livewire\Inventaris;
 
 use App\Models\StockMutation;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,7 +12,6 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 #[Layout('layouts.sistem')]
 #[Title('Riwayat Mutasi Stok')]
@@ -117,12 +117,12 @@ class MutasiStok extends Component
 
         $pdf = Pdf::loadView('pdf.brutalist-table', [
             'title' => 'Laporan Mutasi Stok',
-            'subtitle' => 'Pencarian: ' . ($this->search ?: 'Semua') . ' | Tipe: ' . ($this->type ?: 'Semua'),
+            'subtitle' => 'Pencarian: '.($this->search ?: 'Semua').' | Tipe: '.($this->type ?: 'Semua'),
             'headers' => ['Tanggal', 'Nama Obat', 'Tipe', 'Jumlah', 'Referensi', 'Catatan', 'Dicatat Oleh'],
             'rows' => $rows,
         ]);
 
-        return response()->streamDownload(fn () => print($pdf->output()), 'mutasi-stok-' . now()->format('Y-m-d-His') . '.pdf');
+        return response()->streamDownload(fn () => print ($pdf->output()), 'mutasi-stok-'.now()->format('Y-m-d-His').'.pdf');
     }
 
     /**

@@ -73,8 +73,8 @@ test('medicine form can edit medicine and record stock increase mutation only', 
         ->created_by->toBe($pharmacist->id);
 });
 
-// Test: tidak mencatat mutasi jika stok tidak bertambah saat edit
-test('medicine form does not record stock mutation when stock is not increased on edit', function () {
+// Test: mencatat mutasi keluar (out) jika stok berkurang saat edit
+test('medicine form records stock out mutation when stock is decreased on edit', function () {
     $pharmacist = User::factory()->create(['role' => 'pharmacist']);
 
     $medicine = Medicine::factory()->create([
@@ -88,7 +88,13 @@ test('medicine form does not record stock mutation when stock is not increased o
         ->set('stock', 15)
         ->call('save');
 
-    expect(StockMutation::query()->count())->toBe(0);
+    $mutation = StockMutation::query()->first();
+
+    expect($mutation)
+        ->type->toBe('out')
+        ->quantity->toBe(5)
+        ->created_by->toBe($pharmacist->id);
+
     expect($medicine->fresh()->stock)->toBe(15);
 });
 

@@ -203,9 +203,15 @@ class KasirPage extends Component
             return;
         }
 
-        // Jika sudah ada di keranjang, tambah qty saja
+        // Jika sudah ada di keranjang, tambah qty setelah validasi stok
         foreach ($this->cart as $index => $item) {
             if ($item['medicine_id'] === $medicineId) {
+                if ($medicine->stock < $item['quantity'] + 1) {
+                    $this->dispatch('notify', type: 'warning', message: "Stok {$medicine->name} tidak mencukupi (tersedia: {$medicine->stock}).");
+
+                    return;
+                }
+
                 $this->cart[$index]['quantity']++;
                 $this->search = '';
 

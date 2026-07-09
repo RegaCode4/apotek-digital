@@ -6,9 +6,9 @@
  * Route API untuk komunikasi frontend/eksternal dengan Sanctum auth.
  */
 
+use App\Models\Medicine;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\Medicine;
 
 /**
  * Mendapatkan data pengguna yang sedang login saat ini (via Sanctum).

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\StockMutation;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
-use Illuminate\Http\Response;
 
 /**
  * Controller untuk mencetak Laporan Hasil Stok Opname dalam bentuk PDF.
@@ -19,7 +18,7 @@ class CetakStokOpnameController extends Controller
     public function __invoke(string $timestamp)
     {
         $time = Carbon::createFromTimestamp($timestamp);
-        
+
         $mutations = StockMutation::with('medicine.category')
             ->where('type', 'adjustment')
             ->where('created_at', $time->format('Y-m-d H:i:s'))
@@ -38,14 +37,14 @@ class CetakStokOpnameController extends Controller
                 $index + 1,
                 $mutation->medicine->category->name ?? '-',
                 $mutation->medicine->name ?? 'Obat Dihapus',
-                $prefix . $mutation->quantity,
+                $prefix.$mutation->quantity,
                 $mutation->notes,
             ];
         }
 
         $pdf = Pdf::loadView('pdf.brutalist-table', [
             'title' => 'Laporan Hasil Stok Opname',
-            'subtitle' => 'Waktu Pelaksanaan: ' . $time->format('d M Y, H:i:s') . ' | Oleh: ' . (auth()->check() ? auth()->user()->name : 'Sistem'),
+            'subtitle' => 'Waktu Pelaksanaan: '.$time->format('d M Y, H:i:s').' | Oleh: '.(auth()->check() ? auth()->user()->name : 'Sistem'),
             'headers' => $headers,
             'rows' => $rows,
         ])->setPaper('a4', 'portrait');

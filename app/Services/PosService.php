@@ -6,6 +6,7 @@ use App\Models\Medicine;
 use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\StockMutation;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
@@ -28,7 +29,7 @@ class PosService
             // Mengunci semua baris obat yang terpengaruh untuk mencegah kondisi balapan (§7 Risk #1)
             $medicineIds = array_column($cartItems, 'medicine_id');
 
-            /** @var \Illuminate\Database\Eloquent\Collection<int, Medicine> $medicines */
+            /** @var Collection<int, Medicine> $medicines */
             $medicines = Medicine::whereIn('id', $medicineIds)
                 ->lockForUpdate()
                 ->get()

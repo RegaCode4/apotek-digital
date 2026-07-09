@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Dashboard;
 
-use App\Models\Medicine;
 use App\Services\DashboardService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
