@@ -113,22 +113,27 @@ class KasirPage extends Component
      */
     public function getSearchResultsProperty(): Collection
     {
+        // Jika tidak ada pencarian atau filter yang aktif, kembalikan koleksi kosong
         if (! $this->isFiltering) {
             return collect();
         }
 
+        // Jalankan query pencarian obat berdasarkan kategori dan kata kunci
         return Medicine::query()
             ->when($this->categoryId !== null, fn (Builder $q) => $q->where('category_id', $this->categoryId))
             ->when(strlen($this->search) >= 2, function (Builder $query): void {
                 $term = $this->search;
+                // Lakukan pencarian pada nama obat, nama generik, atau nama kategori
                 $query->where(function (Builder $q) use ($term): void {
                     $q->where('name', 'like', '%'.$term.'%')
                         ->orWhere('generic_name', 'like', '%'.$term.'%')
                         ->orWhereHas('category', fn (Builder $c) => $c->where('name', 'like', '%'.$term.'%'));
                 });
             })
+            // Urutkan berdasarkan stok terbanyak dan nama obat
             ->orderByDesc('stock')
             ->orderBy('name')
+            // Batasi hasil maksimal 40 obat untuk optimasi performa
             ->limit(40)
             ->get();
     }
@@ -148,6 +153,7 @@ class KasirPage extends Component
      */
     public function getTopMedicinesProperty(): Collection
     {
+        // Ambil 8 ID obat terlaris berdasarkan total kuantitas yang terjual
         $topIds = DB::table('sale_items')
             ->select('medicine_id', DB::raw('SUM(quantity) as total_qty'))
             ->groupBy('medicine_id')
@@ -155,10 +161,12 @@ class KasirPage extends Component
             ->limit(8)
             ->pluck('medicine_id');
 
+        // Jika tidak ada data penjualan, kembalikan koleksi kosong
         if ($topIds->isEmpty()) {
             return collect();
         }
 
+        // Ambil data detail obat berdasarkan ID yang didapat, lalu urutkan kembali sesuai dengan urutan penjualan tertinggi
         return Medicine::query()
             ->whereIn('id', $topIds)
             ->get()
@@ -197,6 +205,7 @@ class KasirPage extends Component
     /** Tambah item ke keranjang belanja. */
     public function addToCart(int $medicineId): void
     {
+        // Cari data obat berdasarkan ID, abaikan jika tidak ditemukan atau stok kosong
         $medicine = Medicine::find($medicineId);
 
         if (! $medicine || $medicine->stock <= 0) {
@@ -206,12 +215,14 @@ class KasirPage extends Component
         // Jika sudah ada di keranjang, tambah qty setelah validasi stok
         foreach ($this->cart as $index => $item) {
             if ($item['medicine_id'] === $medicineId) {
+                // Periksa apakah penambahan kuantitas akan melebihi stok tersedia
                 if ($medicine->stock < $item['quantity'] + 1) {
                     $this->dispatch('notify', type: 'warning', message: "Stok {$medicine->name} tidak mencukupi (tersedia: {$medicine->stock}).");
 
                     return;
                 }
 
+                // Tambahkan kuantitas dan reset form pencarian
                 $this->cart[$index]['quantity']++;
                 $this->search = '';
 
@@ -220,10 +231,12 @@ class KasirPage extends Component
         }
 
         // Cek fornas saat ditambahkan ke keranjang
+        // Logika: Jika pembayaran BPJS, cek status Fornas obat tersebut
         $isFornas = $this->paymentMethod === 'bpjs'
             ? $this->bpjs->isFornas($medicine->id)
             : true; // Tidak relevan untuk non-BPJS, default true agar badge tidak muncul
 
+        // Tambahkan item baru ke dalam struktur array keranjang belanja
         $this->cart[] = [
             'medicine_id' => $medicine->id,
             'name' => $medicine->name,
@@ -234,6 +247,7 @@ class KasirPage extends Component
             'is_fornas' => $isFornas,
         ];
 
+        // Kosongkan kolom pencarian setelah item berhasil masuk keranjang
         $this->search = '';
     }
 
@@ -292,12 +306,14 @@ class KasirPage extends Component
     {
         $this->errorMessage = null;
 
+        // Validasi input form utama dari kasir
         $this->validate([
             'buyerName' => ['required', 'string', 'max:100'],
             'paymentMethod' => ['required', 'in:cash,transfer,bpjs,insurance'],
             'discountAmount' => ['numeric', 'min:0'],
         ]);
 
+        // Pastikan ada item di keranjang sebelum memproses
         if (empty($this->cart)) {
             $this->errorMessage = 'Keranjang belanja masih kosong.';
             $this->dispatch('notify', type: 'warning', message: 'Keranjang belanja masih kosong.');
@@ -305,7 +321,7 @@ class KasirPage extends Component
             return;
         }
 
-        // Blokir jika BPJS belum terverifikasi atau tidak aktif
+        // Blokir jika BPJS belum terverifikasi atau tidak aktif (khusus pembayaran BPJS)
         if ($this->paymentMethod === 'bpjs' && ! $this->bpjsVerified) {
             $this->errorMessage = 'Verifikasi peserta BPJS harus dilakukan dan statusnya aktif sebelum memproses transaksi.';
             $this->dispatch('notify', type: 'error', message: $this->errorMessage);
@@ -313,6 +329,7 @@ class KasirPage extends Component
             return;
         }
 
+        // Validasi kelengkapan No. Resep untuk setiap obat keras/resep
         foreach ($this->cart as $item) {
             if ($item['requires_prescription'] && empty($item['prescription_no'])) {
                 $this->errorMessage = "No. Resep wajib diisi untuk obat: {$item['name']}.";
@@ -323,21 +340,28 @@ class KasirPage extends Component
         }
 
         try {
+            // Ambil data user/kasir yang sedang login
             /** @var User $user */
             $user = Auth::user();
 
+            // Eksekusi proses transaksi di layer service (pemotongan stok, pencatatan DB)
             $sale = $posService->processTransaction(
                 cartItems: $this->buildCartItems(),
                 saleData: $this->buildSaleData(),
                 cashierId: $user->id,
             );
 
+            // Simpan data invoice untuk ditampilkan pada struk cetak
             $this->lastInvoiceNo = $sale->invoice_no;
             $this->lastSaleId = $sale->id;
+
+            // Bersihkan form setelah sukses
             $this->resetCart();
             $this->showSuccessModal = true;
+
             $this->dispatch('notify', type: 'success', message: "Transaksi {$sale->invoice_no} berhasil disimpan.");
         } catch (RuntimeException $e) {
+            // Tangkap exception (misal: stok tidak cukup) dan tampilkan alert
             $this->errorMessage = $e->getMessage();
             $this->dispatch('notify', type: 'error', message: $e->getMessage());
         }

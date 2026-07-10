@@ -101,12 +101,15 @@ class RiwayatTransaksi extends Component
      */
     protected function filteredQuery(): Builder
     {
+        // Ambil objek user yang sedang login untuk keperluan otorisasi filter
         /** @var User $user */
         $user = Auth::user();
 
         return Sale::query()
-            // Cashier hanya bisa lihat transaksi miliknya
+            // Aturan Otorisasi: Jika user adalah kasir (cashier), batasi hanya melihat transaksi yang dia input sendiri
             ->when($user->role === 'cashier', fn (Builder $q): Builder => $q->where('cashier_id', $user->id))
+
+            // Filter Pencarian: Mencari berdasarkan nomor invoice atau nama pembeli jika form search diisi
             ->when(
                 $this->search !== '',
                 fn (Builder $q): Builder => $q->where(function (Builder $q): void {
@@ -114,11 +117,17 @@ class RiwayatTransaksi extends Component
                         ->orWhere('buyer_name', 'like', '%'.$this->search.'%');
                 })
             )
+
+            // Filter Metode Pembayaran: Hanya tampilkan data dengan metode pembayaran tertentu jika dipilih (cash/bpjs/dll)
             ->when(
                 $this->paymentMethod !== '',
                 fn (Builder $q): Builder => $q->where('payment_method', $this->paymentMethod)
             )
+
+            // Filter Rentang Tanggal: Batasi transaksi mulai dari tanggal awal (dateFrom)
             ->when($this->dateFrom !== '', fn (Builder $q): Builder => $q->whereDate('sale_date', '>=', $this->dateFrom))
+
+            // Filter Rentang Tanggal: Batasi transaksi sampai dengan tanggal akhir (dateTo)
             ->when($this->dateTo !== '', fn (Builder $q): Builder => $q->whereDate('sale_date', '<=', $this->dateTo));
     }
 }

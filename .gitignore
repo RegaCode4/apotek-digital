@@ -39,3 +39,7 @@ check_db.php
 *.sqlite
 /database/*.sqlite
 prd2.md
+workflow.md
+*.http
+*.rest
+/routes/api.php
