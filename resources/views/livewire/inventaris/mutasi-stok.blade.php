@@ -40,7 +40,8 @@
                 <label for="dateFrom" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Dari Tanggal</label>
                 <input
                     id="dateFrom"
-                    type="date"
+                    type="text"
+                    x-datepicker
                     wire:model.live="dateFrom"
                     class="block w-full input-brutal focus:ring-1 focus:ring-[var(--color-primary)]"
                 />
@@ -50,7 +51,8 @@
                 <label for="dateTo" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Sampai Tanggal</label>
                 <input
                     id="dateTo"
-                    type="date"
+                    type="text"
+                    x-datepicker
                     wire:model.live="dateTo"
                     class="block w-full input-brutal focus:ring-1 focus:ring-[var(--color-primary)]"
                 />

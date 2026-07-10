@@ -106,7 +106,7 @@
 
                         <div>
                             <label for="expiry_date" class="mb-1.5 block text-sm font-bold text-[var(--color-ink)]">Tanggal Kedaluwarsa</label>
-                            <input id="expiry_date" type="date" wire:model="expiry_date" class="block w-full input-brutal text-sm text-[var(--color-ink)] focus:outline-none" />
+                            <input id="expiry_date" type="text" x-datepicker wire:model="expiry_date" class="block w-full input-brutal text-sm text-[var(--color-ink)] focus:outline-none" />
                             @error('expiry_date') <p class="mt-1 text-xs font-bold text-[var(--color-danger)]">{{ $message }}</p> @enderror
                         </div>
 
