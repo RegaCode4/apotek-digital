@@ -8,6 +8,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -75,7 +76,8 @@ class RiwayatTransaksi extends Component
     /**
      * @return LengthAwarePaginator<int, Sale>
      */
-    public function getSalesProperty(): LengthAwarePaginator
+    #[Computed]
+    public function sales(): LengthAwarePaginator
     {
         return $this->filteredQuery()
             ->with(['cashier', 'saleItems'])

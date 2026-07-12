@@ -12,7 +12,12 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 antialiased">
+<body class="min-h-screen flex items-center justify-center p-4 antialiased relative">
+    {{-- Background Image with Blur --}}
+    <div class="fixed inset-0 z-[-1]">
+        <img src="{{ asset('images/bg-login.webp') }}" alt="Background" class="w-full h-full object-cover blur-sm" />
+        <div class="absolute inset-0 bg-white/60"></div>
+    </div>
 
     <div class="w-full max-w-sm">
 
