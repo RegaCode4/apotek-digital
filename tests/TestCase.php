@@ -22,7 +22,7 @@ abstract class TestCase extends BaseTestCase
 
         // FAILSAFE: Mencegah RefreshDatabase menghapus database lokal utama jika config ter-cache
         if ($connection !== 'sqlite' && $dbName === 'apotek_digital') {
-            exit("\n[CRITICAL FAILSAFE] Eksekusi test dihentikan! Test mendeteksi penggunaan database utama '{$dbName}'. Jalankan 'php artisan config:clear' untuk menggunakan pengaturan database in-memory.\n\n");
+            throw new \RuntimeException("\n[CRITICAL FAILSAFE] Eksekusi test dihentikan! Test mendeteksi penggunaan database utama '{$dbName}'. Jalankan 'php artisan config:clear' untuk menggunakan pengaturan database in-memory.\n\n");
         }
     }
 
